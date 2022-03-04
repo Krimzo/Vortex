@@ -2,11 +2,11 @@
 
 
 void Update() {
-	// Clearing the frame
-	//frame.fill(kl::colors::gray);
+	// Logic
+	Logic();
 
 	// Rendering pieces
-	frame.spixel(win.mouse.position, kl::colors::white);
+	board.draw();
 
 	// Frame display
 	win.drawImage(frame);
