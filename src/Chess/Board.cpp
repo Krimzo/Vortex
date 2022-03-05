@@ -94,37 +94,50 @@ void LoadFen(const std::string& fen) {
     }
 }
 
-// Draws the board
-void DrawBoard() {
+// Draws a square
+void DrawSquare(int ind, const kl::color& colL, const kl::color& colD) {
     // Square size
     const int squareSize = frame.width() / 8;
 
+    // Drawing
+    const kl::int2 pos(ind % 8, ind / 8);
+    frame.drawRectangle(
+        pos * squareSize,
+        (pos + 1) * squareSize - 1,
+        (pos.x % 2) == (pos.y % 2) ? colL : colD,
+        true);
+}
+
+// Draws the board
+void DrawBoard() {
 	// Drawing the squares
 	for (int i = 0; i < 64; i++) {
-        const int x = i % 8;
-        const int y = i / 8;
-        if ((x % 2) == (y % 2)) {
-            frame.drawRectangle(
-                kl::int2(x * squareSize, y * squareSize),
-                kl::int2(kl::int2((x + 1) * squareSize, (y + 1) * squareSize)),
-                (i == selected) ? selectL : squareL,
-                true);
+        if (i == selected) {
+            DrawSquare(i, selectL, selectD);
         }
         else {
-            frame.drawRectangle(
-                kl::int2(x * squareSize, y * squareSize),
-                kl::int2(kl::int2((x + 1) * squareSize, (y + 1) * squareSize)),
-                (i == selected) ? selectD : squareD,
-                true);
+            DrawSquare(i, squareL, squareD);
         }
 	}
 
+    // Drawing the moves
+    if (selected > -1) {
+        for (int pm : pieceMoves) {
+            DrawSquare(pm, moveL, moveD);
+        }
+    }
+
+    // Drawing the won square
+    if (wonSquare > -1) {
+        DrawSquare(wonSquare, wonL, wonD);
+    }
+
     // Drawing the pieces
+    const int squareSize = frame.width() / 8;
     for (int i = 0; i < 64; i++) {
-        if (pieces[i]) {
-            const int x = i % 8;
-            const int y = i / 8;
-            frame.drawImage(kl::int2(x * squareSize, y * squareSize), icons[pieces[i] - 1]);
+        if (pieces[i] != Piece::None) {
+            const kl::int2 pos(i % 8, i / 8);
+            frame.drawImage(pos * squareSize, icons[pieces[i] - 1]);
         }
     }
 }

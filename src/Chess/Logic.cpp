@@ -2,23 +2,75 @@
 
 
 void Logic() {
-	// Getting the square size
-	const int squareSize = frame.width() / 8;
+	// Engine plays
+	if (!whiteToPlay) {
+		// Getting the best data
+		const BestInfo bestData = BestMove(pieces, false, 0, -INFINITY, INFINITY);
+
+		// Updating title eval
+		win.setTitle(std::to_string(bestData.eval));
+
+		// Checkmate test
+		if (pieces[bestData.move.y] == Piece::WKing) {
+			win.setTitle("Black wins!");
+			win.update = []() {};
+			wonSquare = bestData.move.y;
+		}
+		else if (pieces[bestData.move.y] == Piece::BKing) {
+			win.setTitle("White wins!");
+			win.update = []() {};
+			wonSquare = bestData.move.y;
+		}
+
+		// Moving engine piece
+		pieces[bestData.move.y] = pieces[bestData.move.x];
+		pieces[bestData.move.x] = Piece::None;
+		whiteToPlay = true;
+	}
 
 	// Getting the mouse click coords
 	static bool lmbWasDown = false;
-	if (win.mouse.lmb) {
+	const int squareSize = frame.width() / 8;
+	if (win.mouse.lmb && wonSquare == -1) {
 		if (!lmbWasDown) {
 			const kl::int2 clickedSqr = win.mouse.position / squareSize;
 			const int clickedInd = clickedSqr.y * 8 + clickedSqr.x;
 
+			// Piece move
+			if ([&]() {
+				for (int pm : pieceMoves) {
+					if (clickedInd == pm) {
+						if (pieces[clickedInd] == Piece::WKing) {
+							win.setTitle("Black wins!");
+							win.update = [](){};
+							wonSquare = clickedInd;
+						}
+						else if (pieces[clickedInd] == Piece::BKing) {
+							win.setTitle("White wins!");
+							win.update = []() {};
+							wonSquare = clickedInd;
+						}
+						pieces[clickedInd] = pieces[selected];
+						pieces[selected] = Piece::None;
+						return true;
+					}
+				}
+				return false;
+			}()) {
+				selected = -1;
+				whiteToPlay = false;
+			}
+
 			// Piece select
-			if (pieces[clickedInd] != Piece::None && clickedInd != selected && ((whiteToPlay && PieceType(pieces[clickedInd]) > 0) || (!whiteToPlay && PieceType(pieces[clickedInd]) < 0))) {
+			else if (pieces[clickedInd] != Piece::None && clickedInd != selected && (whiteToPlay && PieceColor(pieces[clickedInd]) > 0)) {
 				selected = clickedInd;
 			}
 			else {
 				selected = -1;
 			}
+
+			// Getting the possible moves
+			pieceMoves = PieceMoves(pieces, selected);
 		}
 		lmbWasDown = true;
 	}

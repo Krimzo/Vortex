@@ -1,5 +1,7 @@
 #pragma once
 
+#include "KrimzLib/KrimzLib.hpp"
+
 
 // Ids
 enum Piece {
@@ -19,5 +21,8 @@ enum Piece {
 };
 
 
-// Returns piece type
-int PieceType(Piece piece);
+// Returns piece color
+int PieceColor(Piece piece);
+
+// Returns possible moves
+std::vector<int> PieceMoves(const std::vector<Piece>& pieces, int pos);

@@ -22,19 +22,25 @@ inline const kl::image icons[16]{
 };
 
 // Board pieces
-inline Piece pieces[64] = {};
+inline std::vector<Piece> pieces(64);
+inline std::vector<int> pieceMoves;
 
 // Colors
 inline kl::color squareL = kl::color(240, 215, 180);
 inline kl::color squareD = kl::color(180, 135, 100);
 inline kl::color selectL = kl::color(190, 190, 190);
-inline kl::color selectD = kl::color(145, 145, 145);
+inline kl::color selectD = kl::color(165, 165, 165);
+inline kl::color moveL = kl::color(205, 210, 105);
+inline kl::color moveD = kl::color(170, 160,  60);
+inline kl::color wonL = kl::color(170,  20,  20);
+inline kl::color wonD = kl::color(160,  10,  10);
 
 // Render target
 inline kl::image frame(kl::int2(800));
 
 // Selected piece
 inline int selected = -1;
+inline int wonSquare = -1;
 
 // Board states
 inline bool whiteToPlay = true;

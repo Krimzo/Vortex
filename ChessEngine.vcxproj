@@ -214,6 +214,7 @@
   <ItemGroup>
     <ClCompile Include="src\Chess\Board.cpp" />
     <ClCompile Include="src\Chess\Chess.cpp" />
+    <ClCompile Include="src\Chess\Engine.cpp" />
     <ClCompile Include="src\Chess\Logic.cpp" />
     <ClCompile Include="src\Chess\Piece.cpp" />
     <ClCompile Include="src\Chess\Update.cpp" />

@@ -10,3 +10,18 @@ inline kl::window win;
 
 void Update();
 void Logic();
+
+struct BestInfo {
+	float eval;
+	kl::int2 move;
+
+	BestInfo() {
+		eval = 0.0f;
+		move = kl::int2(-1);
+	}
+	BestInfo(float eval, const kl::int2& move) {
+		this->eval = eval;
+		this->move = move;
+	}
+};
+BestInfo BestMove(const std::vector<Piece>& board, bool whitesTurn, int depth, float alpha, float beta);
