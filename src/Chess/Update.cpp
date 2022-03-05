@@ -6,7 +6,7 @@ void Update() {
 	Logic();
 
 	// Rendering pieces
-	board.draw();
+	DrawBoard();
 
 	// Frame display
 	win.drawImage(frame);

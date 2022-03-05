@@ -1,25 +1,8 @@
 #include "Chess/Board.h"
 
 
-// Icons
-const kl::image Board::icons[16] = {
-    kl::image("res/w_pawn.png"),
-    kl::image("res/w_knight.png"),
-    kl::image("res/w_bishop.png"),
-    kl::image("res/w_rook.png"),
-    kl::image("res/w_queen.png"),
-    kl::image("res/w_king.png"),
-    kl::image("res/b_pawn.png"),
-    kl::image("res/b_knight.png"),
-    kl::image("res/b_bishop.png"),
-    kl::image("res/b_rook.png"),
-    kl::image("res/b_queen.png"),
-    kl::image("res/b_king.png")
-};
-
 // Loads fen data
-const std::string Board::defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-void Board::loadFen(const std::string& fen) {
+void LoadFen(const std::string& fen) {
     // Splitting the fen by space
     std::vector<std::string> fenParts;
     std::stringstream fenStream(fen);
@@ -112,28 +95,23 @@ void Board::loadFen(const std::string& fen) {
 }
 
 // Draws the board
-void Board::draw() const {
-    // Target check
-    if (!frame) {
-        return;
-    }
-
+void DrawBoard() {
     // Square size
-    const int squareSize = frame->width() / 8;
+    const int squareSize = frame.width() / 8;
 
 	// Drawing the squares
 	for (int i = 0; i < 64; i++) {
         const int x = i % 8;
         const int y = i / 8;
         if ((x % 2) == (y % 2)) {
-            frame->drawRectangle(
+            frame.drawRectangle(
                 kl::int2(x * squareSize, y * squareSize),
                 kl::int2(kl::int2((x + 1) * squareSize, (y + 1) * squareSize)),
                 (i == selected) ? selectL : squareL,
                 true);
         }
         else {
-            frame->drawRectangle(
+            frame.drawRectangle(
                 kl::int2(x * squareSize, y * squareSize),
                 kl::int2(kl::int2((x + 1) * squareSize, (y + 1) * squareSize)),
                 (i == selected) ? selectD : squareD,
@@ -146,7 +124,7 @@ void Board::draw() const {
         if (pieces[i]) {
             const int x = i % 8;
             const int y = i / 8;
-            frame->drawImage(kl::int2(x * squareSize, y * squareSize), Board::icons[pieces[i] - 1]);
+            frame.drawImage(kl::int2(x * squareSize, y * squareSize), icons[pieces[i] - 1]);
         }
     }
 }

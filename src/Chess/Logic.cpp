@@ -13,20 +13,12 @@ void Logic() {
 			const int clickedInd = clickedSqr.y * 8 + clickedSqr.x;
 
 			// Piece select
-			if (board.selected == -1) {
-				if (board.pieces[clickedInd] != Piece::None) {
-					board.selected = clickedInd;
-				}
+			if (pieces[clickedInd] != Piece::None && clickedInd != selected && ((whiteToPlay && PieceType(pieces[clickedInd]) > 0) || (!whiteToPlay && PieceType(pieces[clickedInd]) < 0))) {
+				selected = clickedInd;
 			}
 			else {
-				if (board.pieces[clickedInd] != Piece::None && clickedInd != board.selected) {
-					board.selected = clickedInd;
-				}
-				else {
-					board.selected = -1;
-				}
+				selected = -1;
 			}
-			
 		}
 		lmbWasDown = true;
 	}
