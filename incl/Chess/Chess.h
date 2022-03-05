@@ -24,4 +24,4 @@ struct BestInfo {
 		this->move = move;
 	}
 };
-BestInfo BestMove(const std::vector<Piece>& board, bool whitesTurn, int depth, float alpha, float beta);
+BestInfo BestMoveMT(const std::vector<Piece>& board);

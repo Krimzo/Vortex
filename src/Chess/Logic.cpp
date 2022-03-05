@@ -5,10 +5,12 @@ void Logic() {
 	// Engine plays
 	if (!whiteToPlay) {
 		// Getting the best data
-		const BestInfo bestData = BestMove(pieces, false, 0, -INFINITY, INFINITY);
+		kl::time::interval();
+		const BestInfo bestData = BestMoveMT(pieces);
+		std::cout << "Elapsed time : " << kl::time::interval() << std::endl;
 
 		// Updating title eval
-		win.setTitle(std::to_string(bestData.eval));
+		win.setTitle(std::to_string(int(bestData.eval)));
 
 		// Checkmate test
 		if (pieces[bestData.move.y] == Piece::WKing) {

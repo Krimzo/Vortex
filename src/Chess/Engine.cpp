@@ -136,3 +136,58 @@ BestInfo BestMove(const std::vector<Piece>& board, bool whitesTurn, int depth, f
 		return maxInfo;
 	}
 }
+BestInfo BestMoveMT(const std::vector<Piece>& board) {
+	// Game finished check
+	const float currEval = Evaluate(board);
+	if (currEval == -INFINITY || currEval == INFINITY) {
+		return BestInfo(currEval, kl::int2(-1));
+	}
+
+	// Min data buffer
+	BestInfo minInfos[4] = {
+		BestInfo(INFINITY, kl::int2(-1)),
+		BestInfo(INFINITY, kl::int2(-1)),
+		BestInfo(INFINITY, kl::int2(-1)),
+		BestInfo(INFINITY, kl::int2(-1))
+	};
+
+	// Parallel board loop
+	kl::thread::parallelFor(0, 64, [&](int t, int p) {
+		// Recomputing index
+		p = (p / 16) + (p % 16) * 4;
+
+		// Checking piece color
+		if (PieceColor(board[p]) < 0) {
+			const std::vector<int> possibleMoves = PieceMoves(board, p);
+			for (int m : possibleMoves) {
+				// First setup
+				if (minInfos[t].move.x == -1) {
+					minInfos[t].move.x = p;
+					minInfos[t].move.y = m;
+				}
+
+				// Copy board and play the move
+				std::vector<Piece> futureBoard = board;
+				futureBoard[m] = futureBoard[p];
+				futureBoard[p] = Piece::None;
+
+				// Find best move for future board
+				const float futureEval = BestMove(futureBoard, true, 1, -INFINITY, INFINITY).eval;
+				if (futureEval < minInfos[t].eval) {
+					minInfos[t].eval = futureEval;
+					minInfos[t].move.x = p;
+					minInfos[t].move.y = m;
+				}
+			}
+		}
+	});
+
+	// Finding the minimum eval
+	BestInfo* minInfo = &minInfos[0];
+	for (int i = 1; i < 4; i++) {
+		if (minInfos[i].eval < minInfo->eval) {
+			minInfo = &minInfos[i];
+		}
+	}
+	return *minInfo;
+}
