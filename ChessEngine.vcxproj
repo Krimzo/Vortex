@@ -153,8 +153,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="incl\Chess\BestInfo.h" />
     <ClInclude Include="incl\Chess\Board.h" />
     <ClInclude Include="incl\Chess\Chess.h" />
+    <ClInclude Include="incl\Chess\Engine.h" />
+    <ClInclude Include="incl\Chess\Move.h" />
     <ClInclude Include="incl\Chess\Piece.h" />
     <ClInclude Include="incl\ImGui\imconfig.h" />
     <ClInclude Include="incl\ImGui\imgui.h" />
@@ -215,9 +218,8 @@
     <ClCompile Include="src\Chess\Board.cpp" />
     <ClCompile Include="src\Chess\Chess.cpp" />
     <ClCompile Include="src\Chess\Engine.cpp" />
-    <ClCompile Include="src\Chess\Logic.cpp" />
+    <ClCompile Include="src\Chess\Moves.cpp" />
     <ClCompile Include="src\Chess\Piece.cpp" />
-    <ClCompile Include="src\Chess\Update.cpp" />
     <ClCompile Include="src\ImGui\imgui.cpp" />
     <ClCompile Include="src\ImGui\imgui_demo.cpp" />
     <ClCompile Include="src\ImGui\imgui_draw.cpp" />

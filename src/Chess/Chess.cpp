@@ -2,7 +2,17 @@
 
 
 int main() {
-	LoadFen(defaultFen);
-	win.update = Update;
+	//kl::console::hide();
+	board.loadFen(Board::defaultFen);
+	win.update = [&]() {
+		// Logic
+		board.update(win, frame);
+
+		// Rendering pieces
+		board.draw(frame);
+
+		// Frame display
+		win.drawImage(frame);
+	};
 	win.startNew(frame.size(), "Chess Engine", false, false);
 }

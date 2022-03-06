@@ -3,57 +3,55 @@
 #include "KrimzLib/KrimzLib.hpp"
 
 #include "Chess/Piece.h"
+#include "Chess/BestInfo.h"
 
 
-// Piece icons
-inline const kl::image icons[16]{
-	kl::image("res/w_pawn.png"),
-	kl::image("res/w_knight.png"),
-	kl::image("res/w_bishop.png"),
-	kl::image("res/w_rook.png"),
-	kl::image("res/w_queen.png"),
-	kl::image("res/w_king.png"),
-	kl::image("res/b_pawn.png"),
-	kl::image("res/b_knight.png"),
-	kl::image("res/b_bishop.png"),
-	kl::image("res/b_rook.png"),
-	kl::image("res/b_queen.png"),
-	kl::image("res/b_king.png")
+class Board {
+public:
+	// Icons
+	static const kl::image icons[16];
+
+	// Colors
+	static kl::color squareL;
+	static kl::color squareD;
+	static kl::color selectL;
+	static kl::color selectD;
+	static kl::color lastL;
+	static kl::color lastD;
+	static kl::color wonL;
+	static kl::color wonD;
+
+	// Piece
+	int selecSqr = -1;
+	int wonSqr = -1;
+	Move lastMove;
+
+	// Rules
+	bool whiteToPlay = true;
+	bool wCanCastleK = true;
+	bool wCanCastleQ = true;
+	bool bCanCastleK = true;
+	bool bCanCastleQ = true;
+
+public:
+	std::vector<Piece> pieces;
+	std::vector<Move> moves;
+
+	Board();
+
+	// Loads fen data
+	static const std::string defaultFen;
+	void loadFen(const std::string& fen);
+
+	// Returns possible moves of a piece
+	std::vector<Move> getMoves(int pos) const;
+
+	// Plays the move
+	void playMove(const Move& move);
+
+	// Logic and input
+	void update(kl::window& win, kl::image& target);
+
+	// Draws the board
+	void draw(kl::image& target) const;
 };
-
-// Board pieces
-inline std::vector<Piece> pieces(64);
-inline std::vector<int> pieceMoves;
-
-// Colors
-inline kl::color squareL = kl::color(240, 215, 180);
-inline kl::color squareD = kl::color(180, 135, 100);
-inline kl::color selectL = kl::color(190, 190, 190);
-inline kl::color selectD = kl::color(165, 165, 165);
-inline kl::color moveL = kl::color(205, 210, 105);
-inline kl::color moveD = kl::color(170, 160,  60);
-inline kl::color wonL = kl::color(170,  20,  20);
-inline kl::color wonD = kl::color(160,  10,  10);
-
-// Render target
-inline kl::image frame(kl::int2(800));
-
-// Selected piece
-inline int selected = -1;
-inline int wonSquare = -1;
-
-// Board states
-inline bool whiteToPlay = true;
-
-// Castling rules
-inline bool wCanCastleK = true;
-inline bool wCanCastleQ = true;
-inline bool bCanCastleK = true;
-inline bool bCanCastleQ = true;
-
-// Loads fen data
-inline const std::string defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-void LoadFen(const std::string& fen);
-
-// Draws the board
-void DrawBoard();

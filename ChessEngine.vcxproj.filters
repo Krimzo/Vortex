@@ -186,18 +186,21 @@
     <ClInclude Include="incl\Chess\Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="incl\Chess\Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="incl\Chess\Move.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="incl\Chess\BestInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Chess\Board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Chess\Chess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Chess\Logic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Chess\Update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\imgui.cpp">
@@ -357,6 +360,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Chess\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Chess\Moves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
