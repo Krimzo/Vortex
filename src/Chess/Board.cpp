@@ -138,15 +138,18 @@ void Board::playMove(const Move& move) {
 void Board::update(kl::window& win, kl::image& target) {
     // Engine plays
     if (!whiteToPlay) {
+        // Updating title
+        win.setTitle("Calculating..");
+
         // Getting the engine info
         const BestInfo engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
 
-        // Updating title eval
-        win.setTitle(std::to_string(int(engineInfo.eval)));
+        // Eval info
+        std::cout << "Eval: " << engineInfo.eval << std::endl;
 
         // Checkmate test
         if (pieces[engineInfo.move.to.index].type == Piece::Type::WKing) {
-            win.setTitle("Black wins!");
+            win.setTitle("Engine wins!");
             win.update = []() {};
             wonSqr = engineInfo.move.to.index;
         }
@@ -155,6 +158,10 @@ void Board::update(kl::window& win, kl::image& target) {
         playMove(engineInfo.move);
         lastMove = engineInfo.move;
         whiteToPlay = true;
+    }
+    else {
+        // Updating title
+        win.setTitle("Player's move");
     }
 
     // Getting the mouse click coords
@@ -170,7 +177,7 @@ void Board::update(kl::window& win, kl::image& target) {
                     if (clickedInd == m.to.index) {
                         // Checkmate test
                         if (pieces[clickedInd].type == Piece::Type::BKing) {
-                            win.setTitle("White wins!");
+                            win.setTitle("Player wins!");
                             win.update = []() {};
                             wonSqr = clickedInd;
                         }

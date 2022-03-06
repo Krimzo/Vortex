@@ -47,7 +47,7 @@ float Engine::Evaluate(const Board& board) {
 		}
 	}
 
-	// King check
+	// King mated
 	if (!whiteKingExists) {
 		return -INFINITY;
 	}
@@ -68,12 +68,19 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 
 	// Turn select
 	if (!whitesTurn) {
+		// Min Buffer
 		BestInfo minInfo(INFINITY);
+
+		// Piece loop
 		for (int p = 0; p < 64; p++) {
+			// Color check
 			if (board.pieces[p].color() < 0) {
+				// Moves buffer
 				const std::vector<Move> possibleMoves = board.getMoves(p);
+
+				// Move loop
 				for (const Move& m : possibleMoves) {
-					// First setup
+					// First move setup
 					if (minInfo.move.from.index == -1) {
 						minInfo.move = m;
 					}
@@ -92,7 +99,7 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 					// Alpha beat pruning
 					beta = min(beta, futureEval);
 					if (beta <= alpha) {
-						break;
+						return minInfo;
 					}
 				}
 			}
@@ -100,12 +107,19 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 		return minInfo;
 	}
 	else {
+		// Max buffer
 		BestInfo maxInfo(-INFINITY);
+
+		// Piece loop
 		for (int p = 0; p < 64; p++) {
+			// Color check
 			if (board.pieces[p].color() > 0) {
+				// Move buffer
 				const std::vector<Move> possibleMoves = board.getMoves(p);
+
+				// Move loop
 				for (const Move& m : possibleMoves) {
-					// First setup
+					// First move setup
 					if (maxInfo.move.from.index == -1) {
 						maxInfo.move = m;
 					}
@@ -124,7 +138,7 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 					// Alpha beta pruning
 					alpha = max(alpha, futureEval);
 					if (beta <= alpha) {
-						break;
+						return maxInfo;
 					}
 				}
 			}

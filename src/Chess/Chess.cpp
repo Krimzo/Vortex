@@ -2,8 +2,11 @@
 
 
 int main() {
-	//kl::console::hide();
-	board.loadFen(Board::defaultFen);
+	win.start = [&]() {
+		kl::console::hide();
+		win.setIcon("res/skull.ico");
+		board.loadFen(Board::defaultFen);
+	};
 	win.update = [&]() {
 		// Logic
 		board.update(win, frame);
