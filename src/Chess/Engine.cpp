@@ -48,66 +48,18 @@ float Engine::Evaluate(const Board& board) {
 	}
 
 	// King check
-	if (!blackKingExists) {
-		return INFINITY;
-	}
 	if (!whiteKingExists) {
 		return -INFINITY;
+	}
+	if (!blackKingExists) {
+		return INFINITY;
 	}
 
 	// Eval return
 	return eval;
 }
 
-BestInfo Engine::BestMove(const Board& board) {
-	// Game finished check
-	const float currEval = Engine::Evaluate(board);
-	if (currEval == -INFINITY || currEval == INFINITY) {
-		return BestInfo(currEval);
-	}
-
-	// Min data buffer
-	BestInfo minInfos[64];
-	for (BestInfo& ref : minInfos) {
-		ref = BestInfo(INFINITY);
-	}
-
-	// Threads
-	std::thread threads[64];
-	for (int i = 0; i < 64; i++) {
-		threads[i] = std::thread([&](int t) {
-			if (board.pieces[t].color() < 0) {
-				const std::vector<Move> possibleMoves = board.getMoves(t);
-				for (const Move& m : possibleMoves) {
-					// Copy board and play the move
-					Board futureBoard = board;
-					futureBoard.playMove(m);
-
-					// Find best move for future board
-					const float futureEval = Engine::BestMoveRec(futureBoard, true, 1, -INFINITY, INFINITY).eval;
-					if (futureEval < minInfos[t].eval) {
-						minInfos[t].eval = futureEval;
-						minInfos[t].move = m;
-					}
-				}
-			}
-		}, i);
-	}
-	for (std::thread& t : threads) {
-		t.join();
-	}
-
-	// Finding the minimum eval
-	BestInfo minInfo = minInfos[0];
-	for (const BestInfo& ref : minInfos) {
-		if (ref.eval < minInfo.eval) {
-			minInfo = ref;
-		}
-	}
-	return minInfo;
-}
-
-BestInfo Engine::BestMoveRec(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
+BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
 	// Game finished check
 	const float currEval = Engine::Evaluate(board);
 	if (currEval == -INFINITY || currEval == INFINITY || depth >= Engine::MaxDepth) {
@@ -131,7 +83,7 @@ BestInfo Engine::BestMoveRec(const Board& board, bool whitesTurn, int depth, flo
 					futureBoard.playMove(m);
 
 					// Find best move for future board
-					const float futureEval = BestMoveRec(futureBoard, true, depth + 1, alpha, beta).eval;
+					const float futureEval = BestMove(futureBoard, true, depth + 1, alpha, beta).eval;
 					if (futureEval < minInfo.eval) {
 						minInfo.eval = futureEval;
 						minInfo.move = m;
@@ -163,7 +115,7 @@ BestInfo Engine::BestMoveRec(const Board& board, bool whitesTurn, int depth, flo
 					futureBoard.playMove(m);
 
 					// Find best move for future board
-					const float futureEval = BestMoveRec(futureBoard, false, depth + 1, alpha, beta).eval;
+					const float futureEval = BestMove(futureBoard, false, depth + 1, alpha, beta).eval;
 					if (futureEval > maxInfo.eval) {
 						maxInfo.eval = futureEval;
 						maxInfo.move = m;

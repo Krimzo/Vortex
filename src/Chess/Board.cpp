@@ -139,7 +139,7 @@ void Board::update(kl::window& win, kl::image& target) {
     // Engine plays
     if (!whiteToPlay) {
         // Getting the engine info
-        const BestInfo engineInfo = Engine::BestMove(*this);
+        const BestInfo engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
 
         // Updating title eval
         win.setTitle(std::to_string(int(engineInfo.eval)));

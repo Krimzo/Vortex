@@ -13,6 +13,5 @@ public:
 	static float Evaluate(const Board& board);
 
 	// Returns the best move
-	static BestInfo BestMove(const Board& board);
-	static BestInfo BestMoveRec(const Board& board, bool whitesTurn, int depth, float alpha, float beta);
+	static BestInfo BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta);
 };
