@@ -130,8 +130,12 @@ void Board::loadFen(const std::string& fen) {
 
 // Plays the move
 void Board::playMove(const Move& move) {
+    // Setting piece types
     pieces[move.from.index].type = move.from.piece;
     pieces[move.to.index].type = move.to.piece;
+
+    // Saving last move
+    lastMove = move;
 }
 
 // Logic and input
@@ -156,7 +160,6 @@ void Board::update(kl::window& win, kl::image& target) {
 
         // Moving engine piece
         playMove(engineInfo.move);
-        lastMove = engineInfo.move;
         whiteToPlay = true;
     }
     else {
@@ -184,7 +187,6 @@ void Board::update(kl::window& win, kl::image& target) {
 
                         // Moving player piece
                         playMove(m);
-                        lastMove = m;
                         return true;
                     }
                 }

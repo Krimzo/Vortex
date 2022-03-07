@@ -2,8 +2,8 @@
 
 
 // XY to I
-size_t ToI(int x, int y) {
-	return size_t(y * 8 + x);
+int ToI(int x, int y) {
+	return y * 8 + x;
 }
 
 // Coords in board check
@@ -100,7 +100,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 	std::vector<Move> moves;
 	if (pieces[pos].color() > 0) {
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y + i);
+			const int ind = ToI(x + i, y + i);
 			if (InBoard(x + i, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WBishop)));
@@ -115,7 +115,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y + i);
+			const int ind = ToI(x - i, y + i);
 			if (InBoard(x - i, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WBishop)));
@@ -130,7 +130,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y - i);
+			const int ind = ToI(x + i, y - i);
 			if (InBoard(x + i, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WBishop)));
@@ -145,7 +145,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y - i);
+			const int ind = ToI(x - i, y - i);
 			if (InBoard(x - i, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WBishop)));
@@ -162,7 +162,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 	}
 	else {
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y + i);
+			const int ind = ToI(x + i, y + i);
 			if (InBoard(x + i, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BBishop)));
@@ -177,7 +177,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y + i);
+			const int ind = ToI(x - i, y + i);
 			if (InBoard(x - i, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BBishop)));
@@ -192,7 +192,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y - i);
+			const int ind = ToI(x + i, y - i);
 			if (InBoard(x + i, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BBishop)));
@@ -207,7 +207,7 @@ std::vector<Move> BishopMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y - i);
+			const int ind = ToI(x - i, y - i);
 			if (InBoard(x - i, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BBishop)));
@@ -231,7 +231,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 	std::vector<Move> moves;
 	if (pieces[pos].color() > 0) {
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y);
+			const int ind = ToI(x + i, y);
 			if (InBoard(x + i, y)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WRook)));
@@ -246,7 +246,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y);
+			const int ind = ToI(x - i, y);
 			if (InBoard(x - i, y)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WRook)));
@@ -261,7 +261,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x, y + i);
+			const int ind = ToI(x, y + i);
 			if (InBoard(x, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WRook)));
@@ -276,7 +276,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x, y - i);
+			const int ind = ToI(x, y - i);
 			if (InBoard(x, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::WRook)));
@@ -293,7 +293,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 	}
 	else {
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x + i, y);
+			const int ind = ToI(x + i, y);
 			if (InBoard(x + i, y)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BRook)));
@@ -308,7 +308,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x - i, y);
+			const int ind = ToI(x - i, y);
 			if (InBoard(x - i, y)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BRook)));
@@ -323,7 +323,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x, y + i);
+			const int ind = ToI(x, y + i);
 			if (InBoard(x, y + i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BRook)));
@@ -338,7 +338,7 @@ std::vector<Move> RookMoves(const std::vector<Piece>& pieces, int pos) {
 			}
 		}
 		for (int i = 1; i < 8; i++) {
-			const size_t ind = ToI(x, y - i);
+			const int ind = ToI(x, y - i);
 			if (InBoard(x, y - i)) {
 				if (pieces[ind].color() == 0) {
 					moves.push_back(Move(Square(pos, Piece::Type::None), Square(ind, Piece::Type::BRook)));

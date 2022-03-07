@@ -63,16 +63,11 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 		for (int p = 0; p < 64; p++) {
 			// Color check
 			if (board.pieces[p].color() < 0) {
-				// Moves buffer
+				// Move buffer
 				const std::vector<Move> possibleMoves = board.getMoves(p);
 
 				// Move loop
 				for (const Move& m : possibleMoves) {
-					// First move setup
-					if (minInfo.move.from.index == -1) {
-						minInfo.move = m;
-					}
-
 					// Copy board and play the move
 					Board futureBoard = board;
 					futureBoard.playMove(m);
@@ -107,11 +102,6 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 
 				// Move loop
 				for (const Move& m : possibleMoves) {
-					// First move setup
-					if (maxInfo.move.from.index == -1) {
-						maxInfo.move = m;
-					}
-
 					// Copy board and play the move
 					Board futureBoard = board;
 					futureBoard.playMove(m);
