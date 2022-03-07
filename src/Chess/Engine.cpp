@@ -3,8 +3,6 @@
 
 float Engine::Evaluate(const Board& board) {
 	float eval = 0.0f;
-	bool whiteKingExists = false;
-	bool blackKingExists = false;
 	for (Piece p : board.pieces) {
 		switch (p.type) {
 		case Piece::Type::WPawn:
@@ -23,7 +21,7 @@ float Engine::Evaluate(const Board& board) {
 			eval += 9.0f;
 			break;
 		case Piece::Type::WKing:
-			whiteKingExists = true;
+			eval += 1000.0f;
 			break;
 
 		case Piece::Type::BPawn:
@@ -42,27 +40,17 @@ float Engine::Evaluate(const Board& board) {
 			eval -= 9.0f;
 			break;
 		case Piece::Type::BKing:
-			blackKingExists = true;
+			eval -= 1000.0f;
 			break;
 		}
 	}
-
-	// King mated
-	if (!whiteKingExists) {
-		return -INFINITY;
-	}
-	if (!blackKingExists) {
-		return INFINITY;
-	}
-
-	// Eval return
 	return eval;
 }
 
 BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
 	// Game finished check
 	const float currEval = Engine::Evaluate(board);
-	if (currEval == -INFINITY || currEval == INFINITY || depth >= Engine::MaxDepth) {
+	if (currEval < -500.0f || currEval > 500.0f || depth >= Engine::MaxDepth) {
 		return BestInfo(currEval);
 	}
 
