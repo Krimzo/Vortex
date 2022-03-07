@@ -1,6 +1,13 @@
 #include "Chess/Engine.h"
 
 
+// Search limits
+const int Engine::MaxDepth = 6;
+
+// Info
+int Engine::calls = 0;
+kl::timer Engine::timer = kl::timer();
+
 float Engine::Evaluate(const Board& board) {
 	float eval = 0.0f;
 	for (Piece p : board.pieces) {
@@ -48,6 +55,9 @@ float Engine::Evaluate(const Board& board) {
 }
 
 BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
+	// Info
+	Engine::calls++;
+
 	// Game finished check
 	const float currEval = Engine::Evaluate(board);
 	if (currEval < -500.0f || currEval > 500.0f || depth >= Engine::MaxDepth) {

@@ -5,8 +5,12 @@
 
 class Engine {
 public:
-	// Max search depth
-	static const int MaxDepth = 6;
+	// Search limits
+	static const int MaxDepth;
+
+	// Info
+	static int calls;
+	static kl::timer timer;
 
 public:
 	// Evaluates the position

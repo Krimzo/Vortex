@@ -3,7 +3,7 @@
 
 int main() {
 	win.start = [&]() {
-		kl::console::hide();
+		//kl::console::hide();
 		win.setIcon("res/skull.ico");
 		board.loadFen(Board::defaultFen);
 	};
