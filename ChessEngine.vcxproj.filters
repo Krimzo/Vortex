@@ -192,7 +192,7 @@
     <ClInclude Include="incl\Chess\Move.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\Chess\BestInfo.h">
+    <ClInclude Include="incl\Chess\BoardState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

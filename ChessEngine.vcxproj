@@ -153,7 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="incl\Chess\BestInfo.h" />
+    <ClInclude Include="incl\Chess\BoardState.h" />
     <ClInclude Include="incl\Chess\Board.h" />
     <ClInclude Include="incl\Chess\Chess.h" />
     <ClInclude Include="incl\Chess\Engine.h" />

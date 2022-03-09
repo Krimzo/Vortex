@@ -3,7 +3,7 @@
 #include "KrimzLib/KrimzLib.hpp"
 
 #include "Chess/Piece.h"
-#include "Chess/BestInfo.h"
+#include "Chess/BoardState.h"
 
 
 class Board {
@@ -38,6 +38,9 @@ public:
 	std::vector<Move> moves;
 
 	Board();
+
+	// Clears the board
+	void clear();
 
 	// Loads fen data
 	static const std::string defaultFen;

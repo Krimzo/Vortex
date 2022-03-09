@@ -34,9 +34,19 @@ Board::Board() {
     this->pieces.resize(64);
 }
 
+// Clears the board
+void Board::clear() {
+    for (int i = 0; i < 64; i++) {
+        pieces[i].type = Piece::Type::None;
+    }
+}
+
 // Loads fen data
 const std::string Board::defaultFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 void Board::loadFen(const std::string& fen) {
+    // Board clearing
+    this->clear();
+
     // Splitting the fen by space
     std::vector<std::string> fenParts;
     std::stringstream fenStream(fen);
@@ -150,7 +160,7 @@ void Board::update(kl::window& win, kl::image& target) {
         Engine::timer.reset();
 
         // Getting the engine info
-        const BestInfo engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
+        const BoardState engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
 
         // Info
         std::cout << std::fixed << std::setprecision(2) <<

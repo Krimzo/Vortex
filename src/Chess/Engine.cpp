@@ -54,20 +54,20 @@ float Engine::Evaluate(const Board& board) {
 	return eval;
 }
 
-BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
+BoardState Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
 	// Info
 	Engine::calls++;
 
 	// Game finished check
 	const float currEval = Engine::Evaluate(board);
 	if (currEval < -500.0f || currEval > 500.0f || depth >= Engine::MaxDepth) {
-		return BestInfo(currEval);
+		return BoardState(currEval);
 	}
 
 	// Turn select
 	if (!whitesTurn) {
 		// Min Buffer
-		BestInfo minInfo(INFINITY);
+		BoardState minState(INFINITY);
 
 		// Piece loop
 		for (int p = 0; p < 64; p++) {
@@ -76,32 +76,41 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 				// Move buffer
 				const std::vector<Move> possibleMoves = board.getMoves(p);
 
+				// Mate check
+				for (const Move& m : possibleMoves) {
+					if (board.pieces[m.to.index].type == Piece::Type::WKing) {
+						return BoardState(-INFINITY, m);
+					}
+				}
+
 				// Move loop
 				for (const Move& m : possibleMoves) {
 					// Copy board and play the move
 					Board futureBoard = board;
 					futureBoard.playMove(m);
 
-					// Find best move for future board
+					// Eval of the future board
 					const float futureEval = BestMove(futureBoard, true, depth + 1, alpha, beta).eval;
-					if (futureEval < minInfo.eval) {
-						minInfo.eval = futureEval;
-						minInfo.move = m;
+
+					// Min eval move save
+					if (futureEval < minState.eval) {
+						minState.eval = futureEval;
+						minState.move = m;
 					}
 
 					// Alpha beat pruning
 					beta = min(beta, futureEval);
 					if (beta <= alpha) {
-						return minInfo;
+						return minState;
 					}
 				}
 			}
 		}
-		return minInfo;
+		return minState;
 	}
 	else {
 		// Max buffer
-		BestInfo maxInfo(-INFINITY);
+		BoardState maxState(-INFINITY);
 
 		// Piece loop
 		for (int p = 0; p < 64; p++) {
@@ -110,27 +119,36 @@ BestInfo Engine::BestMove(const Board& board, bool whitesTurn, int depth, float 
 				// Move buffer
 				const std::vector<Move> possibleMoves = board.getMoves(p);
 
+				// Mate check
+				for (const Move& m : possibleMoves) {
+					if (board.pieces[m.to.index].type == Piece::Type::BKing) {
+						return BoardState(INFINITY, m);
+					}
+				}
+
 				// Move loop
 				for (const Move& m : possibleMoves) {
 					// Copy board and play the move
 					Board futureBoard = board;
 					futureBoard.playMove(m);
 
-					// Find best move for future board
+					// Eval of the future board
 					const float futureEval = BestMove(futureBoard, false, depth + 1, alpha, beta).eval;
-					if (futureEval > maxInfo.eval) {
-						maxInfo.eval = futureEval;
-						maxInfo.move = m;
+
+					// Max eval move save
+					if (futureEval > maxState.eval) {
+						maxState.eval = futureEval;
+						maxState.move = m;
 					}
 
 					// Alpha beta pruning
 					alpha = max(alpha, futureEval);
 					if (beta <= alpha) {
-						return maxInfo;
+						return maxState;
 					}
 				}
 			}
 		}
-		return maxInfo;
+		return maxState;
 	}
 }

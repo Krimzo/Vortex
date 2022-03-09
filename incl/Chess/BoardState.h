@@ -3,18 +3,18 @@
 #include "Chess/Move.h"
 
 
-class BestInfo {
+class BoardState {
 public:
 	float eval;
 	Move move;
 
-	BestInfo() {
+	BoardState() {
 		eval = 0.0f;
 	}
-	BestInfo(float eval) {
+	BoardState(float eval) {
 		this->eval = eval;
 	}
-	BestInfo(float eval, const Move& move) {
+	BoardState(float eval, const Move& move) {
 		this->eval = eval;
 		this->move = move;
 	}
