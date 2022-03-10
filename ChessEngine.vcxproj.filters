@@ -15,28 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="incl\ImGui\imconfig.h">
+    <ClInclude Include="incl\Chess\Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\ImGui\imgui.h">
+    <ClInclude Include="incl\Chess\BoardState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\ImGui\imgui_impl_dx11.h">
+    <ClInclude Include="incl\Chess\Chess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\ImGui\imgui_impl_win32.h">
+    <ClInclude Include="incl\Chess\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\ImGui\imgui_internal.h">
+    <ClInclude Include="incl\Chess\Move.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\ImGui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\ImGui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\ImGui\imstb_truetype.h">
+    <ClInclude Include="incl\Chess\Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="incl\KrimzLib\color\color.h">
@@ -177,24 +171,6 @@
     <ClInclude Include="incl\KrimzLib\KrimzLib.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="incl\Chess\Board.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\Chess\Chess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\Chess\Piece.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\Chess\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\Chess\Move.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="incl\Chess\BoardState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Chess\Board.cpp">
@@ -203,25 +179,13 @@
     <ClCompile Include="src\Chess\Chess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui.cpp">
+    <ClCompile Include="src\Chess\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_demo.cpp">
+    <ClCompile Include="src\Chess\Moves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_dx11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_win32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="src\Chess\Piece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\KrimzLib\color\color.cpp">
@@ -354,15 +318,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\KrimzLib\window\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Chess\Piece.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Chess\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Chess\Moves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
