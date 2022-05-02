@@ -162,10 +162,7 @@ void Board::update(kl::window& win, kl::image& target) {
 		const BoardState engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
 
 		// Info
-		std::cout << std::fixed << std::setprecision(2) <<
-			"Time: " << std::setw(6) << Engine::timer.elapsed() <<
-			" | Calls: " << std::setw(9) << Engine::calls <<
-			" | Eval: " << std::setw(8) << engineInfo.eval << std::endl;
+		std::cout << std::fixed << "Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
 
 		// Checkmate test
 		if (pieces[engineInfo.move.to.index].type == Piece::Type::WKing) {
