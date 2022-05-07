@@ -15,6 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Board\Board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Engine\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Moves\Moves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Chess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="KLibrary\geometry\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,12 +85,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KLibrary\graphics\video.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="KLibrary\light\ambient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="KLibrary\light\direct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KLibrary\math\float2.cpp">
@@ -150,32 +156,44 @@
     <ClCompile Include="KLibrary\window\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Board.cpp">
+    <ClCompile Include="source\Moves\Pawn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\BoardState.cpp">
+    <ClCompile Include="source\Moves\Knight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Chess.cpp">
+    <ClCompile Include="source\Moves\Bishop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Engine.cpp">
+    <ClCompile Include="source\Moves\Rook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Move.cpp">
+    <ClCompile Include="source\Moves\Queen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\MoveLegal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Piece.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Square.cpp">
+    <ClCompile Include="source\Moves\King.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\Board\Board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Types\Info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Engine\Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Types\Move.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Types\Square.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Types\Piece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="KLibrary\geometry\plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -204,12 +222,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\libspec\using.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="KLibrary\light\ambient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="KLibrary\light\direct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\math\float2.h">
@@ -282,24 +294,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\KrimzLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Board.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BoardState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Move.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Piece.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Square.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

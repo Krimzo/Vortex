@@ -39,8 +39,6 @@
     <ClCompile Include="KLibrary\graphics\color.cpp" />
     <ClCompile Include="KLibrary\graphics\image.cpp" />
     <ClCompile Include="KLibrary\graphics\video.cpp" />
-    <ClCompile Include="KLibrary\light\ambient.cpp" />
-    <ClCompile Include="KLibrary\light\direct.cpp" />
     <ClCompile Include="KLibrary\math\float2.cpp" />
     <ClCompile Include="KLibrary\math\float3.cpp" />
     <ClCompile Include="KLibrary\math\float4.cpp" />
@@ -64,14 +62,16 @@
     <ClCompile Include="KLibrary\window\keys.cpp" />
     <ClCompile Include="KLibrary\window\mouse.cpp" />
     <ClCompile Include="KLibrary\window\window.cpp" />
-    <ClCompile Include="source\Board.cpp" />
-    <ClCompile Include="source\BoardState.cpp" />
+    <ClCompile Include="source\Board\Board.cpp" />
     <ClCompile Include="source\Chess.cpp" />
-    <ClCompile Include="source\Engine.cpp" />
-    <ClCompile Include="source\Move.cpp" />
-    <ClCompile Include="source\MoveLegal.cpp" />
-    <ClCompile Include="source\Piece.cpp" />
-    <ClCompile Include="source\Square.cpp" />
+    <ClCompile Include="source\Engine\Engine.cpp" />
+    <ClCompile Include="source\Moves\Moves.cpp" />
+    <ClCompile Include="source\Moves\Bishop.cpp" />
+    <ClCompile Include="source\Moves\King.cpp" />
+    <ClCompile Include="source\Moves\Knight.cpp" />
+    <ClCompile Include="source\Moves\Pawn.cpp" />
+    <ClCompile Include="source\Moves\Queen.cpp" />
+    <ClCompile Include="source\Moves\Rook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KLibrary\geometry\plane.h" />
@@ -85,8 +85,6 @@
     <ClInclude Include="KLibrary\graphics\video.h" />
     <ClInclude Include="KLibrary\KrimzLib.h" />
     <ClInclude Include="KLibrary\libspec\using.h" />
-    <ClInclude Include="KLibrary\light\ambient.h" />
-    <ClInclude Include="KLibrary\light\direct.h" />
     <ClInclude Include="KLibrary\math\float2.h" />
     <ClInclude Include="KLibrary\math\float3.h" />
     <ClInclude Include="KLibrary\math\float4.h" />
@@ -110,12 +108,12 @@
     <ClInclude Include="KLibrary\window\keys.h" />
     <ClInclude Include="KLibrary\window\mouse.h" />
     <ClInclude Include="KLibrary\window\window.h" />
-    <ClInclude Include="source\Board.h" />
-    <ClInclude Include="source\BoardState.h" />
-    <ClInclude Include="source\Engine.h" />
-    <ClInclude Include="source\Move.h" />
-    <ClInclude Include="source\Piece.h" />
-    <ClInclude Include="source\Square.h" />
+    <ClInclude Include="source\Board\Board.h" />
+    <ClInclude Include="source\Types\Info.h" />
+    <ClInclude Include="source\Engine\Engine.h" />
+    <ClInclude Include="source\Types\Move.h" />
+    <ClInclude Include="source\Types\Square.h" />
+    <ClInclude Include="source\Types\Piece.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
