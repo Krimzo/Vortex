@@ -189,7 +189,7 @@ void Board::update(kl::window& win) {
 		const Info engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
 
 		// Info
-		std::cout << std::fixed << "Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
+		std::cout << std::fixed << "Search Depth: " << Engine::SearchDepth << " | Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
 
 		// Title
 		win.setTitle("Player's move");
@@ -203,7 +203,9 @@ void Board::update(kl::window& win) {
 		// Moving engine piece
 		playMove(engineInfo.bestMove);
 		whiteToPlay = true;
+		win.notify();
 	}
+	Sleep(1);
 }
 
 // Draws a square

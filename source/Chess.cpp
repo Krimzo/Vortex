@@ -51,5 +51,5 @@ int main() {
 		fbuffer >> win;
 		fbuffer.swap();
 	};
-	win.startNew(fbuffer.size(), "Chess Engine", false, true);
+	win.startNew(fbuffer.size(), "Chess Engine", false, false);
 }

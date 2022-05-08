@@ -4,9 +4,9 @@
 
 
 namespace Engine {
-	inline int calls = 0;
+	inline size_t calls = 0;
 	inline kl::timer timer = {};
-	inline const int MaxDepth = 6;
+	inline int SearchDepth = 5;
 
 	float Evaluate(const Board& board);
 

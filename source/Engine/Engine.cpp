@@ -14,7 +14,7 @@ Info Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alph
 	Engine::calls++;
 
 	// Depth and time check
-	if (depth > MaxDepth) {
+	if (depth > Engine::SearchDepth) {
 		return Info(Engine::Evaluate(board));
 	}
 
