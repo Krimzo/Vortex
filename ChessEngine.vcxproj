@@ -64,7 +64,8 @@
     <ClCompile Include="KLibrary\window\window.cpp" />
     <ClCompile Include="source\Board\Board.cpp" />
     <ClCompile Include="source\Chess.cpp" />
-    <ClCompile Include="source\Engine\Engine.cpp" />
+    <ClCompile Include="source\Engine\Evaluate.cpp" />
+    <ClCompile Include="source\Engine\Search.cpp" />
     <ClCompile Include="source\Moves\Moves.cpp" />
     <ClCompile Include="source\Moves\Bishop.cpp" />
     <ClCompile Include="source\Moves\King.cpp" />

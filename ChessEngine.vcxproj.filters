@@ -18,7 +18,7 @@
     <ClCompile Include="source\Board\Board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Engine\Engine.cpp">
+    <ClCompile Include="source\Engine\Search.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Moves\Moves.cpp">
@@ -172,6 +172,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Moves\King.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Engine\Evaluate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,15 +1,7 @@
 #include "Engine/Engine.h"
 
 
-float Engine::Evaluate(const Board& board) {
-	float eval = 0.0f;
-	for (auto& p : board.pieces) {
-		eval += float(p);
-	}
-	return eval;
-}
-
-Info Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alpha, float beta) {
+Info Engine::Search(const Board& board, bool whitesTurn, uint32_t depth, float alpha, float beta) {
 	// Info
 	Engine::calls++;
 
@@ -38,7 +30,7 @@ Info Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alph
 					futureBoard.playMove(move);
 
 					// Future board eval
-					const float futureEval = BestMove(futureBoard, !whitesTurn, depth + 1, alpha, beta).eval;
+					const float futureEval = Search(futureBoard, !whitesTurn, depth + 1, alpha, beta).eval;
 
 					// Max eval save
 					if (futureEval > maxState.eval) {
@@ -75,7 +67,7 @@ Info Engine::BestMove(const Board& board, bool whitesTurn, int depth, float alph
 					futureBoard.playMove(move);
 
 					// Future board eval
-					const float futureEval = BestMove(futureBoard, !whitesTurn, depth + 1, alpha, beta).eval;
+					const float futureEval = Search(futureBoard, !whitesTurn, depth + 1, alpha, beta).eval;
 
 					// Min eval save
 					if (futureEval < minState.eval) {

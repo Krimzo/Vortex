@@ -186,7 +186,7 @@ void Board::update(kl::window& win) {
 		Engine::timer.reset();
 
 		// Getting the engine info
-		const Info engineInfo = Engine::BestMove(*this, false, 0, -INFINITY, INFINITY);
+		const Info engineInfo = Engine::Search(*this, false, 0, -INFINITY, INFINITY);
 
 		// Info
 		std::cout << std::fixed << "Search Depth: " << Engine::SearchDepth << " | Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
