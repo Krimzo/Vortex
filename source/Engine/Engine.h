@@ -6,7 +6,7 @@
 namespace Engine {
 	inline size_t calls = 0;
 	inline kl::timer timer = {};
-	inline uint32_t SearchDepth = 5;
+	inline uint32_t searchDepth = 5;
 
 	float Evaluate(const Board& board);
 

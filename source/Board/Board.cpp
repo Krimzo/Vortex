@@ -181,15 +181,23 @@ void Board::update(kl::window& win) {
 		// Updating title
 		win.setTitle("Calculating..");
 
-		// Resetting info
-		Engine::calls = 0;
-		Engine::timer.reset();
+		Info engineInfo = {};
+		Engine::searchDepth = 4;
+		do {
+			// Depth update
+			Engine::searchDepth++;
 
-		// Getting the engine info
-		const Info engineInfo = Engine::Search(*this, false, 0, -INFINITY, INFINITY);
+			// Resetting info
+			Engine::calls = 0;
+			Engine::timer.reset();
+
+			// Getting the engine info
+			engineInfo = Engine::Search(*this, false, 0, -INFINITY, INFINITY);
+		}
+		while (Engine::timer.elapsed() < 1.0f);
 
 		// Info
-		std::cout << std::fixed << "Search Depth: " << Engine::SearchDepth << " | Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
+		std::cout << std::fixed << "Search Depth: " << Engine::searchDepth << " | Time: " << Engine::timer.elapsed() << " | Calls: " << Engine::calls << " | Eval: " << engineInfo.eval << std::endl;
 
 		// Title
 		win.setTitle("Player's move");

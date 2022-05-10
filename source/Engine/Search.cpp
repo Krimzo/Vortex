@@ -6,7 +6,7 @@ Info Engine::Search(const Board& board, bool whitesTurn, uint32_t depth, float a
 	Engine::calls++;
 
 	// Depth and time check
-	if (depth > Engine::SearchDepth) {
+	if (depth > Engine::searchDepth) {
 		return Info(Engine::Evaluate(board));
 	}
 
