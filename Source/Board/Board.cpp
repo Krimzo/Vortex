@@ -6,12 +6,12 @@ const kl::String Board::DefaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN
 
 const kl::Color Board::defaultLight = { 240, 215, 180 };
 const kl::Color Board::defaultDark = { 180, 135, 100 };
-const kl::Color Board::selectedLigt = { 135, 225, 205 };
-const kl::Color Board::selectedDark = { 75, 170, 150 };
-const kl::Color Board::lastMoveLight = { 205, 210, 105 };
-const kl::Color Board::lastMoveDark = { 170, 160, 60 };
-const kl::Color Board::wonSquareLigt = { 170, 20, 20 };
-const kl::Color Board::wonSquareDark = { 160, 10, 10 };
+const kl::Color Board::selectedLigt = { 180, 235, 240 };
+const kl::Color Board::selectedDark = { 100, 180, 175 };
+const kl::Color Board::lastMoveLight = { 205, 240, 175 };
+const kl::Color Board::lastMoveDark = { 145, 180, 95 };
+const kl::Color Board::wonSquareLigt = { 240, 180, 175 };
+const kl::Color Board::wonSquareDark = { 170, 100, 90 };
 
 const kl::Image Board::icons[] = {
 	{ "resource/w_pawn.png" },
