@@ -9,7 +9,7 @@ class Engine {
 	kl::uint64 m_CallCount = 0;
 	float m_SearchTime = 0.0f;
 
-	BoardInfo search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta);
+	BoardInfo search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta, kl::Function<void(const Board&)> futureBoardCallback);
 
 public:
 	Engine() {}
@@ -20,5 +20,5 @@ public:
 
 	float evaluate(const Board& board);
 
-	BoardInfo search(const Board& board, kl::uint searchDepth);
+	BoardInfo search(const Board& board, kl::uint searchDepth, bool searchDisplay = false);
 };

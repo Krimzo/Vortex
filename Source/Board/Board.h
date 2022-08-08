@@ -16,6 +16,8 @@ class Board {
 
 	Piece m_Pieces[64] = {};
 
+	bool m_SearchDiplay = false;
+
 	static const kl::Color defaultLight;
 	static const kl::Color defaultDark;
 	static const kl::Color selectedLigt;
@@ -46,6 +48,8 @@ public:
 	void loadFEN(const kl::String& fen);
 
 	void playMove(const Move& move);
+
+	void setSearchDisplay(bool state);
 
 	void playerPlay(kl::Window& window, int clickedIndex);
 	void enginePlay(kl::Window& window);

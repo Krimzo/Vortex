@@ -200,6 +200,10 @@ void Board::playMove(const Move& move) {
 	m_WhiteToPlay = !m_WhiteToPlay;
 }
 
+void Board::setSearchDisplay(bool state) {
+	m_SearchDiplay = state;
+}
+
 void Board::playerPlay(kl::Window& window, int clickedIndex) {
 	if (!m_MovePlaying) {
 		m_MovePlaying = true;
@@ -210,19 +214,18 @@ void Board::playerPlay(kl::Window& window, int clickedIndex) {
 
 			for (auto& move : moves) {
 				if (clickedIndex == move.to.index) {
+					playMove(move);
+
 					if (m_Pieces[clickedIndex] == Piece::BKing) {
 						window.setTitle("Player wins!");
 						m_WonSquare = clickedIndex;
 						return;
 					}
 
-					playMove(move);
-
 					m_MovePlaying = false;
 					kl::Thread([&]() {
 						enginePlay(window);
 					}).detach();
-
 					break;
 				}
 			}
@@ -244,7 +247,7 @@ void Board::enginePlay(kl::Window& window) {
 		window.setTitle("Calculating..");
 
 		Engine engine = {};
-		BoardInfo info = engine.search(*this, 5);
+		BoardInfo info = engine.search(*this, 5, m_SearchDiplay);
 
 		kl::Print(std::fixed,
 			"Search Depth: ", engine.getSearchDepth(),

@@ -13,20 +13,35 @@ float Engine::getSearchTime() const {
 	return m_SearchTime;
 }
 
-BoardInfo Engine::search(const Board& board, kl::uint searchDepth) {
+BoardInfo Engine::search(const Board& board, kl::uint searchDepth, bool searchDisplay) {
 	m_SearchDepth = searchDepth;
 
 	m_CallCount = 0;
 	kl::Timer timer = {};
 
-	BoardInfo info = search(board, false, 0, -INFINITY, INFINITY);
+	BoardInfo info;
+	if (searchDisplay) {
+		kl::Window window = { { 800, 800 }, "Search Display" };
+		kl::Image frameBuffer = { window.getSize() };
+
+		window.setResizeable(false);
+
+		info = search(board, false, 0, -INFINITY, INFINITY, [&](const Board& futureBoard) {
+			futureBoard.drawToImage(frameBuffer);
+			window.drawImage(frameBuffer);
+			window.process(false);
+		});
+	}
+	else {
+		info = search(board, false, 0, -INFINITY, INFINITY, [](const Board&) {});
+	}
 
 	m_SearchTime = timer.getElapsed();
 
 	return info;
 }
 
-BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta) {
+BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta, kl::Function<void(const Board&)> futureBoardCallback) {
 	m_CallCount += 1;
 
 	if (depth >= m_SearchDepth) {
@@ -42,29 +57,26 @@ BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, fl
 				board.getSquareMoves(i, allMoves);
 
 				for (auto& move : allMoves) {
-					if (board.getPiece(move.to.index) == Piece::BKing) {
-						maxState.evaluation = INFINITY;
-						maxState.bestMove = move;
-						return maxState;
-					}
-
 					Board futureBoard = board;
 					futureBoard.playMove(move);
 
-					const float futureEval = search(futureBoard, !whitesTurn, depth + 1, alpha, beta).evaluation;
+					futureBoardCallback(futureBoard);
 
-					if (futureEval > maxState.evaluation) {
-						maxState.evaluation = futureEval;
+					BoardInfo futureInfo = search(futureBoard, !whitesTurn, depth + 1, alpha, beta, futureBoardCallback);
+
+					if (futureInfo.evaluation > maxState.evaluation) {
+						maxState.evaluation = futureInfo.evaluation;
 						maxState.bestMove = move;
 					}
 
-					alpha = max(alpha, futureEval);
+					alpha = max(alpha, futureInfo.evaluation);
 					if (beta <= alpha) {
 						return maxState;
 					}
 				}
 			}
 		}
+
 		return maxState;
 	}
 	else {
@@ -76,29 +88,26 @@ BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, fl
 				board.getSquareMoves(i, allMoves);
 
 				for (auto& move : allMoves) {
-					if (board.getPiece(move.to.index) == Piece::WKing) {
-						minState.evaluation = -INFINITY;
-						minState.bestMove = move;
-						return minState;
-					}
-
 					Board futureBoard = board;
 					futureBoard.playMove(move);
 
-					const float futureEval = search(futureBoard, !whitesTurn, depth + 1, alpha, beta).evaluation;
+					futureBoardCallback(futureBoard);
 
-					if (futureEval < minState.evaluation) {
-						minState.evaluation = futureEval;
+					BoardInfo futureInfo = search(futureBoard, !whitesTurn, depth + 1, alpha, beta, futureBoardCallback);
+
+					if (futureInfo.evaluation < minState.evaluation) {
+						minState.evaluation = futureInfo.evaluation;
 						minState.bestMove = move;
 					}
 
-					beta = min(beta, futureEval);
+					beta = min(beta, futureInfo.evaluation);
 					if (beta <= alpha) {
 						return minState;
 					}
 				}
 			}
 		}
+
 		return minState;
 	}
 }

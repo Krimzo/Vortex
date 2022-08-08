@@ -9,6 +9,8 @@ int main() {
 
 	board.loadFEN(Board::DefaultFEN);
 
+	board.setSearchDisplay(false); // Set this to true for FUN :)
+
 	window.setResizeable(false);
 
 	window.mouse.left.onPress = [&]() {
