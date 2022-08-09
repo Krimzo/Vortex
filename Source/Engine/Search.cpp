@@ -44,8 +44,9 @@ BoardInfo Engine::search(const Board& board, kl::uint searchDepth, bool searchDi
 BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta, kl::Function<void(const Board&)> futureBoardCallback) {
 	m_CallCount += 1;
 
-	if (depth >= m_SearchDepth) {
-		return { evaluate(board) };
+	const float currentEvaluation = evaluate(board);
+	if (depth >= m_SearchDepth || currentEvaluation < -1e4f || currentEvaluation > 1e4f) {
+		return { currentEvaluation };
 	}
 
 	if (whitesTurn) {
@@ -69,10 +70,10 @@ BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, fl
 						maxState.bestMove = move;
 					}
 
-					alpha = max(alpha, futureInfo.evaluation);
-					if (beta <= alpha) {
+					if (maxState.evaluation >= beta) {
 						return maxState;
 					}
+					alpha = max(alpha, futureInfo.evaluation);
 				}
 			}
 		}
@@ -100,10 +101,10 @@ BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, fl
 						minState.bestMove = move;
 					}
 
-					beta = min(beta, futureInfo.evaluation);
-					if (beta <= alpha) {
+					if (futureInfo.evaluation <= alpha) {
 						return minState;
 					}
+					beta = min(beta, futureInfo.evaluation);
 				}
 			}
 		}
