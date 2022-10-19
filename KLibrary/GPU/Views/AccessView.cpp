@@ -1,13 +1,15 @@
-#include "gpu/gpu.h"
+#include "GPU/GPU.h"
 
-#include "utility/console.h"
+#include "Utility/Console.h"
 
 
-kl::dx::AccessView kl::GPU::newAccessView(dx::Texture texture, dx::AccessViewDesc* descriptor) {
-	kl::dx::AccessView view = nullptr;
+kl::dx::AccessView kl::GPU::newAccessView(dx::Resource resource, dx::AccessViewDesc* descriptor) {
+	dx::AccessView view = nullptr;
 
-	m_Device->CreateUnorderedAccessView(texture, descriptor, &view);
-	Assert(!view, "Failed to create unordered access view");
+	long result = m_Device->CreateUnorderedAccessView(resource, descriptor, &view);
+	if (Warning(!view, Format("Failed to create unordered access view. Result: 0x", std::hex, result))) {
+		return nullptr;
+	}
 
 	m_Children.insert(view);
 

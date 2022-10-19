@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -167,6 +167,7 @@
     <ClCompile Include="KLibrary\Graphics\Image.cpp" />
     <ClCompile Include="KLibrary\Graphics\Video.cpp" />
     <ClCompile Include="KLibrary\Render\Camera.cpp" />
+    <ClCompile Include="KLibrary\Render\Entity.cpp" />
     <ClCompile Include="KLibrary\Render\Plane.cpp" />
     <ClCompile Include="KLibrary\Render\Ray.cpp" />
     <ClCompile Include="KLibrary\Render\Sphere.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="KLibrary\Math\Vector3.h" />
     <ClInclude Include="KLibrary\Math\Vector4.h" />
     <ClInclude Include="KLibrary\Render\Camera.h" />
+    <ClInclude Include="KLibrary\Render\Entity.h" />
     <ClInclude Include="KLibrary\Render\Plane.h" />
     <ClInclude Include="KLibrary\Render\Ray.h" />
     <ClInclude Include="KLibrary\Render\Sphere.h" />

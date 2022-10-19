@@ -1,13 +1,12 @@
-#include "utility/random.h"
+#include "Utility/Random.h"
 
 
 namespace _ignore {
 	static const int _dontcare = [] {
-		srand(kl::uint(std::time(nullptr)));
+		srand(kl::uint(time(nullptr)));
 		return 0;
 	}();
 }
-
 
 bool kl::Random::BOOL() {
 	return rand() % 2;
@@ -20,9 +19,9 @@ byte kl::Random::BYTE() {
 kl::Color kl::Random::COLOR(bool gray) {
 	if (gray) {
 		const byte randGray = BYTE();
-		return kl::Color(randGray, randGray, randGray);
+		return { randGray, randGray, randGray };
 	}
-	return kl::Color(BYTE(), BYTE(), BYTE());
+	return { BYTE(), BYTE(), BYTE() };
 }
 
 int kl::Random::INT(int startInclusive, int endExclusive) {
@@ -34,15 +33,15 @@ int kl::Random::INT(int endExclusive) {
 }
 
 float kl::Random::FLOAT(float startInclusive, float endInclusive) {
-	return INT(int(startInclusive * 1000.0f), int(endInclusive * 1000.0f) + 1) * 0.001f;
+	return FLOAT(endInclusive - startInclusive) + startInclusive;
 }
 
 float kl::Random::FLOAT(float endInclusive) {
-	return FLOAT(0.0f, endInclusive);
+	return FLOAT() * endInclusive;
 }
 
 float kl::Random::FLOAT() {
-	return FLOAT(0.0f, 1.0f);
+	return rand() / float(RAND_MAX);
 }
 
 char kl::Random::CHAR(bool upperCase) {

@@ -19,6 +19,10 @@ namespace kl {
 		dx::VertexShader vertexShader = nullptr;
 		dx::PixelShader pixelShader = nullptr;
 		dx::Layout layout = nullptr;
+
+		operator bool() const {
+			return vertexShader && pixelShader && layout;
+		}
 	};
 }
 
@@ -26,6 +30,16 @@ namespace kl {
 	inline constexpr int CBUFFER_PREDEFINED_SIZE = 64;
 
 	class GPU {
+	public:
+		enum CreationType {
+			None = 0,
+			Render,
+			Compute
+		};
+
+	private:
+		CreationType m_CreationType = None;
+
 		dx::Device m_Device = nullptr;
 		dx::Context m_Context = nullptr;
 		dx::Chain m_Chain = nullptr;
@@ -33,23 +47,29 @@ namespace kl {
 		dx::TargetView m_FrameBuffer = nullptr;
 		dx::DepthView m_DepthBuffer = nullptr;
 
-		std::set<IUnknown*> m_Children;
+		std::set<IUnknown*> m_Children = {};
 
 		dx::Buffer m_VertexCBuffers[CBUFFER_PREDEFINED_SIZE] = {};
 		dx::Buffer m_PixelCBuffers[CBUFFER_PREDEFINED_SIZE] = {};
 		dx::Buffer m_ComputeCBuffers[CBUFFER_PREDEFINED_SIZE] = {};
 
 	public:
+		GPU();
 		GPU(HWND window);
 		GPU(const GPU&) = delete;
 		void operator=(const GPU&) = delete;
 		~GPU();
+
+		CreationType getCreationType() const;
 
 		dx::Device getDevice();
 		const dx::Device getDevice() const;
 
 		dx::Context getContext();
 		const dx::Context getContext() const;
+
+		dx::Chain getChain();
+		const dx::Chain getChain() const;
 
 		void setViewport(const UInt2& size);
 		void setViewport(const Int2& position, const UInt2& size);
@@ -66,6 +86,10 @@ namespace kl {
 		void clearInternal();
 
 		void swapBuffers(bool vSync);
+
+		void copyResource(dx::Resource destination, dx::Resource source);
+		void readFromResource(void* cpuBuffer, dx::Resource cpuReadResource, uint byteSize);
+		void writeToResource(dx::Resource cpuWriteResource, const void* data, uint byteSize, bool discard = true);
 
 		// Raster state
 		dx::RasterState newRasterState(dx::RasterStateDesc* descriptor);
@@ -98,8 +122,12 @@ namespace kl {
 		void dispatchComputeShader(const UInt3& size);
 		void executeComputeShader(dx::ComputeShader shader, const UInt3& size);
 
+		void destroy(const Shaders& shaders);
+
 		// Buffer
 		dx::Buffer newBuffer(dx::BufferDesc* descriptor, dx::SubresDesc* subresourceData = nullptr);
+		dx::Buffer newStructuredBuffer(const void* data, uint elementCount, uint elementSize, bool hasUnorderedAccess = false, bool cpuRead = false);
+		dx::Buffer newStagingBuffer(dx::Buffer buffer, uint byteSize = 0);
 
 		// Constant buffer
 		dx::Buffer newCBuffer(uint byteSize);
@@ -111,7 +139,7 @@ namespace kl {
 		void bindComputeCBuffer(dx::Buffer cbuff, uint slot);
 
 		template<typename T>
-		inline bool autoVertexCBuffer(const T& data, uint slot = 0) {
+		bool autoVertexCBuffer(const T& data, uint slot = 0) {
 			if (sizeof(T) > (CBUFFER_PREDEFINED_SIZE * 16) || sizeof(T) % 16) {
 				return false;
 			}
@@ -122,7 +150,7 @@ namespace kl {
 		}
 
 		template<typename T>
-		inline bool autoPixelCBuffer(const T& data, uint slot = 0) {
+		bool autoPixelCBuffer(const T& data, uint slot = 0) {
 			if (sizeof(T) > (CBUFFER_PREDEFINED_SIZE * 16) || sizeof(T) % 16) {
 				return false;
 			}
@@ -133,7 +161,7 @@ namespace kl {
 		}
 
 		template<typename T>
-		inline bool autoComputeCBuffer(const T& data, uint slot = 0) {
+		bool autoComputeCBuffer(const T& data, uint slot = 0) {
 			if (sizeof(T) > (CBUFFER_PREDEFINED_SIZE * 16) || sizeof(T) % 16) {
 				return false;
 			}
@@ -146,6 +174,9 @@ namespace kl {
 		// Vertex buffer
 		dx::Buffer newVertexBuffer(const Vector<Vertex>& vertexData);
 		dx::Buffer newVertexBuffer(const String& filePath, bool flipZ = true);
+		
+		dx::Buffer generateScreenMesh();
+		dx::Buffer generatePlaneMesh(float size, int numOfPoints);
 
 		void drawVertexBuffer(dx::Buffer buffer);
 
@@ -163,12 +194,12 @@ namespace kl {
 		dx::Texture newTexture(const Image& image, bool hasUnorderedAccess = false, bool isTarget = false);
 		dx::Texture newTexture(const Image& front, const Image& back, const Image& left, const Image& right, const Image& top, const Image& bottom);
 
-		dx::Texture newTextureStaging(dx::Texture texture, const UInt2& size = {});
+		dx::Texture newStagingTexture(dx::Texture texture, const UInt2& size = {});
 
 		// Render target view
 		dx::TargetView newTargetView(dx::Texture texture, dx::TargetViewDesc* descriptor = nullptr);
 
-		void clearTargetView(dx::TargetView view, const Float4& color);
+		void clearTargetView(dx::TargetView view, const Float4& values);
 
 		// Depth stencil view
 		dx::DepthView newDepthView(dx::Texture texture, dx::DepthViewDesc* desc = nullptr);
@@ -176,13 +207,13 @@ namespace kl {
 		void clearDepthView(dx::DepthView view, float depth = 1.0f, byte stencil = 0);
 
 		// Shader resource view
-		dx::ShaderView newShaderView(dx::Texture texture, dx::ShaderViewDesc* descriptor = nullptr);
+		dx::ShaderView newShaderView(dx::Resource resource, dx::ShaderViewDesc* descriptor = nullptr);
 
 		void bindPixelShaderView(dx::ShaderView view, uint slot);
 		void bindComputeShaderView(dx::ShaderView view, uint slot);
 
 		// Shader access view
-		dx::AccessView newAccessView(dx::Texture texture, dx::AccessViewDesc* descriptor = nullptr);
+		dx::AccessView newAccessView(dx::Resource resource, dx::AccessViewDesc* descriptor = nullptr);
 
 		void bindComputeAccessView(dx::AccessView view, uint slot, uint* initalCounts = nullptr);
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "math/vector2.h"
-#include "graphics/color.h"
+#include "Math/Vector2.h"
+#include "Graphics/Color.h"
 
 
 #undef min
@@ -48,6 +48,11 @@ namespace kl {
 		template<typename T0>
 		Vector3(const T0& x, const Vector2<T>& v) : x(T(x)), y(v.x), z(v.y) {}
 
+		template<typename T0>
+		static Vector3<T> Splash(const T0& value) {
+			return { value, value, value };
+		}
+
 		Vector3(const Color& color) : x(ToFloatColor(color.r)), y(ToFloatColor(color.g)), z(ToFloatColor(color.b)) {}
 
 		T& operator[](int ind) {
@@ -75,7 +80,7 @@ namespace kl {
 			return result;
 		}
 
-		void operator+=(const kl::Vector3<T>& obj) {
+		void operator+=(const Vector3<T>& obj) {
 			*this = *this + obj;
 		}
 
@@ -87,7 +92,7 @@ namespace kl {
 			return result;
 		}
 
-		void operator-=(const kl::Vector3<T>& obj) {
+		void operator-=(const Vector3<T>& obj) {
 			*this = *this - obj;
 		}
 
@@ -111,7 +116,7 @@ namespace kl {
 			return result;
 		}
 
-		void operator*=(const kl::Vector3<T>& obj) {
+		void operator*=(const Vector3<T>& obj) {
 			*this = *this * obj;
 		}
 
@@ -223,7 +228,7 @@ namespace kl {
 	};
 
 	template<typename T>
-	inline std::ostream& operator<<(std::ostream& stream, const kl::Vector3<T>& obj) {
+	inline std::ostream& operator<<(std::ostream& stream, const Vector3<T>& obj) {
 		stream << std::fixed << std::setprecision(2);
 		stream << "(" << obj.x << ", " << obj.y << ", " << obj.z << ")";
 		return stream;

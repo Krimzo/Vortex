@@ -43,6 +43,11 @@ namespace kl {
 		template<typename T0, typename T1>
 		Vector2(const T0& x, const T1& y) : x(T(x)), y(T(y)) {}
 
+		template<typename T0>
+		static Vector2<T> Splash(const T0& value) {
+			return { value, value };
+		}
+
 		T& operator[](int ind) {
 			return data[ind];
 		}
@@ -184,6 +189,11 @@ namespace kl {
 			const T sinA = T(std::sin(Math::ToRadians(angle)));
 			const T cosA = T(std::cos(Math::ToRadians(angle)));
 			return { cosA * x - sinA * y, sinA * x + cosA * y };
+		}
+
+		Vector2<T> reflect(const Vector2<T>& normal) const {
+			Vector2<T> normalized = normal.normalize();
+			return *this - normalized * dot(normalized) * 2.0f;
 		}
 	};
 

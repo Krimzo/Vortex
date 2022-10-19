@@ -5,26 +5,49 @@
 #include <fstream>
 #include <vector>
 
-#include "render/vertex.h"
-#include "utility/console.h"
+#include "Render/Vertex.h"
+#include "Utility/Console.h"
 
 #pragma comment (lib, "d3d11.lib")
 
+
+kl::GPU::GPU() {
+	D3D11CreateDevice(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		NULL,
+		nullptr,
+		NULL,
+		D3D11_SDK_VERSION,
+		&m_Device,
+		nullptr,
+		&m_Context
+	);
+	Assert(!m_Device, "Failed to create device");
+	Assert(!m_Context, "Failed to create device context");
+
+	for (int i = 0; i < CBUFFER_PREDEFINED_SIZE; i++) {
+		m_ComputeCBuffers[i] = newCBuffer((i + 1) * 16);
+	}
+
+	m_CreationType = Compute;
+}
 
 kl::GPU::GPU(HWND window) {
 	RECT windowClientArea = {};
 	GetClientRect(window, &windowClientArea);
 
-	DXGI_SWAP_CHAIN_DESC chaindes = {};
-	chaindes.BufferCount = 1;
-	chaindes.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	chaindes.BufferDesc.Width = windowClientArea.right;
-	chaindes.BufferDesc.Height = windowClientArea.bottom;
-	chaindes.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	chaindes.OutputWindow = window;
-	chaindes.SampleDesc.Count = 1;
-	chaindes.Windowed = true;
-	chaindes.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	DXGI_SWAP_CHAIN_DESC chainDescriptor = {};
+	chainDescriptor.BufferCount = 1;
+	chainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	chainDescriptor.BufferDesc.Width = windowClientArea.right;
+	chainDescriptor.BufferDesc.Height = windowClientArea.bottom;
+	chainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	chainDescriptor.OutputWindow = window;
+	chainDescriptor.SampleDesc.Count = 1;
+	chainDescriptor.Windowed = true;
+	chainDescriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	D3D11CreateDeviceAndSwapChain(
 		nullptr,
@@ -34,7 +57,7 @@ kl::GPU::GPU(HWND window) {
 		nullptr,
 		NULL,
 		D3D11_SDK_VERSION,
-		&chaindes,
+		&chainDescriptor,
 		&m_Chain,
 		&m_Device,
 		nullptr,
@@ -55,19 +78,27 @@ kl::GPU::GPU(HWND window) {
 		m_PixelCBuffers[i] = newCBuffer(bufferSize);
 		m_ComputeCBuffers[i] = newCBuffer(bufferSize);
 	}
+
+	m_CreationType = Render;
 }
 
 kl::GPU::~GPU() {
-	m_Chain->SetFullscreenState(false, nullptr);
-
 	for (auto& ref : m_Children) {
 		ref->Release();
 	}
 	m_Children.clear();
 
-	m_Chain->Release();
+	if (m_CreationType == Render) {
+		m_Chain->SetFullscreenState(false, nullptr);
+		m_Chain->Release();
+	}
+
 	m_Context->Release();
 	m_Device->Release();
+}
+
+kl::GPU::CreationType kl::GPU::getCreationType() const {
+	return m_CreationType;
 }
 
 kl::dx::Device kl::GPU::getDevice() {
@@ -84,6 +115,14 @@ kl::dx::Context kl::GPU::getContext() {
 
 const kl::dx::Context kl::GPU::getContext() const {
 	return m_Context;
+}
+
+kl::dx::Chain kl::GPU::getChain() {
+	return m_Chain;
+}
+
+const kl::dx::Chain kl::GPU::getChain() const {
+	return m_Chain;
 }
 
 void kl::GPU::setViewport(const UInt2& size) {
@@ -169,9 +208,27 @@ void kl::GPU::swapBuffers(bool vSync) {
 	m_Chain->Present(vSync, NULL);
 }
 
+void kl::GPU::copyResource(dx::Resource destination, dx::Resource source) {
+	m_Context->CopyResource(destination, source);
+}
+
+void kl::GPU::readFromResource(void* cpuBuffer, dx::Resource cpuReadResource, uint byteSize) {
+	dx::MappedSubresDesc mappedSubresource = {};
+	m_Context->Map(cpuReadResource, 0, D3D11_MAP_READ, NULL, &mappedSubresource);
+	memcpy(cpuBuffer, mappedSubresource.pData, byteSize);
+	m_Context->Unmap(cpuReadResource, NULL);
+}
+
+void kl::GPU::writeToResource(dx::Resource cpuWriteResource, const void* data, uint byteSize, bool discard) {
+	dx::MappedSubresDesc mappedSubresource = {};
+	m_Context->Map(cpuWriteResource, 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mappedSubresource);
+	memcpy(mappedSubresource.pData, data, byteSize);
+	m_Context->Unmap(cpuWriteResource, NULL);
+}
+
 void kl::GPU::destroy(IUnknown* child) {
 	if (m_Children.contains(child)) {
-		child->Release();
 		m_Children.erase(child);
+		child->Release();
 	}
 }

@@ -6,8 +6,10 @@
 kl::dx::DepthState kl::GPU::newDepthState(dx::DepthStateDesc* descriptor) {
 	dx::DepthState state = nullptr;
 
-	m_Device->CreateDepthStencilState(descriptor, &state);
-	Assert(!state, "Failed to create depth stencil state");
+	long result = m_Device->CreateDepthStencilState(descriptor, &state);
+	if (Warning(!state, Format("Failed to create depth stencil state. Result: 0x", std::hex, result))) {
+		return nullptr;
+	}
 
 	m_Children.insert(state);
 

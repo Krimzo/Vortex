@@ -1,13 +1,15 @@
-#include "gpu/gpu.h"
+#include "GPU/GPU.h"
 
-#include "utility/console.h"
+#include "Utility/Console.h"
 
 
 kl::dx::Texture kl::GPU::getBackBuffer() {
 	dx::Texture buffer = nullptr;
 
-	m_Chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
-	Assert(!buffer, "Failed to get backbuffer texture");
+	long result = m_Chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+	if (Warning(!buffer, Format("Failed to get backbuffer texture. Result: 0x", std::hex, result))) {
+		return nullptr;
+	}
 
 	m_Children.insert(buffer);
 
@@ -17,8 +19,10 @@ kl::dx::Texture kl::GPU::getBackBuffer() {
 kl::dx::Texture kl::GPU::newTexture(dx::TextureDesc* descriptor, dx::SubresDesc* subresourceData) {
 	dx::Texture texture = nullptr;
 
-	m_Device->CreateTexture2D(descriptor, subresourceData, &texture);
-	Assert(!texture, "Failed to create texture");
+	long result = m_Device->CreateTexture2D(descriptor, subresourceData, &texture);
+	if (Warning(!texture, Format("Failed to create texture. Result: 0x", std::hex, result))) {
+		return nullptr;
+	}
 
 	m_Children.insert(texture);
 
@@ -48,12 +52,14 @@ kl::dx::Texture kl::GPU::newTexture(const Image& image, bool hasUnorderedAccess,
 }
 
 kl::dx::Texture kl::GPU::newTexture(const Image& front, const Image& back, const Image& left, const Image& right, const Image& top, const Image& bottom) {
-	Assert(!(front.getSize() == back.getSize() &&
+	if (Warning(!(front.getSize() == back.getSize() &&
 		front.getSize() == left.getSize() &&
 		front.getSize() == right.getSize() &&
 		front.getSize() == top.getSize() &&
 		front.getSize() == bottom.getSize()),
-		"Sizes of the 6 given images do not match");
+		"Sizes of the 6 given images do not match")) {
+		return nullptr;
+	}
 
 	dx::TextureDesc descriptor = {};
 	descriptor.Width = front.getWidth();
@@ -78,7 +84,7 @@ kl::dx::Texture kl::GPU::newTexture(const Image& front, const Image& back, const
 	return newTexture(&descriptor, data);
 }
 
-kl::dx::Texture kl::GPU::newTextureStaging(dx::Texture texture, const UInt2& size) {
+kl::dx::Texture kl::GPU::newStagingTexture(dx::Texture texture, const UInt2& size) {
 	dx::TextureDesc descriptor = {};
 	texture->GetDesc(&descriptor);
 

@@ -99,6 +99,9 @@
     <ClCompile Include="KLibrary\Render\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KLibrary\Render\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="KLibrary\Render\Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,6 +170,9 @@
     <ClInclude Include="Source\Engine\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Board\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="KLibrary\GPU\DXTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -207,6 +213,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\Render\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KLibrary\Render\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\Render\Plane.h">
@@ -270,9 +279,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\KrimzLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Board\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

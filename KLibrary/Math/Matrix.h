@@ -5,12 +5,12 @@
 #include <iomanip>
 #include <functional>
 
-#include "math/vector4.h"
+#include "Math/Vector4.h"
 
 
 namespace kl {
 	template<typename T, int W, int H>
-	struct Matrix : public std::array<T, W* H> {
+	struct Matrix : public std::array<T, W * H> {
 
 		Matrix() : std::array<T, W* H>() {
 			if constexpr (W == H) {
@@ -83,7 +83,7 @@ namespace kl {
 
 		template<int S>
 		Matrix<T, S, H> operator*(const Matrix<T, S, W>& obj) const {
-			Matrix<T, S, H> result;
+			Matrix<T, S, H> result = {};
 			for (int y = 0; y < H; y++) {
 				for (int x = 0; x < S; x++) {
 					result.get(x, y) = {};
@@ -258,6 +258,7 @@ namespace kl {
 				<< ((y == 0) ? char(191) : (y == (H - 1) ? char(217) : char(179)))
 				<< (y == (H - 1) ? "" : "\n");
 		}
+		
 		return stream;
 	}
 }
