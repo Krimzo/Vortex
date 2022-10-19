@@ -1,114 +1,92 @@
 #include "Engine/Engine.h"
 
 
-kl::uint Engine::getSearchDepth() const {
-	return m_SearchDepth;
+int Engine::getSearchDepth() const {
+	return m_searchDepth;
 }
 
 kl::uint64 Engine::getCallCount() const {
-	return m_CallCount;
+	return m_callCount;
 }
 
 float Engine::getSearchTime() const {
-	return m_SearchTime;
+	return m_searchTime;
 }
 
-BoardInfo Engine::search(const Board& board, kl::uint searchDepth, bool searchDisplay) {
-	m_SearchDepth = searchDepth;
+Position Engine::findBest(const Position& position, int searchDepth) {
+	m_searchDepth = searchDepth;
+	m_callCount = 0;
 
-	m_CallCount = 0;
-	kl::Timer timer = {};
+	m_timer.reset();
+	Position result = findBest(position, 0, -INFINITY, INFINITY);
+	m_searchTime = m_timer.getElapsed();
 
-	BoardInfo info;
-	if (searchDisplay) {
-		kl::Window window = { { 800, 800 }, "Search Display" };
-		kl::Image frameBuffer = { window.getSize() };
-
-		window.setResizeable(false);
-
-		info = search(board, false, 0, -INFINITY, INFINITY, [&](const Board& futureBoard) {
-			futureBoard.drawToImage(frameBuffer);
-			window.drawImage(frameBuffer);
-			window.process(false);
-		});
-	}
-	else {
-		info = search(board, false, 0, -INFINITY, INFINITY, [](const Board&) {});
-	}
-
-	m_SearchTime = timer.getElapsed();
-
-	return info;
+	return result;
 }
 
-BoardInfo Engine::search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta, kl::Function<void(const Board&)> futureBoardCallback) {
-	m_CallCount += 1;
+Position Engine::findBest(const Position& position, int depth, float alpha, float beta) {
+	m_callCount += 1;
 
-	const float currentEvaluation = evaluate(board);
-	if (depth >= m_SearchDepth || currentEvaluation < -1e4f || currentEvaluation > 1e4f) {
-		return { currentEvaluation };
+	const float evaluation = evaluate(position);
+
+	if (depth > m_searchDepth || evaluation < -1e4f || evaluation > 1e4f) {
+		Position result = position;
+		result.evaluation = evaluation;
+		return result;
 	}
 
-	if (whitesTurn) {
-		BoardInfo maxState = { -INFINITY };
+	if (position.whiteToPlay) {
+		Position bestPosition = {};
+		bestPosition.evaluation = -INFINITY;
 
 		for (int i = 0; i < 64; i++) {
-			if (Board::IsWhite(board.getPiece(i))) {
-				kl::Vector<Move> allMoves;
-				board.getSquareMoves(i, allMoves);
+			if (position.pieces[i].isWhite()) {
+				kl::Vector<Position> allPositions = {};
+				position.pieces[i].getMoves(position, i, allPositions);
 
-				for (auto& move : allMoves) {
-					Board futureBoard = board;
-					futureBoard.playMove(move);
+				for (auto& position : allPositions) {
+					const float futureEval = findBest(position, depth + 1, alpha, beta).evaluation;
 
-					futureBoardCallback(futureBoard);
-
-					BoardInfo futureInfo = search(futureBoard, !whitesTurn, depth + 1, alpha, beta, futureBoardCallback);
-
-					if (futureInfo.evaluation > maxState.evaluation) {
-						maxState.evaluation = futureInfo.evaluation;
-						maxState.bestMove = move;
+					if (futureEval > bestPosition.evaluation) {
+						bestPosition = position;
+						bestPosition.evaluation = futureEval;
 					}
 
-					if (maxState.evaluation >= beta) {
-						return maxState;
+					if (bestPosition.evaluation >= beta) {
+						return bestPosition;
 					}
-					alpha = max(alpha, futureInfo.evaluation);
+					alpha = max(alpha, bestPosition.evaluation);
 				}
 			}
 		}
 
-		return maxState;
+		return bestPosition;
 	}
 	else {
-		BoardInfo minState = { INFINITY };
+		Position bestPosition = {};
+		bestPosition.evaluation = INFINITY;
 
 		for (int i = 0; i < 64; i++) {
-			if (Board::IsBlack(board.getPiece(i))) {
-				std::vector<Move> allMoves;
-				board.getSquareMoves(i, allMoves);
+			if (position.pieces[i].isBlack()) {
+				kl::Vector<Position> allPositions = {};
+				position.pieces[i].getMoves(position, i, allPositions);
 
-				for (auto& move : allMoves) {
-					Board futureBoard = board;
-					futureBoard.playMove(move);
+				for (auto& position : allPositions) {
+					const float futureEval = findBest(position, depth + 1, alpha, beta).evaluation;
 
-					futureBoardCallback(futureBoard);
-
-					BoardInfo futureInfo = search(futureBoard, !whitesTurn, depth + 1, alpha, beta, futureBoardCallback);
-
-					if (futureInfo.evaluation < minState.evaluation) {
-						minState.evaluation = futureInfo.evaluation;
-						minState.bestMove = move;
+					if (futureEval < bestPosition.evaluation) {
+						bestPosition = position;
+						bestPosition.evaluation = futureEval;
 					}
 
-					if (futureInfo.evaluation <= alpha) {
-						return minState;
+					if (bestPosition.evaluation <= alpha) {
+						return bestPosition;
 					}
-					beta = min(beta, futureInfo.evaluation);
+					beta = min(beta, bestPosition.evaluation);
 				}
 			}
 		}
 
-		return minState;
+		return bestPosition;
 	}
 }

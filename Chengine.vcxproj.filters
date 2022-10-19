@@ -24,25 +24,22 @@
     <ClCompile Include="Source\Engine\Search.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves\Bishop.cpp">
+    <ClCompile Include="Source\Piece\Moves\Bishop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves\King.cpp">
+    <ClCompile Include="Source\Piece\Moves\King.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves\Knight.cpp">
+    <ClCompile Include="Source\Piece\Moves\Knight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves.cpp">
+    <ClCompile Include="Source\Piece\Moves\Pawn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves\Pawn.cpp">
+    <ClCompile Include="Source\Piece\Moves\Queen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Board\Moves\Queen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Board\Moves\Rook.cpp">
+    <ClCompile Include="Source\Piece\Moves\Rook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Chess.cpp">
@@ -162,15 +159,18 @@
     <ClCompile Include="KLibrary\Window\WindowHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Piece\Piece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Position\Position.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Board\Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Board\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\GPU\DXTypes.h">
@@ -279,6 +279,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KLibrary\KrimzLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Position\Position.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Piece\Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

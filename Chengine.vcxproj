@@ -192,13 +192,14 @@
     <ClCompile Include="Source\Chess.cpp" />
     <ClCompile Include="Source\Engine\Evaluate.cpp" />
     <ClCompile Include="Source\Engine\Search.cpp" />
-    <ClCompile Include="Source\Board\Moves\Bishop.cpp" />
-    <ClCompile Include="Source\Board\Moves\King.cpp" />
-    <ClCompile Include="Source\Board\Moves\Knight.cpp" />
-    <ClCompile Include="Source\Board\Moves.cpp" />
-    <ClCompile Include="Source\Board\Moves\Pawn.cpp" />
-    <ClCompile Include="Source\Board\Moves\Queen.cpp" />
-    <ClCompile Include="Source\Board\Moves\Rook.cpp" />
+    <ClCompile Include="Source\Piece\Moves\Bishop.cpp" />
+    <ClCompile Include="Source\Piece\Moves\King.cpp" />
+    <ClCompile Include="Source\Piece\Moves\Knight.cpp" />
+    <ClCompile Include="Source\Piece\Moves\Pawn.cpp" />
+    <ClCompile Include="Source\Piece\Moves\Queen.cpp" />
+    <ClCompile Include="Source\Piece\Moves\Rook.cpp" />
+    <ClCompile Include="Source\Piece\Piece.cpp" />
+    <ClCompile Include="Source\Position\Position.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KLibrary\GPU\DXTypes.h" />
@@ -238,7 +239,8 @@
     <ClInclude Include="KLibrary\Window\Mouse.h" />
     <ClInclude Include="KLibrary\Window\Window.h" />
     <ClInclude Include="Source\Board\Board.h" />
-    <ClInclude Include="Source\Board\Types.h" />
+    <ClInclude Include="Source\Piece\Piece.h" />
+    <ClInclude Include="Source\Position\Position.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

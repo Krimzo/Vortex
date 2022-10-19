@@ -1,24 +1,24 @@
 #pragma once
 
-#include "Board/Board.h"
+#include "Position/Position.h"
 
 
 class Engine {
-	kl::uint m_SearchDepth = 0;
+	int m_searchDepth = 0;
+	kl::uint64 m_callCount = 0;
 
-	kl::uint64 m_CallCount = 0;
-	float m_SearchTime = 0.0f;
+	kl::Timer m_timer = {};
+	float m_searchTime = 0.0f;
 
-	BoardInfo search(const Board& board, bool whitesTurn, kl::uint depth, float alpha, float beta, kl::Function<void(const Board&)> futureBoardCallback);
+	Position findBest(const Position& position, int depth, float alpha, float beta);
 
 public:
 	Engine() {}
 
-	kl::uint getSearchDepth() const;
+	int getSearchDepth() const;
 	kl::uint64 getCallCount() const;
 	float getSearchTime() const;
 
-	float evaluate(const Board& board);
-
-	BoardInfo search(const Board& board, kl::uint searchDepth, bool searchDisplay = false);
+	float evaluate(const Position& position);
+	Position findBest(const Position& position, int searchDepth);
 };

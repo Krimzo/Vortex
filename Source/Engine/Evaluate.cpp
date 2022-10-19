@@ -155,16 +155,16 @@ static const float BlackKingEndValueTable[64] = {
 };
 
 
-static bool WhiteInEndgame(const Board& board) {
+static bool WhiteInEndgame(const Position& position) {
 	int minorPieces = 0;
 	for (int i = 0; i < 64; i++) {
-		switch (board.getPiece(i)) {
-		case Piece::BQueen:
+		switch (position.pieces[i].type) {
+		case PieceType::BQueen:
 			return false;
 
-		case Piece::BKnight:
-		case Piece::BBishop:
-		case Piece::BRook:
+		case PieceType::BKnight:
+		case PieceType::BBishop:
+		case PieceType::BRook:
 			if (++minorPieces > 2) {
 				return false;
 			}
@@ -173,16 +173,16 @@ static bool WhiteInEndgame(const Board& board) {
 	return true;
 }
 
-static bool BlackInEndgame(const Board& board) {
+static bool BlackInEndgame(const Position& position) {
 	int minorPieces = 0;
 	for (int i = 0; i < 64; i++) {
-		switch (board.getPiece(i)) {
-		case Piece::WQueen:
+		switch (position.pieces[i].type) {
+		case PieceType::WQueen:
 			return false;
 
-		case Piece::WKnight:
-		case Piece::WBishop:
-		case Piece::WRook:
+		case PieceType::WKnight:
+		case PieceType::WBishop:
+		case PieceType::WRook:
 			if (++minorPieces > 2) {
 				return false;
 			}
@@ -191,58 +191,58 @@ static bool BlackInEndgame(const Board& board) {
 	return true;
 }
 
-float Engine::evaluate(const Board& board) {
+float Engine::evaluate(const Position& position) {
 	float eval = 0.0f;
 	for (int i = 0; i < 64; i++) {
-		switch (board.getPiece(i)) {
-		case Piece::WPawn:
+		switch (position.pieces[i].type) {
+		case PieceType::WPawn:
 			eval += 1.0f;
 			eval += WhitePawnValueTable[i];
 			break;
-		case Piece::WKnight:
+		case PieceType::WKnight:
 			eval += 3.2f;
 			eval += WhiteKnightValueTable[i];
 			break;
-		case Piece::WBishop:
+		case PieceType::WBishop:
 			eval += 3.3f;
 			eval += WhiteBishopValueTable[i];
 			break;
-		case Piece::WRook:
+		case PieceType::WRook:
 			eval += 5.0f;
 			eval += WhiteRookValueTable[i];
 			break;
-		case Piece::WQueen:
+		case PieceType::WQueen:
 			eval += 9.0f;
 			eval += WhiteQueenValueTable[i];
 			break;
-		case Piece::WKing:
+		case PieceType::WKing:
 			eval += 1'000'000.0f;
-			eval += WhiteInEndgame(board) ? WhiteKingEndValueTable[i] : WhiteKingMidValueTable[i];
+			eval += WhiteInEndgame(position) ? WhiteKingEndValueTable[i] : WhiteKingMidValueTable[i];
 			break;
 
-		case Piece::BPawn:
+		case PieceType::BPawn:
 			eval -= 1.0f;
 			eval -= BlackPawnValueTable[i];
 			break;
-		case Piece::BKnight:
+		case PieceType::BKnight:
 			eval -= 3.2f;
 			eval -= BlackKnightValueTable[i];
 			break;
-		case Piece::BBishop:
+		case PieceType::BBishop:
 			eval -= 3.3f;
 			eval -= BlackBishopValueTable[i];
 			break;
-		case Piece::BRook:
+		case PieceType::BRook:
 			eval -= 5.0f;
 			eval -= BlackRookValueTable[i];
 			break;
-		case Piece::BQueen:
+		case PieceType::BQueen:
 			eval -= 9.0f;
 			eval -= BlackQueenValueTable[i];
 			break;
-		case Piece::BKing:
+		case PieceType::BKing:
 			eval -= 1'000'000.0f;
-			eval -= BlackInEndgame(board) ? BlackKingEndValueTable[i] : BlackKingMidValueTable[i];
+			eval -= BlackInEndgame(position) ? BlackKingEndValueTable[i] : BlackKingMidValueTable[i];
 			break;
 		}
 	}

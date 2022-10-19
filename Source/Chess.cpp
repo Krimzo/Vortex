@@ -3,23 +3,20 @@
 
 
 int main() {
-	kl::Window window = { { 800, 800 }, "Chengine" };
-	kl::DoubleBuffer frameBuffer = { window.getSize() };
 	Board board = {};
+	board.position = Position(DefaultFEN);
 
-	board.loadFEN(Board::DefaultFEN);
-
-	board.setSearchDisplay(false); // Set this to true for FUN :)
+	kl::Window window = { { 800, 800 }, "Chess Engine" };
+	kl::DoubleBuffer frameBuffer = { window.getSize() };
 
 	window.setResizeable(false);
-
 	window.mouse.left.onPress = [&]() {
 		kl::Int2 clickedSquare = window.mouse.getPosition() / (frameBuffer.getSize().x / 8);
-		board.playerPlay(window, Board::ToIndex(clickedSquare.x, clickedSquare.y));
+		board.playPlayersTurn(window, clickedSquare.y * 8 + clickedSquare.x);
 	};
 
 	while (window.process()) {
-		board.drawToImage(*frameBuffer.getBackBuffer());
+		board.render(*frameBuffer.getBackBuffer());
 		frameBuffer.drawToWindow(window);
 		frameBuffer.swapBuffers();
 	}
