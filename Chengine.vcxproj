@@ -72,19 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\debug\</OutDir>
+    <IntDir>$(SolutionDir)bin\debug\intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\release\</OutDir>
+    <IntDir>$(SolutionDir)Bin\release\intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\Debug\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Debug\Intermediate\</IntDir>
+    <OutDir>$(SolutionDir)bin\debug\</OutDir>
+    <IntDir>$(SolutionDir)bin\debug\intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\Release\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Release\Intermediate\</IntDir>
+    <OutDir>$(SolutionDir)bin\release\</OutDir>
+    <IntDir>$(SolutionDir)Bin\release\intermediate\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,6 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,100 +155,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="KLibrary\GPU\Buffer\Buffer.cpp" />
-    <ClCompile Include="KLibrary\GPU\Buffer\CBuffer.cpp" />
-    <ClCompile Include="KLibrary\GPU\GPU.cpp" />
-    <ClCompile Include="KLibrary\GPU\States\DepthState.cpp" />
-    <ClCompile Include="KLibrary\GPU\States\RasterState.cpp" />
-    <ClCompile Include="KLibrary\GPU\States\SamplerState.cpp" />
-    <ClCompile Include="KLibrary\GPU\Utility\Shaders.cpp" />
-    <ClCompile Include="KLibrary\GPU\Utility\Texture.cpp" />
-    <ClCompile Include="KLibrary\GPU\Utility\VertexBuffer.cpp" />
-    <ClCompile Include="KLibrary\GPU\Views\AccessView.cpp" />
-    <ClCompile Include="KLibrary\GPU\Views\DepthView.cpp" />
-    <ClCompile Include="KLibrary\GPU\Views\ShaderView.cpp" />
-    <ClCompile Include="KLibrary\GPU\Views\TargetView.cpp" />
-    <ClCompile Include="KLibrary\Graphics\Color.cpp" />
-    <ClCompile Include="KLibrary\Graphics\Image.cpp" />
-    <ClCompile Include="KLibrary\Graphics\Video.cpp" />
-    <ClCompile Include="KLibrary\Render\Camera.cpp" />
-    <ClCompile Include="KLibrary\Render\Entity.cpp" />
-    <ClCompile Include="KLibrary\Render\Plane.cpp" />
-    <ClCompile Include="KLibrary\Render\Ray.cpp" />
-    <ClCompile Include="KLibrary\Render\Sphere.cpp" />
-    <ClCompile Include="KLibrary\Render\Triangle.cpp" />
-    <ClCompile Include="KLibrary\Render\Vertex.cpp" />
-    <ClCompile Include="KLibrary\Utility\ASync.cpp" />
-    <ClCompile Include="KLibrary\Utility\Console.cpp" />
-    <ClCompile Include="KLibrary\Utility\Encrypter.cpp" />
-    <ClCompile Include="KLibrary\Utility\File.cpp" />
-    <ClCompile Include="KLibrary\Utility\Random.cpp" />
-    <ClCompile Include="KLibrary\Utility\Socket.cpp" />
-    <ClCompile Include="KLibrary\Utility\Strings.cpp" />
-    <ClCompile Include="KLibrary\Utility\Time.cpp" />
-    <ClCompile Include="KLibrary\Utility\Web.cpp" />
-    <ClCompile Include="KLibrary\Window\DoubleBuffer.cpp" />
-    <ClCompile Include="KLibrary\Window\Key.cpp" />
-    <ClCompile Include="KLibrary\Window\Keyboard.cpp" />
-    <ClCompile Include="KLibrary\Window\Mouse.cpp" />
-    <ClCompile Include="KLibrary\Window\Window.cpp" />
-    <ClCompile Include="KLibrary\Window\WindowHandler.cpp" />
-    <ClCompile Include="Source\Board\Board.cpp" />
-    <ClCompile Include="Source\Chess.cpp" />
-    <ClCompile Include="Source\Engine\Evaluate.cpp" />
-    <ClCompile Include="Source\Engine\Search.cpp" />
-    <ClCompile Include="Source\Piece\Moves\Bishop.cpp" />
-    <ClCompile Include="Source\Piece\Moves\King.cpp" />
-    <ClCompile Include="Source\Piece\Moves\Knight.cpp" />
-    <ClCompile Include="Source\Piece\Moves\Pawn.cpp" />
-    <ClCompile Include="Source\Piece\Moves\Queen.cpp" />
-    <ClCompile Include="Source\Piece\Moves\Rook.cpp" />
-    <ClCompile Include="Source\Piece\Piece.cpp" />
-    <ClCompile Include="Source\Position\Position.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="KLibrary\GPU\DXTypes.h" />
-    <ClInclude Include="KLibrary\GPU\GPU.h" />
-    <ClInclude Include="KLibrary\Graphics\Color.h" />
-    <ClInclude Include="KLibrary\Graphics\Image.h" />
-    <ClInclude Include="KLibrary\Graphics\Video.h" />
-    <ClInclude Include="KLibrary\KLTypes.h" />
-    <ClInclude Include="KLibrary\KrimzLib.h" />
-    <ClInclude Include="KLibrary\Math\Math.h" />
-    <ClInclude Include="KLibrary\Math\Matrix.h" />
-    <ClInclude Include="KLibrary\Math\Matrix2x2.h" />
-    <ClInclude Include="KLibrary\Math\Matrix3x3.h" />
-    <ClInclude Include="KLibrary\Math\Matrix4x4.h" />
-    <ClInclude Include="KLibrary\Math\Vector2.h" />
-    <ClInclude Include="KLibrary\Math\Vector3.h" />
-    <ClInclude Include="KLibrary\Math\Vector4.h" />
-    <ClInclude Include="KLibrary\Render\Camera.h" />
-    <ClInclude Include="KLibrary\Render\Entity.h" />
-    <ClInclude Include="KLibrary\Render\Plane.h" />
-    <ClInclude Include="KLibrary\Render\Ray.h" />
-    <ClInclude Include="KLibrary\Render\Sphere.h" />
-    <ClInclude Include="KLibrary\Render\Triangle.h" />
-    <ClInclude Include="KLibrary\Render\Vertex.h" />
-    <ClInclude Include="KLibrary\Utility\ASync.h" />
-    <ClInclude Include="KLibrary\Utility\Console.h" />
-    <ClInclude Include="KLibrary\Utility\Encrypter.h" />
-    <ClInclude Include="KLibrary\Utility\File.h" />
-    <ClInclude Include="KLibrary\Utility\Random.h" />
-    <ClInclude Include="KLibrary\Utility\Socket.h" />
-    <ClInclude Include="KLibrary\Utility\Strings.h" />
-    <ClInclude Include="KLibrary\Utility\Time.h" />
-    <ClInclude Include="KLibrary\Utility\Web.h" />
-    <ClInclude Include="KLibrary\Window\DoubleBuffer.h" />
-    <ClInclude Include="KLibrary\Window\Key.h" />
-    <ClInclude Include="KLibrary\Window\Keyboard.h" />
-    <ClInclude Include="KLibrary\Window\Mouse.h" />
-    <ClInclude Include="KLibrary\Window\Window.h" />
-    <ClInclude Include="Source\Board\Board.h" />
-    <ClInclude Include="Source\Piece\Piece.h" />
-    <ClInclude Include="Source\Position\Position.h" />
-    <ClInclude Include="Source\Engine\Engine.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
