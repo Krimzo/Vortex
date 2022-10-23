@@ -1,2 +1,2 @@
-# C++ Chess Engine
-Fun stuff
+# Chengine
+C++ Chess Engine
