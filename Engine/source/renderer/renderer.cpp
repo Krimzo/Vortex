@@ -3,7 +3,9 @@
 
 vtx::renderer::renderer(const kl::int2& size)
     : render_buffer_(size)
-{}
+{
+	resize(size);
+}
 
 vtx::renderer::~renderer()
 {}
@@ -13,33 +15,52 @@ vtx::renderer::operator const kl::image& () const
     return render_buffer_.front_buffer();
 }
 
-int vtx::renderer::get_square_size() const
+void vtx::renderer::resize(const kl::int2& new_size)
 {
+    render_buffer_.resize(new_size);
 	auto& buffer = render_buffer_.front_buffer();
-	return (min(buffer.width(), buffer.height()) / 8);
-}
+	
+	// Square size
+	square_size = (min(buffer.width(), buffer.height()) / 8);
 
-kl::int2 vtx::renderer::get_start_top_left(const int square_size) const
-{
-	auto& buffer = render_buffer_.front_buffer();
-	const int full_board_size = square_size * 8;
-	return {
+	// Start position
+	const int full_board_size = (square_size * 8);
+	start_top_left = {
 		(buffer.width() - full_board_size) / 2,
 		(buffer.height() - full_board_size) / 2,
 	};
-}
 
-void vtx::renderer::handle_resize(const kl::int2& new_size)
-{
-    render_buffer_.resize(new_size);
+	// Load images
+	w_pawn_icon = kl::image("resource/w_pawn.png");
+	w_knight_icon = kl::image("resource/w_knight.png");
+	w_bishop_icon = kl::image("resource/w_bishop.png");
+	w_rook_icon = kl::image("resource/w_rook.png");
+	w_queen_icon = kl::image("resource/w_queen.png");
+	w_king_icon = kl::image("resource/w_king.png");
+	b_pawn_icon = kl::image("resource/b_pawn.png");
+	b_knight_icon = kl::image("resource/b_knight.png");
+	b_bishop_icon = kl::image("resource/b_bishop.png");
+	b_rook_icon = kl::image("resource/b_rook.png");
+	b_queen_icon = kl::image("resource/b_queen.png");
+	b_king_icon = kl::image("resource/b_king.png");
+
+	// Resize images
+	w_pawn_icon.resize_scaled(kl::int2(square_size));
+	w_knight_icon.resize_scaled(kl::int2(square_size));
+	w_bishop_icon.resize_scaled(kl::int2(square_size));
+	w_rook_icon.resize_scaled(kl::int2(square_size));
+	w_queen_icon.resize_scaled(kl::int2(square_size));
+	w_king_icon.resize_scaled(kl::int2(square_size));
+	b_pawn_icon.resize_scaled(kl::int2(square_size));
+	b_knight_icon.resize_scaled(kl::int2(square_size));
+	b_bishop_icon.resize_scaled(kl::int2(square_size));
+	b_rook_icon.resize_scaled(kl::int2(square_size));
+	b_queen_icon.resize_scaled(kl::int2(square_size));
+	b_king_icon.resize_scaled(kl::int2(square_size));
 }
 
 void vtx::renderer::render(const board& board)
 {
-	// Prepare
-	const int square_size = get_square_size();
-	const kl::int2 start_top_left = get_start_top_left(square_size);
-
 	// Clear
 	kl::image* buffer = render_buffer_.back_buffer();
 	buffer->fill(kl::colors::gray);
@@ -78,11 +99,7 @@ void vtx::renderer::render(const board& board)
 	// Draw images
 	for (int i = 0; i < 64; i++) {
 		if (const kl::image* icon = get_piece_icon(board[i])) {
-			const kl::int2 top_left = kl::int2(i % 8, i / 8) * square_size + start_top_left;
-
-			//kl::image copy_icon = *icon;
-			//copy_icon.resize_scaled(kl::int2(square_size));
-			
+			const kl::int2 top_left = ((kl::int2(i % 8, i / 8) * square_size) + start_top_left);
 			buffer->draw_image(top_left, *icon);
 		}
 	}
@@ -109,7 +126,7 @@ void vtx::renderer::draw_square(const int index, const int square_size, const kl
 	buffer->draw_rectangle(top_left, bottom_right, chosen_color, true);
 }
 
-kl::image* vtx::renderer::get_piece_icon(const piece& piece)
+const kl::image* vtx::renderer::get_piece_icon(const piece& piece) const
 {
 	switch (piece) {
 	case w_pawn:

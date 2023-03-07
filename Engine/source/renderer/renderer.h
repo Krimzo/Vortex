@@ -9,17 +9,16 @@ namespace vtx {
         kl::frame_buffer render_buffer_;
 
         void draw_square(int index, int square_size, const kl::int2& start_top_left, const kl::color& light_color, const kl::color& dark_color);
-        kl::image* get_piece_icon(const piece& piece);
+        const kl::image* get_piece_icon(const piece& piece) const;
 
-    public:
         kl::color default_light_color = { 240, 215, 180 };
-        kl::color default_dark_color  = { 180, 135, 100 };
+        kl::color default_dark_color = { 180, 135, 100 };
         kl::color selected_light_color = { 180, 235, 240 };
-        kl::color selected_dark_color  = { 100, 180, 175 };
+        kl::color selected_dark_color = { 100, 180, 175 };
         kl::color last_played_light_color = { 205, 240, 175 };
-        kl::color last_played_dark_color  = { 145, 180,  95 };
+        kl::color last_played_dark_color = { 145, 180,  95 };
         kl::color game_over_light_color = { 240, 180, 175 };
-        kl::color game_over_dark_color  = { 170, 100,  90 };
+        kl::color game_over_dark_color = { 170, 100,  90 };
 
         kl::image w_pawn_icon = kl::image("resource/w_pawn.png");
         kl::image w_knight_icon = kl::image("resource/w_knight.png");
@@ -34,15 +33,16 @@ namespace vtx {
         kl::image b_queen_icon = kl::image("resource/b_queen.png");
         kl::image b_king_icon = kl::image("resource/b_king.png");
 
+    public:
+        int square_size = 0;
+        kl::int2 start_top_left = {};
+
         renderer(const kl::int2& size);
         virtual ~renderer();
 
         operator const kl::image& () const;
 
-        int get_square_size() const;
-        kl::int2 get_start_top_left(int square_size) const;
-
-        void handle_resize(const kl::int2& new_size);
+        void resize(const kl::int2& new_size);
         void render(const board& board);
 
         void swap();

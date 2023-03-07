@@ -5,10 +5,7 @@ vortex::vortex()
 {
 	window_.mouse.left.on_press.push_back([&]
 	{
-		const int square_size = renderer_.get_square_size();
-		const kl::int2 start_top_left = renderer_.get_start_top_left(square_size);
-		const kl::int2 clicked_square = (window_.mouse.position() + start_top_left) / square_size;
-		play_players_turn(clicked_square.x + clicked_square.y * 8);
+		std::thread(&vortex::on_mouse_click, this).detach();
 	});
 }
 
@@ -18,11 +15,26 @@ vortex::~vortex()
 void vortex::run()
 {
 	while (window_.process()) {
-		renderer_.handle_resize(window_.size());
+		renderer_.resize(window_.size());
 		renderer_.render(board_);
 
 		window_.draw_image(renderer_);
 		renderer_.swap();
+	}
+}
+
+void vortex::on_mouse_click()
+{
+	if (!currently_calculating) {
+		currently_calculating = true;
+
+		kl::int2 clicked_square = (window_.mouse.position() - renderer_.start_top_left);
+		clicked_square /= renderer_.square_size;
+
+		play_players_turn(clicked_square.x + clicked_square.y * 8);
+		window_.notify();
+
+		currently_calculating = false;
 	}
 }
 
@@ -64,7 +76,6 @@ void vortex::play_engines_turn()
 	}
 
 	window_.set_title("Calculating..");
-
 	board_ = engine_.find_best_position(board_, 5);
 
 	kl::print(std::fixed,
@@ -72,7 +83,5 @@ void vortex::play_engines_turn()
 		" | Time: ", engine_.get_search_time(),
 		" | Calls: ", engine_.get_call_count(),
 		" | Eval: ", board_.evaluation);
-
-	const std::string next_message = (board_.get_win_state() < 0) ? "Engine wins!" : "Player's move";
-	window_.set_title(next_message);
+	window_.set_title((board_.get_win_state() < 0) ? "Engine wins!" : "Player's move");
 }
