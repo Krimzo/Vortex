@@ -169,17 +169,17 @@ static constexpr float black_king_end_value_table[64]
 };
 
 
-static bool white_in_endgame(const position& position)
+static bool white_in_endgame(const vtx::board& board)
 {
 	int minor_pieces = 0;
-	for (const auto piece : position.pieces) {
-		switch (piece.type) {
-		case b_queen:
+	for (const auto piece : board.pieces) {
+		switch (piece) {
+		case vtx::b_queen:
 			return false;
 
-		case b_knight:
-		case b_bishop:
-		case b_rook:
+		case vtx::b_knight:
+		case vtx::b_bishop:
+		case vtx::b_rook:
 			if (++minor_pieces > 2) {
 				return false;
 			}
@@ -188,17 +188,17 @@ static bool white_in_endgame(const position& position)
 	return true;
 }
 
-static bool black_in_endgame(const position& position)
+static bool black_in_endgame(const vtx::board& board)
 {
 	int minor_pieces = 0;
-	for (const auto piece : position.pieces) {
+	for (const auto piece : board.pieces) {
 		switch (piece.type) {
-		case w_queen:
+		case vtx::w_queen:
 			return false;
 
-		case w_knight:
-		case w_bishop:
-		case w_rook:
+		case vtx::w_knight:
+		case vtx::w_bishop:
+		case vtx::w_rook:
 			if (++minor_pieces > 2) {
 				return false;
 			}
@@ -207,59 +207,69 @@ static bool black_in_endgame(const position& position)
 	return true;
 }
 
-float engine::static_evaluation(const position& position)
+float vtx::engine::static_evaluation(const board& board)
 {
 	float eval = 0.0f;
 	for (int i = 0; i < 64; i++) {
-		switch (position.pieces[i].type) {
+		switch (board[i].type) {
 		case w_pawn:
 			eval += 1.0f;
 			eval += white_pawn_value_table[i];
 			break;
+
 		case w_knight:
 			eval += 3.2f;
 			eval += white_knight_value_table[i];
 			break;
+
 		case w_bishop:
 			eval += 3.3f;
 			eval += white_bishop_value_table[i];
 			break;
+
 		case w_rook:
 			eval += 5.0f;
 			eval += white_rook_value_table[i];
 			break;
+
 		case w_queen:
 			eval += 9.0f;
 			eval += white_queen_value_table[i];
 			break;
+
 		case w_king:
 			eval += 1'000'000.0f;
-			eval += white_in_endgame(position) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
+			eval += white_in_endgame(board) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
 			break;
 
 		case b_pawn:
 			eval -= 1.0f;
 			eval -= black_pawn_value_table[i];
 			break;
+
 		case b_knight:
 			eval -= 3.2f;
 			eval -= black_knight_value_table[i];
 			break;
+
 		case b_bishop:
 			eval -= 3.3f;
 			eval -= black_bishop_value_table[i];
 			break;
+
 		case b_rook:
 			eval -= 5.0f;
 			eval -= black_rook_value_table[i];
 			break;
+
 		case b_queen:
 			eval -= 9.0f;
 			eval -= black_queen_value_table[i];
 			break;
+
 		case b_king:
 			eval -= 1'000'000.0f;
-			eval -= black_in_endgame(position) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
+			eval -= black_in_endgame(board) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
 			break;
 		}
 	}

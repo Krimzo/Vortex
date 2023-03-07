@@ -3,114 +3,157 @@
 #include "engine/engine.h"
 
 
-static const kl::color board_colors[8]
+// Helpers
+bool vtx::in_board(const int x, const int y)
 {
-	{ 240, 215, 180 },
-	{ 180, 135, 100 },
-	{ 180, 235, 240 },
-	{ 100, 180, 175 },
-	{ 205, 240, 175 },
-	{ 145, 180, 95  },
-	{ 240, 180, 175 },
-	{ 170, 100, 90  },
-};
+	return (x >= 0 && x < 8 && y >= 0 && y < 8);
+}
 
+int vtx::get_index(const int x, const int y)
+{
+	return (x + y * 8);
+}
 
-board::board()
+// Board
+vtx::board::board()
 {}
 
-void board::play_players_turn(const kl::window& window, const int clicked_index)
+vtx::board::board(const std::string& fen)
 {
-	if (position.get_win_state()) {
+	load_fen(fen);
+}
+
+vtx::board::~board()
+{}
+
+vtx::piece& vtx::board::operator[](const int index)
+{
+	return pieces[index];
+}
+
+const vtx::piece& vtx::board::operator[](const int index) const
+{
+	return pieces[index];
+}
+
+vtx::piece& vtx::board::operator()(const int x, const int y)
+{
+	return pieces[get_index(x, y)];
+}
+
+const vtx::piece& vtx::board::operator()(const int x, const int y) const
+{
+	return pieces[get_index(x, y)];
+}
+
+void vtx::board::load_fen(const std::string& fen)
+{
+	const std::vector<std::string> parts = kl::strings::split(fen, ' ');
+	if (kl::warning_check(parts.size() < 3, "Bad FEN data")) {
 		return;
 	}
 
-	if (selected_square > -1) {
-		std::vector<::position> positions = {};
-		position.pieces[selected_square].get_moves(position, selected_square, positions);
+	white_to_play = (parts[1] == "w");
 
-		for (const auto& pos : positions) {
-			if (clicked_index == pos.last_played_move.y) {
-				this->position = pos;
-
-				if (pos.get_win_state() > 0) {
-					window.set_title("Player wins!");
-				}
-				else {
-					play_engines_turn(window);
-				}
-
-				break;
-			}
+	for (int i = 0, position = 0; i < int(parts[0].size()) && position < 64; i++) {
+		if (const char lower_char = char(tolower(fen[i])); lower_char == 'p' || lower_char == 'n' || lower_char == 'b' ||
+			lower_char == 'r' || lower_char == 'q' || lower_char == 'k') {
+			pieces[position++] = piece(char(fen[i]));
 		}
-
-		selected_square = -1;
+		else if (isdigit(fen[i])) {
+			position += (fen[i] - 48);
+		}
 	}
-	else if (position.pieces[clicked_index].is_white()) {
-		selected_square = clicked_index;
+
+	for (auto& c : parts[2]) {
+		switch (c) {
+		case 'K':
+			castling_wk = true;
+			break;
+		case 'Q':
+			castling_wq = true;
+			break;
+		case 'k':
+			castling_bk = true;
+			break;
+		case 'q':
+			castling_bq = true;
+			break;
+		}
 	}
 }
 
-void board::play_engines_turn(const kl::window& window)
+void vtx::board::clear()
 {
-	if (position.get_win_state()) {
-		return;
+	for (auto& piece : pieces) {
+		piece = none;
 	}
 
-	window.set_title("Calculating..");
+	white_to_play = true;
 
-	engine engine = {};
-	position = engine.find_best_position(this->position, 5);
+	castling_wk = true;
+	castling_wq = true;
+	castling_bk = true;
+	castling_bq = true;
 
-	kl::print(std::fixed,
-		"Search Depth: ", engine.get_search_depth(),
-		" | Time: ", engine.get_search_time(),
-		" | Calls: ", engine.get_call_count(),
-		" | Eval: ", position.evaluation);
-
-	window.set_title((position.get_win_state() < 0) ? "Engine wins!" : "Player's move");
+	last_played_move = kl::int2(-1);
+	evaluation = 0.0f;
 }
 
-static void draw_square(kl::image& target, const int index, const kl::color& light_color, const kl::color& dark_color)
-{
-	const int square_size = static_cast<int>(target.width()) / 8;
-	const kl::int2 position = { index % 8, index / 8 };
-	target.draw_rectangle(position * square_size, (position + kl::int2(1)) * square_size - kl::int2(1),
-		((position.x % 2) == (position.y % 2)) ? light_color : dark_color, true);
+vtx::board vtx::board::after_playing(const int from_index, const int to_index, const char new_type) const {
+	board board = *this;
+
+	if (board[from_index].type == w_king) {
+		board.castling_wk = false;
+		board.castling_wq = false;
+	}
+
+	if (board[from_index].type == b_king) {
+		board.castling_bk = false;
+		board.castling_bq = false;
+	}
+
+	if (board[from_index].type == w_rook) {
+		if (from_index == 63) {
+			board.castling_wk = false;
+		}
+		else if (from_index == 56) {
+			board.castling_wq = false;
+		}
+	}
+
+	if (board[from_index].type == b_rook) {
+		if (from_index == 7) {
+			board.castling_bk = false;
+		}
+		else if (from_index == 0) {
+			board.castling_bq = false;
+		}
+	}
+
+	board.last_played_move.x = from_index;
+	board.last_played_move.y = to_index;
+
+	board[from_index].type = none;
+	board[to_index].type = new_type;
+
+	board.white_to_play = !white_to_play;
+	return board;
 }
 
-void board::render(kl::image& target) const
+int vtx::board::get_win_state() const
 {
-	for (int i = 0; i < 64; i++) {
-		if (i == selected_square) {
-			draw_square(target, i, board_colors[2], board_colors[3]);
+	int white_king_count = 0;
+	int black_king_count = 0;
+
+	for (auto& piece : pieces) {
+		if (piece.type == w_king) {
+			white_king_count += 1;
 		}
-		else {
-			draw_square(target, i, board_colors[0], board_colors[1]);
-		}
-	}
-
-	if (position.last_played_move.x >= 0 && position.last_played_move.y >= 0) {
-		draw_square(target, position.last_played_move.x, board_colors[4], board_colors[5]);
-		draw_square(target, position.last_played_move.y, board_colors[4], board_colors[5]);
-	}
-
-	if (selected_square >= 0) {
-		std::vector<::position> positions;
-		position.pieces[selected_square].get_moves(position, selected_square, positions);
-
-		for (const auto& pos : positions) {
-			draw_square(target, pos.last_played_move.y, board_colors[2], board_colors[3]);
+		if (piece.type == b_king) {
+			black_king_count += 1;
 		}
 	}
 
-	if (position.get_win_state()) {
-		draw_square(target, position.last_played_move.y, board_colors[6], board_colors[7]);
-	}
-
-	for (int i = 0; i < 64; i++) {
-		if (const kl::image* icon = position.pieces[i].get_icon()) {
-			target.draw_image(kl::int2(i % 8, i / 8) * static_cast<int>(target.width() / 8), *icon);
-		}
-	}
+	return (white_king_count - black_king_count);
 }

@@ -1,18 +1,48 @@
 #pragma once
 
-#include "position/position.h"
+#include "piece/piece.h"
 
 
-class board
-{
-public:
-	int selected_square = -1;
-	position position = {};
+namespace vtx {
+	inline const std::string default_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq";
+}
 
-	board();
+namespace vtx {
+	bool in_board(int x, int y);
+	int get_index(int x, int y);
+}
 
-	void play_players_turn(const kl::window& window, int clicked_index);
-	void play_engines_turn(const kl::window& window);
+namespace vtx {
+	class board
+	{
+	public:
+		piece pieces[8 * 8] = {};
+		int selected_square = -1;
 
-	void render(kl::image& target) const;
-};
+		bool white_to_play = true;
+
+		bool castling_wk = true;
+		bool castling_wq = true;
+		bool castling_bk = true;
+		bool castling_bq = true;
+
+		kl::int2 last_played_move = kl::int2(-1);
+		float evaluation = 0.0f;
+
+		board();
+		board(const std::string& fen);
+		virtual ~board();
+
+		piece& operator[](int index);
+		const piece& operator[](int index) const;
+
+		piece& operator()(int x, int y);
+		const piece& operator()(int x, int y) const;
+		
+		void load_fen(const std::string& fen);
+		void clear();
+
+		board after_playing(int from_index, int to_index, char new_type) const;
+		int get_win_state() const;
+	};
+}

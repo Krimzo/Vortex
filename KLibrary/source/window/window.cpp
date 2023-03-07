@@ -64,6 +64,7 @@ kl::window::~window()
     // Clearing window
     DestroyWindow(window_);
     UnregisterClassA(name_.c_str(), instance_);
+    window_ = nullptr;
 }
 
 kl::window::operator HWND() const

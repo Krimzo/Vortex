@@ -1,35 +1,38 @@
 #pragma once
 
-#include "piece_type.h"
 #include "klib.h"
 
 
-class position;
+namespace vtx {
+	inline const char none = 0;
 
-class piece
-{
-public:
-	piece_type type = none;
+	inline const char w_pawn = 'P';
+	inline const char w_knight = 'N';
+	inline const char w_bishop = 'B';
+	inline const char w_rook = 'R';
+	inline const char w_queen = 'Q';
+	inline const char w_king = 'K';
 
-	piece();
-	piece(piece_type type);
+	inline const char b_pawn = 'p';
+	inline const char b_knight = 'n';
+	inline const char b_bishop = 'b';
+	inline const char b_rook = 'r';
+	inline const char b_queen = 'q';
+	inline const char b_king = 'k';
+}
 
-	const kl::image* get_icon() const;
+namespace vtx {
+	class piece
+	{
+	public:
+		char type = none;
 
-	bool exists() const;
-	bool is_white(bool allow_none = false) const;
-	bool is_black(bool allow_none = false) const;
+		piece();
+		piece(char type);
 
-	void get_moves(const position& position, int piece_index, std::vector<::position>& out_positions) const;
-	void get_pawn_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
-	void get_knight_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
-	void get_bishop_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
-	void get_rook_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
-	void get_queen_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
-	void get_king_moves(const position& position, int x, int y, std::vector<::position>& out_positions) const;
+		operator char() const;
 
-	static void load_icon_textures();
-
-private:
-	static kl::image icons_[12];
-};
+		bool is_white(bool allow_none = false) const;
+		bool is_black(bool allow_none = false) const;
+	};
+}

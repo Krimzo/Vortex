@@ -78,30 +78,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KLibrary\KLibrary.vcxproj">
+      <Project>{7a2de3e8-3740-4c52-b602-f4960aaec7ed}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\board\board.cpp" />
-    <ClCompile Include="source\engine.cpp" />
-    <ClCompile Include="source\engine\evaluate.cpp" />
-    <ClCompile Include="source\engine\search.cpp" />
-    <ClCompile Include="source\piece\moves\bishop.cpp" />
-    <ClCompile Include="source\piece\moves\king.cpp" />
-    <ClCompile Include="source\piece\moves\knight.cpp" />
-    <ClCompile Include="source\piece\moves\pawn.cpp" />
-    <ClCompile Include="source\piece\moves\queen.cpp" />
-    <ClCompile Include="source\piece\moves\rook.cpp" />
+    <ClCompile Include="source\engine\engine.cpp" />
+    <ClCompile Include="source\engine\engine_evaluate.cpp" />
+    <ClCompile Include="source\engine\engine_search.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\moves\logic\bishop_logic.cpp" />
+    <ClCompile Include="source\moves\logic\king_logic.cpp" />
+    <ClCompile Include="source\moves\logic\knight_logic.cpp" />
+    <ClCompile Include="source\moves\logic\pawn_logic.cpp" />
+    <ClCompile Include="source\moves\logic\queen_logic.cpp" />
+    <ClCompile Include="source\moves\logic\rook_logic.cpp" />
+    <ClCompile Include="source\moves\moves.cpp" />
     <ClCompile Include="source\piece\piece.cpp" />
-    <ClCompile Include="source\position\position.cpp" />
+    <ClCompile Include="source\renderer\renderer.cpp" />
+    <ClCompile Include="source\vortex\vortex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\board\board.h" />
     <ClInclude Include="source\engine\engine.h" />
+    <ClInclude Include="source\moves\moves.h" />
     <ClInclude Include="source\piece\piece.h" />
-    <ClInclude Include="source\piece\piece_type.h" />
-    <ClInclude Include="source\position\position.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\KLibrary\KLibrary.vcxproj">
-      <Project>{7a2de3e8-3740-4c52-b602-f4960aaec7ed}</Project>
-    </ProjectReference>
+    <ClInclude Include="source\renderer\renderer.h" />
+    <ClInclude Include="source\vortex\vortex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
