@@ -76,9 +76,9 @@ void vtx::renderer::render(const board& board)
 	}
 
 	// Draw last played
-	if (board.last_played_move.x >= 0 && board.last_played_move.y >= 0) {
-		draw_square(board.last_played_move.x, square_size, start_top_left, last_played_light_color, last_played_dark_color);
-		draw_square(board.last_played_move.y, square_size, start_top_left, last_played_light_color, last_played_dark_color);
+	if (board.last_played_from >= 0 && board.last_played_to >= 0) {
+		draw_square(board.last_played_from, square_size, start_top_left, last_played_light_color, last_played_dark_color);
+		draw_square(board.last_played_to, square_size, start_top_left, last_played_light_color, last_played_dark_color);
 	}
 
 	// Draw possible moves
@@ -87,13 +87,13 @@ void vtx::renderer::render(const board& board)
 		get_piece_moves(board, board.selected_square, boards);
 
 		for (auto& future_board : boards) {
-			draw_square(future_board.last_played_move.y, square_size, start_top_left, selected_light_color, selected_dark_color);
+			draw_square(future_board.last_played_to, square_size, start_top_left, selected_light_color, selected_dark_color);
 		}
 	}
 
 	// Draw win states
 	if (board.get_win_state()) {
-		draw_square(board.last_played_move.y, square_size, start_top_left, game_over_light_color, game_over_dark_color);
+		draw_square(board.last_played_to, square_size, start_top_left, game_over_light_color, game_over_dark_color);
 	}
 
 	// Draw images

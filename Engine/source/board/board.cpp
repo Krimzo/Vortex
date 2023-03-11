@@ -83,46 +83,46 @@ void vtx::board::load_fen(const std::string& fen)
 	}
 }
 
-void vtx::board::clear()
+void vtx::board::reset()
 {
 	for (auto& piece : pieces) {
 		piece = none;
 	}
 
 	white_to_play = true;
-
 	castling_wk = true;
 	castling_wq = true;
 	castling_bk = true;
 	castling_bq = true;
 
-	last_played_move = kl::int2(-1);
+	selected_square = -1;
+	last_played_from = -1;
+	last_played_to = -1;
+
 	evaluation = 0.0f;
 }
 
 vtx::board vtx::board::after_playing(const int from_index, const int to_index, const char new_type) const {
 	board board = *this;
 
-	if (board[from_index].type == w_king) {
+	switch (board[from_index]) {
+	case w_king:
 		board.castling_wk = false;
 		board.castling_wq = false;
-	}
 
-	if (board[from_index].type == b_king) {
+	case b_king:
 		board.castling_bk = false;
 		board.castling_bq = false;
-	}
 
-	if (board[from_index].type == w_rook) {
+	case w_rook:
 		if (from_index == 63) {
 			board.castling_wk = false;
 		}
 		else if (from_index == 56) {
 			board.castling_wq = false;
 		}
-	}
 
-	if (board[from_index].type == b_rook) {
+	case b_rook:
 		if (from_index == 7) {
 			board.castling_bk = false;
 		}
@@ -131,8 +131,8 @@ vtx::board vtx::board::after_playing(const int from_index, const int to_index, c
 		}
 	}
 
-	board.last_played_move.x = from_index;
-	board.last_played_move.y = to_index;
+	board.last_played_from = from_index;
+	board.last_played_to = to_index;
 
 	board[from_index].type = none;
 	board[to_index].type = new_type;

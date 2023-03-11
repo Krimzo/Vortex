@@ -49,7 +49,7 @@ void vortex::play_players_turn(const int clicked_index)
 		vtx::get_piece_moves(board_, board_.selected_square, boards);
 
 		for (auto& board : boards) {
-			if (clicked_index == board.last_played_move.y) {
+			if (clicked_index == board.last_played_to) {
 				board_ = board;
 
 				if (board.get_win_state() > 0) {

@@ -17,16 +17,17 @@ namespace vtx {
 	{
 	public:
 		piece pieces[8 * 8] = {};
-		int selected_square = -1;
 
 		bool white_to_play = true;
-
 		bool castling_wk = true;
 		bool castling_wq = true;
 		bool castling_bk = true;
 		bool castling_bq = true;
 
-		kl::int2 last_played_move = kl::int2(-1);
+		int8_t selected_square = -1;
+		int8_t last_played_from = -1;
+		int8_t last_played_to = -1;
+
 		float evaluation = 0.0f;
 
 		board();
@@ -40,7 +41,7 @@ namespace vtx {
 		const piece& operator()(int x, int y) const;
 		
 		void load_fen(const std::string& fen);
-		void clear();
+		void reset();
 
 		board after_playing(int from_index, int to_index, char new_type) const;
 		int get_win_state() const;
