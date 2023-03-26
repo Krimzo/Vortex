@@ -1,2 +1,0 @@
-# Vortex
-C++ Chess Engine
