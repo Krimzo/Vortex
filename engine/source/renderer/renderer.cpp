@@ -31,18 +31,18 @@ void vtx::renderer::resize(const kl::int2& new_size)
 	};
 
 	// Load images
-	w_pawn_icon = kl::image("resource/w_pawn.png");
-	w_knight_icon = kl::image("resource/w_knight.png");
-	w_bishop_icon = kl::image("resource/w_bishop.png");
-	w_rook_icon = kl::image("resource/w_rook.png");
-	w_queen_icon = kl::image("resource/w_queen.png");
-	w_king_icon = kl::image("resource/w_king.png");
-	b_pawn_icon = kl::image("resource/b_pawn.png");
-	b_knight_icon = kl::image("resource/b_knight.png");
-	b_bishop_icon = kl::image("resource/b_bishop.png");
-	b_rook_icon = kl::image("resource/b_rook.png");
-	b_queen_icon = kl::image("resource/b_queen.png");
-	b_king_icon = kl::image("resource/b_king.png");
+	w_pawn_icon = kl::image("textures/w_pawn.png");
+	w_knight_icon = kl::image("textures/w_knight.png");
+	w_bishop_icon = kl::image("textures/w_bishop.png");
+	w_rook_icon = kl::image("textures/w_rook.png");
+	w_queen_icon = kl::image("textures/w_queen.png");
+	w_king_icon = kl::image("textures/w_king.png");
+	b_pawn_icon = kl::image("textures/b_pawn.png");
+	b_knight_icon = kl::image("textures/b_knight.png");
+	b_bishop_icon = kl::image("textures/b_bishop.png");
+	b_rook_icon = kl::image("textures/b_rook.png");
+	b_queen_icon = kl::image("textures/b_queen.png");
+	b_king_icon = kl::image("textures/b_king.png");
 
 	// Resize images
 	w_pawn_icon.resize_scaled(kl::int2(square_size));
