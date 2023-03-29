@@ -2,33 +2,31 @@
 
 
 kl::frame_buffer::frame_buffer(const int2& size)
-{
-    resize(size);
-}
+    : buffer1_(size), buffer2_(size)
+{}
 
 kl::frame_buffer::~frame_buffer()
 {}
 
 kl::int2 kl::frame_buffer::size() const
 {
-    return buffers_[0].size();
+    return buffer1_.size();
 }
 
-void kl::frame_buffer::resize(const kl::int2& new_size)
+void kl::frame_buffer::resize(const int2& size)
 {
-    for (auto& buffer : buffers_) {
-        buffer.resize(new_size);
-    }
+    buffer1_.resize(size);
+    buffer2_.resize(size);
 }
 
 kl::image* kl::frame_buffer::back_buffer()
 {
-    return !first_is_front ? (buffers_ + 0) : (buffers_ + 1);
+    return !first_is_front ? &buffer1_ : &buffer2_;
 }
 
 const kl::image& kl::frame_buffer::front_buffer() const
 {
-    return first_is_front ? buffers_[0] : buffers_[1];
+    return first_is_front ? buffer1_ : buffer2_;
 }
 
 void kl::frame_buffer::swap()

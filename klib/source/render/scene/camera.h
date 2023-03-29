@@ -10,15 +10,18 @@ namespace kl {
         float3 up_ = { 0.0f, 1.0f, 0.0f };
 
     public:
-        float3 position = {};
+        float3 origin = {};
+
         float aspect_ratio = 1.7778f;
         float field_of_view = 75.0f;
+
         float near_plane = 0.01f;
         float far_plane = 500.0f;
+
         float sensitivity = 0.1f;
         float speed = 2.0f;
 
-        color background = kl::colors::gray;
+        color background = {};
         dx::shader_view skybox = nullptr;
 
         void update_aspect_ratio(const int2& size);

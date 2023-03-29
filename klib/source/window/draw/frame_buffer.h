@@ -7,7 +7,8 @@ namespace kl {
     class frame_buffer
     {
         bool first_is_front = true;
-        image buffers_[2] = {};
+        image buffer1_ = {};
+        image buffer2_ = {};
 
     public:
         frame_buffer(const int2& size);
@@ -20,7 +21,7 @@ namespace kl {
         void operator=(const frame_buffer&&) = delete;
 
         int2 size() const;
-        void resize(const kl::int2& new_size);
+        void resize(const int2& size);
 
         image* back_buffer();
         const image& front_buffer() const;
