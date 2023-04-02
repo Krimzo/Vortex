@@ -24,7 +24,7 @@ public:
     bool parallel_search = true;
 
     vortex();
-    virtual ~vortex();
+    ~vortex();
 
     void run();
 };

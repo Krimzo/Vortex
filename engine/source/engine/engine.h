@@ -20,7 +20,7 @@ namespace vtx {
 
 	public:
 		engine();
-		virtual ~engine();
+		~engine();
 
 		int get_search_depth() const;
 		uint64_t get_call_count() const;

@@ -38,7 +38,7 @@ namespace vtx {
         kl::int2 start_top_left = {};
 
         renderer(const kl::int2& size);
-        virtual ~renderer();
+        ~renderer();
 
         operator const kl::image& () const;
 
