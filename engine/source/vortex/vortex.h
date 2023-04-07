@@ -7,12 +7,12 @@
 class vortex
 {
     kl::window window_ = { { 800, 800 }, "Vortex" };
-    vtx::renderer renderer_ = { window_.size() };
+    vtx::renderer renderer_ = { &window_ };
 
     vtx::board board_ = { vtx::default_fen };
     vtx::engine engine_ = {};
 
-    std::atomic<bool> currently_calculating = false;
+    std::atomic<bool> currently_calculating_ = false;
 
     void play_players_turn(int clicked_index);
     void play_engines_turn();
@@ -20,8 +20,9 @@ class vortex
     void on_mouse_click();
 
 public:
-    int render_fps = 60;
-    bool parallel_search = true;
+    bool white_is_bottom = true;
+    bool parallel_search = false;
+    int search_depth = 5;
 
     vortex();
     ~vortex();

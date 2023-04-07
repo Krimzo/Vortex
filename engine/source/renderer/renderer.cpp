@@ -1,169 +1,148 @@
 #include "renderer/renderer.h"
 
 
-vtx::renderer::renderer(const kl::int2& size)
-    : render_buffer_(size)
+vtx::renderer::renderer(kl::window* window)
+    : gpu_(*window)
 {
-	resize(size);
+	square_mesh_ = gpu_.create_screen_mesh();
+	render_shaders_ = gpu_.create_render_shaders(kl::files::read_string("shaders/board_render.hlsl"));
+	sampler_state_ = gpu_.create_sampler_state(true, true);
+
+	w_pawn_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_pawn.png")), nullptr);
+	b_pawn_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_pawn.png")), nullptr);
+	w_knight_icon_ = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_knight.png")), nullptr);
+	b_knight_icon_ = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_knight.png")), nullptr);
+	w_bishop_icon_ = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_bishop.png")), nullptr);
+	b_bishop_icon_ = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_bishop.png")), nullptr);
+	w_rook_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_rook.png")), nullptr);
+	b_rook_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_rook.png")), nullptr);
+	w_queen_icon_  = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_queen.png")), nullptr);
+	b_queen_icon_  = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_queen.png")), nullptr);
+	w_king_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/w_king.png")), nullptr);
+	b_king_icon_   = gpu_.create_shader_view(gpu_.create_texture(kl::image("textures/b_king.png")), nullptr);
 }
 
 vtx::renderer::~renderer()
 {}
 
-vtx::renderer::operator const kl::image& () const
-{
-    return render_buffer_.front_buffer();
-}
-
 void vtx::renderer::resize(const kl::int2& new_size)
 {
-    render_buffer_.resize(new_size);
-	auto& buffer = render_buffer_.front_buffer();
-	
-	// Square size
-	square_size = (min(buffer.width(), buffer.height()) / 8);
-
-	// Start position
-	const int full_board_size = (square_size * 8);
-	start_top_left = {
-		(buffer.width() - full_board_size) / 2,
-		(buffer.height() - full_board_size) / 2,
-	};
-
-	// Load images
-	w_pawn_icon = kl::image("textures/w_pawn.png");
-	w_knight_icon = kl::image("textures/w_knight.png");
-	w_bishop_icon = kl::image("textures/w_bishop.png");
-	w_rook_icon = kl::image("textures/w_rook.png");
-	w_queen_icon = kl::image("textures/w_queen.png");
-	w_king_icon = kl::image("textures/w_king.png");
-	b_pawn_icon = kl::image("textures/b_pawn.png");
-	b_knight_icon = kl::image("textures/b_knight.png");
-	b_bishop_icon = kl::image("textures/b_bishop.png");
-	b_rook_icon = kl::image("textures/b_rook.png");
-	b_queen_icon = kl::image("textures/b_queen.png");
-	b_king_icon = kl::image("textures/b_king.png");
-
-	// Resize images
-	w_pawn_icon.resize_scaled(kl::int2(square_size));
-	w_knight_icon.resize_scaled(kl::int2(square_size));
-	w_bishop_icon.resize_scaled(kl::int2(square_size));
-	w_rook_icon.resize_scaled(kl::int2(square_size));
-	w_queen_icon.resize_scaled(kl::int2(square_size));
-	w_king_icon.resize_scaled(kl::int2(square_size));
-	b_pawn_icon.resize_scaled(kl::int2(square_size));
-	b_knight_icon.resize_scaled(kl::int2(square_size));
-	b_bishop_icon.resize_scaled(kl::int2(square_size));
-	b_rook_icon.resize_scaled(kl::int2(square_size));
-	b_queen_icon.resize_scaled(kl::int2(square_size));
-	b_king_icon.resize_scaled(kl::int2(square_size));
+	gpu_.resize_internal(new_size);
+	gpu_.set_viewport_size(new_size);
 }
 
-void vtx::renderer::render(const board& board)
+void vtx::renderer::clear()
 {
-	// Clear
-	kl::image* buffer = render_buffer_.back_buffer();
-	buffer->fill(kl::colors::gray);
+	gpu_.clear_internal(background_color_);
+}
 
-	// Draw default colors
-	for (int i = 0; i < 64; i++) {
-		if (i == board.selected_square) {
-			draw_square(i, square_size, start_top_left, selected_light_color, selected_dark_color);
-		}
-		else {
-			draw_square(i, square_size, start_top_left, default_light_color, default_dark_color);
-		}
-	}
+void vtx::renderer::render(const board& board, const bool white_is_bottom)
+{
+	struct vs_cb {
+		kl::float4 position_data = {}; // (x_index, y_index, none, none)
+		kl::float4 viewport_data = {}; // (width, height, aspect, none)
+	};
 
-	// Draw last played
-	if (board.last_played_from >= 0 && board.last_played_to >= 0) {
-		draw_square(board.last_played_from, square_size, start_top_left, last_played_light_color, last_played_dark_color);
-		draw_square(board.last_played_to, square_size, start_top_left, last_played_light_color, last_played_dark_color);
-	}
+	struct ps_cb {
+		kl::float4 square_color = {};
+	};
 
-	// Draw possible moves
-	if (board.selected_square >= 0) {
-		std::vector<vtx::board> boards = {};
-		get_piece_moves(board, board.selected_square, boards);
+	gpu_.set_draw_type(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		for (auto& future_board : boards) {
-			draw_square(future_board.last_played_to, square_size, start_top_left, selected_light_color, selected_dark_color);
-		}
-	}
+	gpu_.bind_mesh(square_mesh_, 0, 0, sizeof(kl::vertex));
+	gpu_.bind_render_shaders(render_shaders_);
+	gpu_.bind_sampler_state_for_pixel_shader(sampler_state_, 0);
 
-	// Draw win states
-	if (board.get_win_state()) {
-		draw_square(board.last_played_to, square_size, start_top_left, game_over_light_color, game_over_dark_color);
-	}
+	const kl::float2 viewport_size = gpu_.get_viewport_size();
+	const float aspect_ratio = viewport_size.x / viewport_size.y;
 
-	// Draw images
-	for (int i = 0; i < 64; i++) {
-		if (const kl::image* icon = get_piece_icon(board[i])) {
-			const kl::int2 top_left = ((kl::int2(i % 8, i / 8) * square_size) + start_top_left);
-			buffer->draw_image(top_left, *icon);
+	for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < 8; x++) {
+			vs_cb vs_data = {};
+			vs_data.position_data = { (float) x, (float) y, 0.0f, 0.0f };
+			vs_data.viewport_data = { viewport_size, aspect_ratio, 0.0f };
+			render_shaders_.vertex_shader.update_cbuffer(vs_data);
+
+			ps_cb ps_data = {};
+			ps_data.square_color = get_square_color(board, !white_is_bottom ? 7 - x : x, white_is_bottom ? 7 - y : y);
+			render_shaders_.pixel_shader.update_cbuffer(ps_data);
+
+			const auto icon_texture = get_square_icon(board, !white_is_bottom ? 7 - x : x, white_is_bottom ? 7 - y : y);
+			gpu_.bind_shader_view_for_pixel_shader(icon_texture, 0);
+
+			gpu_.draw(6, 0);
 		}
 	}
 }
 
 void vtx::renderer::swap()
 {
-	render_buffer_.swap();
+	gpu_.swap_buffers(true);
 }
 
-void vtx::renderer::draw_square(const int index, const int square_size, const kl::int2& start_top_left, const kl::color& light_color, const kl::color& dark_color)
+kl::color vtx::renderer::get_square_color(const board& board, const int x, const int y) const
 {
-	const kl::int2 coords = { (index % 8), (index / 8) };
+	// Single index
+	const int index = x + y * 8;
 
-	kl::int2 top_left = coords * square_size;
-	top_left += start_top_left;
+	// Win states
+	if (board.get_win_state() && index == board.last_played_to) {
+		return ((x % 2) == (y % 2)) ? game_over_light_color_ : game_over_dark_color_;
+	}
 
-	kl::int2 bottom_right = (coords + kl::int2(1)) * square_size - kl::int2(1);
-	bottom_right += start_top_left;
+	// Possible moves
+	if (board.selected_square >= 0) {
+		std::vector<vtx::board> boards = {};
+		get_piece_moves(board, board.selected_square, boards);
+	
+		for (auto& future_board : boards) {
+			if (index == future_board.last_played_to) {
+				return ((x % 2) == (y % 2)) ? selected_light_color_ : selected_dark_color_;
+			}
+		}
+	}
 
-	const kl::color chosen_color = ((coords.x % 2) == (coords.y % 2)) ? light_color : dark_color;
+	// Last played
+	if (index == board.last_played_from || index == board.last_played_to) {
+		return ((x % 2) == (y % 2)) ? last_played_light_color_ : last_played_dark_color_;
+	}
 
-	kl::image* buffer = render_buffer_.back_buffer();
-	buffer->draw_rectangle(top_left, bottom_right, chosen_color, true);
+	// Default colors
+	return ((x % 2) == (y % 2)) ? default_light_color_ : default_dark_color_;
 }
 
-const kl::image* vtx::renderer::get_piece_icon(const piece& piece) const
+kl::dx::shader_view vtx::renderer::get_square_icon(const board& board, const int x, const int y) const
 {
-	switch (piece) {
+	switch (board(x, y)) {
 	case w_pawn:
-		return &w_pawn_icon;
-
+		return w_pawn_icon_;
 	case b_pawn:
-		return &b_pawn_icon;
+		return b_pawn_icon_;
 
 	case w_knight:
-		return &w_knight_icon;
-
+		return w_knight_icon_;
 	case b_knight:
-		return &b_knight_icon;
+		return b_knight_icon_;
 
 	case w_bishop:
-		return &w_bishop_icon;
-
+		return w_bishop_icon_;
 	case b_bishop:
-		return &b_bishop_icon;
+		return b_bishop_icon_;
 
 	case w_rook:
-		return &w_rook_icon;
-
+		return w_rook_icon_;
 	case b_rook:
-		return &b_rook_icon;
+		return b_rook_icon_;
 
 	case w_queen:
-		return &w_queen_icon;
-
+		return w_queen_icon_;
 	case b_queen:
-		return &b_queen_icon;
+		return b_queen_icon_;
 
 	case w_king:
-		return &w_king_icon;
-
+		return w_king_icon_;
 	case b_king:
-		return &b_king_icon;
+		return b_king_icon_;
 	}
 	return nullptr;
 }
