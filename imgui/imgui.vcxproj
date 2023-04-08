@@ -13,19 +13,19 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9609a635-c924-4414-b49d-ab53353732b8}</ProjectGuid>
-    <RootNamespace>Engine</RootNamespace>
+    <ProjectGuid>{8a1bdb3e-7595-4625-b578-8a0885d6a24d}</ProjectGuid>
+    <RootNamespace>imgui</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -43,21 +43,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>vortex</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>vortex</TargetName>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);KL_USING_IMGUI</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -70,11 +64,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);KL_USING_IMGUI</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,48 +78,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\imgui\imgui.vcxproj">
-      <Project>{8a1bdb3e-7595-4625-b578-8a0885d6a24d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\klib\klib.vcxproj">
-      <Project>{7a2de3e8-3740-4c52-b602-f4960aaec7ed}</Project>
-    </ProjectReference>
+    <ClCompile Include="source\GraphEditor.cpp" />
+    <ClCompile Include="source\ImCurveEdit.cpp" />
+    <ClCompile Include="source\ImGradient.cpp" />
+    <ClCompile Include="source\imgui.cpp" />
+    <ClCompile Include="source\ImGuizmo.cpp" />
+    <ClCompile Include="source\imgui_demo.cpp" />
+    <ClCompile Include="source\imgui_draw.cpp" />
+    <ClCompile Include="source\imgui_impl_dx11.cpp" />
+    <ClCompile Include="source\imgui_impl_win32.cpp" />
+    <ClCompile Include="source\imgui_tables.cpp" />
+    <ClCompile Include="source\imgui_widgets.cpp" />
+    <ClCompile Include="source\ImSequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource\resource.h" />
-    <ClInclude Include="source\board\board.h" />
-    <ClInclude Include="source\engine\engine.h" />
-    <ClInclude Include="source\moves\moves.h" />
-    <ClInclude Include="source\piece\piece.h" />
-    <ClInclude Include="source\renderer\board_renderer.h" />
-    <ClInclude Include="source\renderer\gui_renderer.h" />
-    <ClInclude Include="source\vortex\search_info.h" />
-    <ClInclude Include="source\vortex\vortex.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\board\board.cpp" />
-    <ClCompile Include="source\engine\engine.cpp" />
-    <ClCompile Include="source\engine\engine_evaluate.cpp" />
-    <ClCompile Include="source\engine\engine_search.cpp" />
-    <ClCompile Include="source\logic\bishop_logic.cpp" />
-    <ClCompile Include="source\logic\king_logic.cpp" />
-    <ClCompile Include="source\logic\knight_logic.cpp" />
-    <ClCompile Include="source\logic\pawn_logic.cpp" />
-    <ClCompile Include="source\logic\queen_logic.cpp" />
-    <ClCompile Include="source\logic\rook_logic.cpp" />
-    <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\moves\moves.cpp" />
-    <ClCompile Include="source\piece\piece.cpp" />
-    <ClCompile Include="source\renderer\board_renderer.cpp" />
-    <ClCompile Include="source\renderer\gui_renderer.cpp" />
-    <ClCompile Include="source\vortex\search_info.cpp" />
-    <ClCompile Include="source\vortex\vortex.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resource\engine.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\textures\vortex.ico" />
+    <ClInclude Include="source\GraphEditor.h" />
+    <ClInclude Include="source\imconfig.h" />
+    <ClInclude Include="source\ImCurveEdit.h" />
+    <ClInclude Include="source\ImGradient.h" />
+    <ClInclude Include="source\imgui.h" />
+    <ClInclude Include="source\ImGuizmo.h" />
+    <ClInclude Include="source\imgui_impl_dx11.h" />
+    <ClInclude Include="source\imgui_impl_win32.h" />
+    <ClInclude Include="source\imgui_internal.h" />
+    <ClInclude Include="source\ImSequencer.h" />
+    <ClInclude Include="source\imstb_rectpack.h" />
+    <ClInclude Include="source\imstb_textedit.h" />
+    <ClInclude Include="source\imstb_truetype.h" />
+    <ClInclude Include="source\ImZoomSlider.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,7 +15,7 @@ vs_out v_shader(const float3 position : KL_Position, const float2 textur : KL_Te
 {
     float2 altered_position = (position.xy + 1) * 0.0625;
     altered_position = altered_position * 2 - 1;
-    altered_position += position_data.xy / 4;
+    altered_position += position_data.xy * 0.25;
 
     if (viewport_data.y > viewport_data.x) {
         altered_position.y *= viewport_data.z;

@@ -3,5 +3,6 @@
 
 int main()
 {
-	vortex().run();
+	auto app = vortex();
+	app.run();
 }

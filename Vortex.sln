@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine", "engine\engine.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klib", "klib\klib.vcxproj", "{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{8A1BDB3E-7595-4625-B578-8A0885D6A24D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}.Debug|x64.Build.0 = Debug|x64
 		{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}.Release|x64.ActiveCfg = Release|x64
 		{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}.Release|x64.Build.0 = Release|x64
+		{8A1BDB3E-7595-4625-B578-8A0885D6A24D}.Debug|x64.ActiveCfg = Debug|x64
+		{8A1BDB3E-7595-4625-B578-8A0885D6A24D}.Debug|x64.Build.0 = Debug|x64
+		{8A1BDB3E-7595-4625-B578-8A0885D6A24D}.Release|x64.ActiveCfg = Release|x64
+		{8A1BDB3E-7595-4625-B578-8A0885D6A24D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

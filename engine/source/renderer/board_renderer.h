@@ -3,10 +3,15 @@
 #include "moves/moves.h"
 
 
+class vortex;
+
 namespace vtx {
-    class renderer
+    class board_renderer
     {
-        kl::gpu gpu_ = {};
+        vortex* vortex_ = nullptr;
+
+        kl::int2 render_size_ = {};
+        kl::texture render_texture_ = { nullptr };
 
         kl::dx::buffer square_mesh_ = nullptr;
         kl::render_shaders render_shaders_ = {};
@@ -25,27 +30,28 @@ namespace vtx {
         kl::dx::shader_view   w_king_icon_ = nullptr;
         kl::dx::shader_view   b_king_icon_ = nullptr;
 
-        kl::color        background_color_ = {  32,  32,  32 };
-        kl::color     default_light_color_ = { 240, 215, 180 };
-        kl::color      default_dark_color_ = { 180, 135, 100 };
-        kl::color    selected_light_color_ = { 180, 235, 240 };
-        kl::color     selected_dark_color_ = { 100, 180, 175 };
-        kl::color last_played_light_color_ = { 205, 240, 175 };
-        kl::color  last_played_dark_color_ = { 145, 180,  95 };
-        kl::color   game_over_light_color_ = { 240, 180, 175 };
-        kl::color    game_over_dark_color_ = { 170, 100,  90 };
-
         kl::color get_square_color(const board& board, int x, int y) const;
         kl::dx::shader_view get_square_icon(const board& board, int x, int y) const;
 
     public:
-        renderer(kl::window* window);
-        ~renderer();
+        friend class vortex;
+        friend class gui_renderer;
+
+        kl::float4     default_light_color_ = kl::color(240, 215, 180);
+        kl::float4      default_dark_color_ = kl::color(180, 135, 100);
+        kl::float4    selected_light_color_ = kl::color(180, 235, 240);
+        kl::float4     selected_dark_color_ = kl::color(100, 180, 175);
+        kl::float4 last_played_light_color_ = kl::color(205, 240, 175);
+        kl::float4  last_played_dark_color_ = kl::color(145, 180,  95);
+        kl::float4   game_over_light_color_ = kl::color(240, 180, 175);
+        kl::float4    game_over_dark_color_ = kl::color(170, 100,  90);
+
+        board_renderer(vortex* vortex);
+        ~board_renderer();
 
         void resize(const kl::int2& new_size);
-
-        void clear();
         void render(const board& board, bool white_is_bottom);
-        void swap();
+
+        void reset_colors();
     };
 }
