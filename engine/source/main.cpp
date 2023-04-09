@@ -5,4 +5,5 @@ int main()
 {
 	auto app = vortex();
 	app.run();
+	exit(0);
 }

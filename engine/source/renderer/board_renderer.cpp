@@ -25,10 +25,31 @@ vtx::board_renderer::board_renderer(vortex* vortex)
 	b_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_queen.png")), nullptr);
 	w_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_king.png")), nullptr);
 	b_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_king.png")), nullptr);
+
+	setup_alpha_blending();
 }
 
 vtx::board_renderer::~board_renderer()
 {}
+
+void vtx::board_renderer::setup_alpha_blending()
+{
+	D3D11_BLEND_DESC blend_state_descriptor = {};
+	blend_state_descriptor.RenderTarget[0].BlendEnable = true;
+	blend_state_descriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blend_state_descriptor.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blend_state_descriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blend_state_descriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blend_state_descriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blend_state_descriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blend_state_descriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	ComPtr<ID3D11BlendState> blend_state = nullptr;
+	vortex_->gpu_.device()->CreateBlendState(&blend_state_descriptor, &blend_state);
+	if (!kl::warning_check(!blend_state, "Failed to create blend state")) {
+		vortex_->gpu_.context()->OMSetBlendState(blend_state.Get(), nullptr, 0xFFFFFFFF);
+	}
+}
 
 void vtx::board_renderer::resize(const kl::int2& new_size)
 {
@@ -55,8 +76,9 @@ void vtx::board_renderer::resize(const kl::int2& new_size)
 void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 {
 	struct vs_cb {
-		kl::float4 position_data = {}; // (x_index, y_index, none, none)
-		kl::float4 viewport_data = {}; // (width, height, aspect, none)
+		kl::float4   position_data = {}; // (x_index, y_index, none, none)
+		kl::float4   viewport_data = {}; // (width, height, aspect, none)
+		kl::float4 offset_position = {}; // (x, y, exists?, none)
 	};
 
 	struct ps_cb {
@@ -78,8 +100,11 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 	const float aspect_ratio = (float) render_size_.x / render_size_.y;
 	const UINT vertex_count = gpu.get_mesh_vertex_count(square_mesh_, sizeof(kl::vertex));
 
+	// Render all
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
+			const int i = (!white_is_bottom ? 7 - x : x) + (white_is_bottom ? 7 - y : y) * 8;
+
 			vs_cb vs_data = {};
 			vs_data.position_data = { (float) x, (float) y, 0.0f, 0.0f };
 			vs_data.viewport_data = { render_size_, aspect_ratio, 0.0f };
@@ -87,6 +112,7 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 
 			ps_cb ps_data = {};
 			ps_data.square_color = get_square_color(board, !white_is_bottom ? 7 - x : x, white_is_bottom ? 7 - y : y);
+			ps_data.square_color.w = (i == vortex_->board_.selected_square) ? 0.0f : 2.0f;
 			render_shaders_.pixel_shader.update_cbuffer(ps_data);
 
 			const auto icon_texture = get_square_icon(board, !white_is_bottom ? 7 - x : x, white_is_bottom ? 7 - y : y);
@@ -94,6 +120,28 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 
 			gpu.draw(vertex_count, 0);
 		}
+	}
+
+	// Rendering moving piece
+	if (vortex_->board_.selected_square >= 0) {
+		const int x = vortex_->board_.selected_square % 8;
+		const int y = vortex_->board_.selected_square / 8;
+
+		vs_cb vs_data = {};
+		vs_data.position_data = { (float) x, (float) y, 0.0f, 0.0f };
+		vs_data.viewport_data = { render_size_, aspect_ratio, 0.0f };
+		vs_data.offset_position = { vortex_->mouse_ndc_, 1.0f, 0.0f };
+		render_shaders_.vertex_shader.update_cbuffer(vs_data);
+
+		ps_cb ps_data = {};
+		ps_data.square_color = get_square_color(board, x, y);
+		ps_data.square_color.w = 1.0f;
+		render_shaders_.pixel_shader.update_cbuffer(ps_data);
+
+		const auto icon_texture = get_square_icon(board, x, y);
+		gpu.bind_shader_view_for_pixel_shader(icon_texture, 0);
+
+		gpu.draw(vertex_count, 0);
 	}
 }
 

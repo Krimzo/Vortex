@@ -9,15 +9,22 @@
 vtx::gui_renderer::gui_renderer(vortex* vortex)
     : vortex_(vortex)
 {
+	// Init
 	ImGui::CreateContext();
 	ImGui_ImplWin32_Init(vortex_->window_);
 	ImGui_ImplDX11_Init(vortex_->gpu_.device().Get(), vortex_->gpu_.context().Get());
-
-	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui::StyleColorsDark();
 
+	// Refs
+	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
 
+	// IO setup
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
+	io.Fonts->AddFontFromFileTTF("fonts/JetBrainsMono.ttf", 16);
+
+	// Style sizes
 	style.WindowPadding = ImVec2(15.0f, 15.0f);
 	style.WindowRounding = 2.0f;
 	style.FramePadding = ImVec2(5.0f, 5.0f);
@@ -35,6 +42,7 @@ vtx::gui_renderer::gui_renderer(vortex* vortex)
 	style.ChildBorderSize = 1.0f;
 	style.ChildRounding = 5.0f;
 
+	// Style colors
 	const ImVec4 colorNone = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
 	const ImVec4 colorDark = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	const ImVec4 colorMid = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -156,6 +164,11 @@ void vtx::gui_renderer::display_log_window()
 			}
 			ImGui::EndTable();
 		}
+
+		if (ImGui::Button("Reset board", { -1.0f, 0.0f })) {
+			vortex_->board_ = { default_fen };
+			vortex_->search_infos_.clear();
+		}
 	}
 	ImGui::End();
 }
@@ -210,7 +223,10 @@ void vtx::gui_renderer::display_info_window()
 		ImGui::ColorEdit3("Last played dark", vortex_->board_renderer_.last_played_dark_color_);
 		ImGui::ColorEdit3("Game over light", vortex_->board_renderer_.game_over_light_color_);
 		ImGui::ColorEdit3("Game over dark", vortex_->board_renderer_.game_over_dark_color_);
-		if (ImGui::Button("Reset colors")) vortex_->board_renderer_.reset_colors();
+
+		if (ImGui::Button("Reset colors", { -1.0f, 0.0f })) {
+			vortex_->board_renderer_.reset_colors();
+		}
 	}
 	ImGui::End();
 }

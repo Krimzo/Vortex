@@ -1,5 +1,6 @@
 #pragma once
 
+#include "input/input_handler.h"
 #include "renderer/board_renderer.h"
 #include "renderer/gui_renderer.h"
 #include "vortex/search_info.h"
@@ -11,22 +12,21 @@ class vortex
     kl::window window_ = { { 1600, 900 }, "Vortex" };
     kl::gpu gpu_ = { (HWND) window_ };
     
+    vtx::input_handler input_handler_ = { this };
     vtx::board_renderer board_renderer_ = { this };
     vtx::gui_renderer gui_renderer_ = { this };
 
     vtx::board board_ = { vtx::default_fen };
     vtx::engine engine_ = {};
 
-    std::atomic<bool> currently_calculating_ = false;
+    kl::float2 mouse_ndc_ = {};
     std::vector<search_info> search_infos_ = {};
 
-    void play_players_turn(int clicked_index);
+    bool play_players_turn(int destination_index);
     void play_engines_turn();
 
-    void on_mouse_click();
-    kl::int2 get_clicked_square() const;
-
 public:
+    friend class vtx::input_handler;
     friend class vtx::board_renderer;
     friend class vtx::gui_renderer;
 

@@ -19,7 +19,7 @@ namespace vtx {
         void display_info_window();
 
     public:
-        friend class vortex;
+        friend class input_handler;
 
         gui_renderer(vortex* vortex);
         ~gui_renderer();

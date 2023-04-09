@@ -30,11 +30,12 @@ namespace vtx {
         kl::dx::shader_view   w_king_icon_ = nullptr;
         kl::dx::shader_view   b_king_icon_ = nullptr;
 
+        void setup_alpha_blending();
+
         kl::color get_square_color(const board& board, int x, int y) const;
         kl::dx::shader_view get_square_icon(const board& board, int x, int y) const;
 
     public:
-        friend class vortex;
         friend class gui_renderer;
 
         kl::float4     default_light_color_ = kl::color(240, 215, 180);

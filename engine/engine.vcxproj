@@ -95,6 +95,7 @@
     <ClInclude Include="resource\resource.h" />
     <ClInclude Include="source\board\board.h" />
     <ClInclude Include="source\engine\engine.h" />
+    <ClInclude Include="source\input\input_handler.h" />
     <ClInclude Include="source\moves\moves.h" />
     <ClInclude Include="source\piece\piece.h" />
     <ClInclude Include="source\renderer\board_renderer.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="source\engine\engine.cpp" />
     <ClCompile Include="source\engine\engine_evaluate.cpp" />
     <ClCompile Include="source\engine\engine_search.cpp" />
+    <ClCompile Include="source\input\input_handler.cpp" />
     <ClCompile Include="source\logic\bishop_logic.cpp" />
     <ClCompile Include="source\logic\king_logic.cpp" />
     <ClCompile Include="source\logic\knight_logic.cpp" />
