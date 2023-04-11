@@ -10,8 +10,9 @@ vtx::board_renderer::board_renderer(vortex* vortex)
 	render_texture_.gpu = &gpu;
 
 	square_mesh_ = gpu.create_screen_mesh();
-	render_shaders_ = gpu.create_render_shaders(kl::files::read_string("shaders/board_render.hlsl"));
+	render_shaders_ = gpu.create_render_shaders(kl::read_file_string("shaders/board_render.hlsl"));
 	sampler_state_ = gpu.create_sampler_state(true, true);
+	gpu.bind_blend_state(gpu.create_blend_state(true));
 
 	w_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_pawn.png")), nullptr);
 	b_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_pawn.png")), nullptr);
@@ -25,31 +26,10 @@ vtx::board_renderer::board_renderer(vortex* vortex)
 	b_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_queen.png")), nullptr);
 	w_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_king.png")), nullptr);
 	b_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_king.png")), nullptr);
-
-	setup_alpha_blending();
 }
 
 vtx::board_renderer::~board_renderer()
 {}
-
-void vtx::board_renderer::setup_alpha_blending()
-{
-	D3D11_BLEND_DESC blend_state_descriptor = {};
-	blend_state_descriptor.RenderTarget[0].BlendEnable = true;
-	blend_state_descriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blend_state_descriptor.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blend_state_descriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blend_state_descriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-	blend_state_descriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-	blend_state_descriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blend_state_descriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	ComPtr<ID3D11BlendState> blend_state = nullptr;
-	vortex_->gpu_.device()->CreateBlendState(&blend_state_descriptor, &blend_state);
-	if (!kl::warning_check(!blend_state, "Failed to create blend state")) {
-		vortex_->gpu_.context()->OMSetBlendState(blend_state.Get(), nullptr, 0xFFFFFFFF);
-	}
-}
 
 void vtx::board_renderer::resize(const kl::int2& new_size)
 {
@@ -92,13 +72,13 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 	gpu.clear_target_view(render_texture_.target_view, vortex_->background);
 
 	gpu.set_draw_type(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gpu.bind_mesh(square_mesh_, 0, 0, sizeof(kl::vertex));
+	gpu.bind_vertex_buffer(square_mesh_, 0, 0, sizeof(kl::vertex));
 
 	gpu.bind_render_shaders(render_shaders_);
 	gpu.bind_sampler_state_for_pixel_shader(sampler_state_, 0);
 
 	const float aspect_ratio = (float) render_size_.x / render_size_.y;
-	const UINT vertex_count = gpu.get_mesh_vertex_count(square_mesh_, sizeof(kl::vertex));
+	const UINT vertex_count = gpu.get_vertex_buffer_size(square_mesh_, sizeof(kl::vertex));
 
 	// Render all
 	for (int y = 0; y < 8; y++) {

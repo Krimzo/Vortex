@@ -154,17 +154,17 @@ void kl::gpu::resize_internal(const int2& size)
     target_view_ = create_target_view(render_texture, nullptr);
 
     // Depth buffer
-    dx::texture_descriptor depth_descriptor = {};
-    depth_descriptor.Width = size.x;
-    depth_descriptor.Height = size.y;
-    depth_descriptor.MipLevels = 1;
-    depth_descriptor.ArraySize = 1;
-    depth_descriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depth_descriptor.SampleDesc.Count = 1;
-    depth_descriptor.Usage = D3D11_USAGE_DEFAULT;
-    depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    dx::texture_descriptor descriptor = {};
+    descriptor.Width = size.x;
+    descriptor.Height = size.y;
+    descriptor.MipLevels = 1;
+    descriptor.ArraySize = 1;
+    descriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descriptor.SampleDesc.Count = 1;
+    descriptor.Usage = D3D11_USAGE_DEFAULT;
+    descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-    auto depth_texture = create_texture(&depth_descriptor, nullptr);
+    auto depth_texture = create_texture(&descriptor, nullptr);
     depth_view_ = create_depth_view(depth_texture, nullptr);
 
     // Rebind

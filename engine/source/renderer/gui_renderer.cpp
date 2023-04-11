@@ -165,9 +165,12 @@ void vtx::gui_renderer::display_log_window()
 			ImGui::EndTable();
 		}
 
-		if (ImGui::Button("Reset board", { -1.0f, 0.0f })) {
-			vortex_->board_ = { default_fen };
-			vortex_->search_infos_.clear();
+		if (vortex_->input_handler_.lock_.try_lock()) {
+			if (ImGui::Button("Reset board", { -1.0f, 0.0f })) {
+				vortex_->board_ = { default_fen };
+				vortex_->search_infos_.clear();
+			}
+			vortex_->input_handler_.lock_.unlock();
 		}
 	}
 	ImGui::End();

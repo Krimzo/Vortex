@@ -48,7 +48,7 @@ const vtx::piece& vtx::board::operator()(const int x, const int y) const
 
 void vtx::board::load_fen(const std::string& fen)
 {
-	const std::vector<std::string> parts = kl::strings::split(fen, ' ');
+	const std::vector<std::string> parts = kl::split_string(fen, ' ');
 	if (kl::warning_check(parts.size() < 3, "Bad FEN data")) {
 		return;
 	}

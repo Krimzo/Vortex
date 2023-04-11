@@ -21,6 +21,8 @@ namespace vtx {
         kl::int2 get_mouse_square() const;
 
     public:
+        friend class gui_renderer;
+
         input_handler(vortex* vortex);
         ~input_handler();
     };
