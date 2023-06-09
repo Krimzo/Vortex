@@ -23,9 +23,6 @@ vtx::board::board(const std::string& fen)
 	load_fen(fen);
 }
 
-vtx::board::~board()
-{}
-
 vtx::piece& vtx::board::operator[](const int index)
 {
 	return pieces[index];

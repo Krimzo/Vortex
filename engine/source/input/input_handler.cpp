@@ -11,9 +11,6 @@ vtx::input_handler::input_handler(vortex* vortex)
 	vortex_->window_.mouse.left.on_release.push_back([&] { if (vortex_->gui_renderer_.is_viewport_focused_ && vortex_->board_.selected_square >= 0) on_mouse_release(); });
 }
 
-vtx::input_handler::~input_handler()
-{}
-
 void vtx::input_handler::on_mouse_click()
 {
 	const kl::int2 clicked_square = get_mouse_square();

@@ -11,5 +11,4 @@ struct search_info
     float eval = 0.0f;
 
     search_info();
-    ~search_info();
 };

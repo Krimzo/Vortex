@@ -37,7 +37,6 @@ public:
     int search_depth = 5;
 
     vortex();
-    ~vortex();
 
     void run();
 };

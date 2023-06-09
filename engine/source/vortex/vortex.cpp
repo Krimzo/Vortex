@@ -4,7 +4,7 @@
 vortex::vortex()
 {
 	// Window resize
-	window_.on_resize.push_back([&](kl::int2 new_size)
+	window_.on_resize.emplace_back([&](const kl::int2 new_size)
 	{
 		gpu_.resize_internal(new_size);
 		gpu_.set_viewport_size(new_size);
@@ -18,9 +18,6 @@ vortex::vortex()
 	kl::console::set_enabled(false);
 #endif
 }
-
-vortex::~vortex()
-{}
 
 void vortex::run()
 {
@@ -38,9 +35,9 @@ bool vortex::play_players_turn(const int destination_index)
 	}
 	
 	std::vector<vtx::board> boards = {};
-	vtx::get_piece_moves(board_, board_.selected_square, boards);
+	get_piece_moves(board_, board_.selected_square, boards);
 
-	for (auto& board : boards) {
+	for (const auto& board : boards) {
 		if (destination_index == board.last_played_to) {
 			board_ = board;
 			return true;

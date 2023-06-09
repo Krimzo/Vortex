@@ -1,7 +1,7 @@
 #include "engine/engine.h"
 
 
-vtx::board vtx::engine::find_best_board_init(board& board, const int search_depth, const bool parallel)
+vtx::board vtx::engine::find_best_board_init(board& board, const uint8_t search_depth, const bool parallel)
 {
 	// Reset
 	call_count_ = 0;
@@ -59,7 +59,7 @@ vtx::board vtx::engine::find_best_board(board& board, const int depth, float alp
 	return best_position;
 }
 
-vtx::board vtx::engine::find_best_board_parallel(board& board, std::atomic<int> depth, std::atomic<float> alpha, std::atomic<float> beta)
+vtx::board vtx::engine::find_best_board_parallel(board& board, const int depth, std::atomic<float> alpha, std::atomic<float> beta)
 {
 	// Evaluate
 	call_count_ += 1;

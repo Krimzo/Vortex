@@ -28,9 +28,6 @@ vtx::board_renderer::board_renderer(vortex* vortex)
 	b_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_king.png")), nullptr);
 }
 
-vtx::board_renderer::~board_renderer()
-{}
-
 void vtx::board_renderer::resize(const kl::int2& new_size)
 {
 	if (new_size.x <= 0 || new_size.y <= 0 || new_size == render_size_) {
@@ -65,7 +62,7 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 		kl::float4 square_color = {};
 	};
 
-	kl::gpu& gpu = vortex_->gpu_;
+	const kl::gpu& gpu = vortex_->gpu_;
 
 	gpu.bind_target_depth_views({ render_texture_.target_view }, nullptr);
 	gpu.set_viewport_size(render_size_);
@@ -77,7 +74,7 @@ void vtx::board_renderer::render(const board& board, const bool white_is_bottom)
 	gpu.bind_render_shaders(render_shaders_);
 	gpu.bind_sampler_state_for_pixel_shader(sampler_state_, 0);
 
-	const float aspect_ratio = (float) render_size_.x / render_size_.y;
+	const float aspect_ratio = (float) render_size_.x / (float) render_size_.y;
 	const UINT vertex_count = gpu.get_vertex_buffer_size(square_mesh_, sizeof(kl::vertex));
 
 	// Render all
@@ -140,7 +137,7 @@ kl::color vtx::board_renderer::get_square_color(const board& board, const int x,
 		std::vector<vtx::board> boards = {};
 		get_piece_moves(board, board.selected_square, boards);
 	
-		for (auto& future_board : boards) {
+		for (const auto& future_board : boards) {
 			if (index == future_board.last_played_to) {
 				return ((x % 2) == (y % 2)) ? selected_light_color_ : selected_dark_color_;
 			}
@@ -149,11 +146,11 @@ kl::color vtx::board_renderer::get_square_color(const board& board, const int x,
 
 	// Last played
 	if (index == board.last_played_from || index == board.last_played_to) {
-		return ((x % 2) == (y % 2)) ? last_played_light_color_ : last_played_dark_color_;
+		return x % 2 == y % 2 ? last_played_light_color_ : last_played_dark_color_;
 	}
 
 	// Default colors
-	return ((x % 2) == (y % 2)) ? default_light_color_ : default_dark_color_;
+	return x % 2 == y % 2 ? default_light_color_ : default_dark_color_;
 }
 
 kl::dx::shader_view vtx::board_renderer::get_square_icon(const board& board, const int x, const int y) const

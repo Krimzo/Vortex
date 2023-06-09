@@ -11,7 +11,7 @@ namespace vtx {
 		float search_time_ = 0.0f;
 
 		board find_best_board(board& board, int depth, float alpha, float beta);
-		board find_best_board_parallel(board& board, std::atomic<int> depth, std::atomic<float> alpha, std::atomic<float> beta);
+		board find_best_board_parallel(board& board, int depth, std::atomic<float> alpha, std::atomic<float> beta);
 
 		bool piece_type_check(const board& board, const piece& piece);
 
@@ -20,13 +20,12 @@ namespace vtx {
 
 	public:
 		engine();
-		~engine();
 
 		int get_search_depth() const;
 		uint64_t get_call_count() const;
 		float get_search_time() const;
 
-		void static_evaluation(board& position);
-		board find_best_board_init(board& position, int search_depth, bool parallel);
+		void static_evaluation(board& board);
+		board find_best_board_init(board& board, uint8_t search_depth, bool parallel);
 	};
 }

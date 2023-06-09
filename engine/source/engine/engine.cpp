@@ -4,9 +4,6 @@
 vtx::engine::engine()
 {}
 
-vtx::engine::~engine()
-{}
-
 int vtx::engine::get_search_depth() const
 {
 	return search_depth_;

@@ -32,7 +32,6 @@ namespace vtx {
 
 		board();
 		board(const std::string& fen);
-		~board();
 
 		piece& operator[](int index);
 		const piece& operator[](int index) const;

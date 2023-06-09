@@ -3,6 +3,3 @@
 
 search_info::search_info()
 {}
-
-search_info::~search_info()
-{}

@@ -46,7 +46,6 @@ namespace vtx {
         kl::float4    game_over_dark_color_ = kl::color(170, 100,  90);
 
         board_renderer(vortex* vortex);
-        ~board_renderer();
 
         void resize(const kl::int2& new_size);
         void render(const board& board, bool white_is_bottom);

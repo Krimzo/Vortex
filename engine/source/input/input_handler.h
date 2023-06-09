@@ -24,6 +24,5 @@ namespace vtx {
         friend class gui_renderer;
 
         input_handler(vortex* vortex);
-        ~input_handler();
     };
 }
