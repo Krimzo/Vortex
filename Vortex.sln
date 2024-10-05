@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine", "engine\engine.vcxproj", "{9609A635-C924-4414-B49D-AB53353732B8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vortex", "vortex\vortex.vcxproj", "{9609A635-C924-4414-B49D-AB53353732B8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klib", "klib\klib.vcxproj", "{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klibrary", "klibrary\klibrary.vcxproj", "{7A2DE3E8-3740-4C52-B602-F4960AAEC7ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{8A1BDB3E-7595-4625-B578-8A0885D6A24D}"
 EndProject

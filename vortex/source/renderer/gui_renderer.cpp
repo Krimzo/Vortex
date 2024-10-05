@@ -2,9 +2,6 @@
 
 #include "vortex/vortex.h"
 
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx11.h>
-
 
 vtx::gui_renderer::gui_renderer(vortex* vortex)
     : vortex_(vortex)
@@ -22,7 +19,7 @@ vtx::gui_renderer::gui_renderer(vortex* vortex)
 	// IO setup
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
-	io.Fonts->AddFontFromFileTTF("fonts/JetBrainsMono.ttf", 16);
+	io.Fonts->AddFontFromFileTTF("resource/fonts/JetBrainsMono.ttf", 16);
 
 	// Style sizes
 	style.WindowPadding = ImVec2(15.0f, 15.0f);

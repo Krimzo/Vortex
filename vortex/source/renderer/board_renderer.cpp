@@ -10,22 +10,22 @@ vtx::board_renderer::board_renderer(vortex* vortex)
 	render_texture_.gpu = &gpu;
 
 	square_mesh_ = gpu.create_screen_mesh();
-	render_shaders_ = gpu.create_render_shaders(kl::read_file_string("shaders/board_render.hlsl"));
+	render_shaders_ = gpu.create_render_shaders(kl::read_file_string("resource/shaders/board_render.hlsl"));
 	sampler_state_ = gpu.create_sampler_state(true, true);
 	gpu.bind_blend_state(gpu.create_blend_state(true));
 
-	w_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_pawn.png")), nullptr);
-	b_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_pawn.png")), nullptr);
-	w_knight_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_knight.png")), nullptr);
-	b_knight_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_knight.png")), nullptr);
-	w_bishop_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_bishop.png")), nullptr);
-	b_bishop_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_bishop.png")), nullptr);
-	w_rook_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_rook.png")), nullptr);
-	b_rook_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_rook.png")), nullptr);
-	w_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_queen.png")), nullptr);
-	b_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_queen.png")), nullptr);
-	w_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/w_king.png")), nullptr);
-	b_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("textures/b_king.png")), nullptr);
+	w_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_pawn.png")), nullptr);
+	b_pawn_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_pawn.png")), nullptr);
+	w_knight_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_knight.png")), nullptr);
+	b_knight_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_knight.png")), nullptr);
+	w_bishop_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_bishop.png")), nullptr);
+	b_bishop_icon_ = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_bishop.png")), nullptr);
+	w_rook_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_rook.png")), nullptr);
+	b_rook_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_rook.png")), nullptr);
+	w_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_queen.png")), nullptr);
+	b_queen_icon_  = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_queen.png")), nullptr);
+	w_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/w_king.png")), nullptr);
+	b_king_icon_   = gpu.create_shader_view(gpu.create_texture(kl::image("resource/textures/b_king.png")), nullptr);
 }
 
 void vtx::board_renderer::resize(const kl::int2& new_size)

@@ -14,7 +14,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{9609a635-c924-4414-b49d-ab53353732b8}</ProjectGuid>
-    <RootNamespace>Engine</RootNamespace>
+    <RootNamespace>vortex</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -57,12 +57,15 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)resource\" "$(LocalDebuggerWorkingDirectory)resource\" /S /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -74,7 +77,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,12 +85,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)resource\" "$(LocalDebuggerWorkingDirectory)resource\" /S /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{8a1bdb3e-7595-4625-b578-8a0885d6a24d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\klib\klib.vcxproj">
+    <ProjectReference Include="..\klibrary\klibrary.vcxproj">
       <Project>{7a2de3e8-3740-4c52-b602-f4960aaec7ed}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -124,10 +130,10 @@
     <ClCompile Include="source\vortex\vortex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resource\engine.rc" />
+    <ResourceCompile Include="resource\icon\engine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\textures\vortex.ico" />
+    <Image Include="resource\icon\vortex.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

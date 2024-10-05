@@ -12,7 +12,7 @@ vortex::vortex()
 
 	// Final
 	window_.maximize();
-	window_.set_icon("textures/vortex.ico");
+	window_.set_icon("icon/vortex.ico");
 
 #ifdef NDEBUG
 	kl::console::set_enabled(false);
