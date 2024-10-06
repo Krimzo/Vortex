@@ -5,21 +5,17 @@
 
 
 namespace kl {
-    class material
+    struct Material
     {
-    public:
-        float4 color = colors::white;
-
-        ref<texture> color_map = nullptr;
-        ref<texture> normal_map = nullptr;
-        ref<texture> roughness_map = nullptr;
-
         float texture_blend = 0.0f;
         float reflection_factor = 0.0f;
         float refraction_factor = 0.0f;
-        float refraction_index = 0.0f;
+        float refraction_index = 1.0f;
 
-        material();
-        ~material();
+        Float4 color = colors::WHITE;
+
+        Ref<Texture> color_map;
+        Ref<Texture> normal_map;
+        Ref<Texture> roughness_map;
     };
 }

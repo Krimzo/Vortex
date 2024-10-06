@@ -3,38 +3,26 @@
 #include "math/math.h"
 
 
-// Class
 namespace kl {
-    inline static constexpr int encryptor_key_count = 5;
-    using encrpytion_key = std::vector<byte>;
-}
-
-namespace kl {
-    class encryptor : public std::array<encrpytion_key, encryptor_key_count>
+    struct Encryptor
     {
-        bool key_size_exists(size_t size) const;
+        std::vector<std::vector<byte>> keys;
 
-    public:
-        encryptor();
+        Encryptor(int key_count = 5);
 
-        void encrypt(void* data, size_t byte_size) const;
-        void decrypt(void* data, size_t byte_size) const;
+        void run_pass(void* data, uint64_t byte_size) const;
 
-        template <typename T>
-        void encrypt(T& obj) const
+        template<typename T>
+        void run_pass(T* object) const
         {
-            encrypt(&obj, sizeof(T));
+            run_pass(object, sizeof(T));
         }
 
-        template <typename T>
-        void decrypt(T& obj) const
-        {
-            decrypt(&obj, sizeof(T));
-        }
+    private:
+        bool key_size_exists(uint64_t size) const;
     };
 }
 
-// Format
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const encryptor& encryptor);
+    std::ostream& operator<<(std::ostream& stream, const Encryptor& encryptor);
 }

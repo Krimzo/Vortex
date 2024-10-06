@@ -1,19 +1,34 @@
 #pragma once
 
-#include "math/vector/float4.h"
+#include "math/vector/vector4.h"
 
 
 namespace kl {
-    struct sphere
+    template<typename T = float>
+    struct Sphere
     {
-        float3 origin = {};
-        float radius = 0.0f;
+        Vector3<T> position;
+        T radius = {};
 
-        sphere();
-        sphere(const float3& origin, float radius);
+        constexpr Sphere()
+        {}
+
+        constexpr Sphere(const Vector3<T>& position, T radius)
+			: position(position) , radius(radius)
+        {}
+
+        constexpr bool contains(const Vector3<T>& point) const
+        {
+			return (point - position).length() <= radius;
+        }
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const sphere& obj);
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Sphere<T>& sphere)
+    {
+        stream << "{" << sphere.position << ", " << sphere.radius << "}";
+        return stream;
+    }
 }

@@ -4,17 +4,22 @@
 
 
 namespace kl {
-    struct render_shaders
+    struct RenderShaders : private CBuffer
     {
-        shader_holder<dx::vertex_shader> vertex_shader = nullptr;
-        shader_holder<dx::pixel_shader> pixel_shader = nullptr;
-        dx::layout input_layout = nullptr;
+        dx::InputLayout input_layout;
+        dx::VertexShader vertex_shader;
+        dx::PixelShader pixel_shader;
 
-        // Creation
-        render_shaders();
-        ~render_shaders();
+        RenderShaders(const GPU* gpu = nullptr);
 
-        // Get
         operator bool() const;
+
+        template<typename T>
+        void upload(const T& object, int index = 0)
+        {
+            CBuffer::upload(&object, sizeof(T));
+            CBuffer::bind(ShaderType::VERTEX, index);
+            CBuffer::bind(ShaderType::PIXEL, index);
+        }
     };
 }

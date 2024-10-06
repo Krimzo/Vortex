@@ -1,39 +1,74 @@
-#include "time/timer/timer.h"
-
-#include "time/time.h"
+#include "klibrary.h"
 
 
-kl::timer::timer()
+kl::Timer::Timer()
 {
-    const time_t now = time::now();
-    interval_start_ = now;
-    interval_end_ = now;
-    elapsed_start_ = now;
+    const uint64_t now = time::now();
+    m_delta_start = now;
+    m_delta_end = now;
+    m_elapsed_start = now;
 }
 
-void kl::timer::reset()
+void kl::Timer::update_delta()
 {
-    update_interval();
-    update_elapsed();
+    m_delta_start = m_delta_end;
+    m_delta_end = time::now();
 }
 
-void kl::timer::update_interval()
+float kl::Timer::delta() const
 {
-    interval_start_ = interval_end_;
-    interval_end_ = time::now();
+    return time::calculate(m_delta_start, m_delta_end);
 }
 
-float kl::timer::get_interval() const
+void kl::Timer::reset_elapsed()
 {
-    return time::calculate(interval_start_, interval_end_);
+    m_old_elapsed = 0.0f;
+    m_elapsed_start = time::now();
 }
 
-void kl::timer::update_elapsed()
+float kl::Timer::elapsed() const
 {
-    elapsed_start_ = time::now();
+    if (!m_is_running) {
+        return m_old_elapsed;
+    }
+    const float elapsed = time::calculate(m_elapsed_start, time::now());
+    return m_old_elapsed + elapsed;
 }
 
-float kl::timer::get_elapsed() const
+void kl::Timer::stop()
 {
-    return time::calculate(elapsed_start_, time::now());
+    update_delta();
+    reset_elapsed();
+    m_is_running = false;
+}
+
+void kl::Timer::restart()
+{
+    update_delta();
+    reset_elapsed();
+    m_is_running = true;
+}
+
+void kl::Timer::pause()
+{
+    if (!m_is_running) {
+        return;
+    }
+    m_old_elapsed += time::calculate(m_elapsed_start, time::now());
+    m_is_running = false;
+}
+
+void kl::Timer::resume()
+{
+    if (m_is_running) {
+        return;
+    }
+	update_delta();
+    m_elapsed_start = time::now();
+    m_is_running = true;
+}
+
+bool kl::Timer::is_running() const
+{
+    return m_is_running;
 }

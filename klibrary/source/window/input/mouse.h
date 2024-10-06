@@ -5,31 +5,41 @@
 
 
 namespace kl {
-    class mouse
+    struct Mouse
     {
-        HWND window_ = nullptr;
-        int2 position_ = {};
-        bool hidden_ = false;
-        int show_counter_ = 0;
-        int scroll_ = 0;
+        union
+        {
+            Key keys[5] = {};
+            struct
+            {
+                Key left;
+                Key right;
+                Key middle;
+                Key btn4;
+                Key btn5;
+            };
+        };
 
-        void process() const;
-
-    public:
-        friend class window;
-
-        key left = {};
-        key middle = {};
-        key right = {};
-
-        bool is_hidden() const;
-        void set_hidden(bool enabled);
-
-        int2 position(bool client = true) const;
-        void set_position(const int2& position, bool client = true);
-
-        float2 get_normalized_position(bool client = true) const;
-
+        void set_position(Int2 position);
+        Int2 position() const;
+        Float2 norm_position() const;
+        
         int scroll() const;
+
+        void set_hidden(bool state);
+        bool is_hidden() const;
+
+        void _reload();
+        void _update(int btn_num, bool new_state);
+
+        void _set_window(HWND window);
+        void _update_scroll(int scroll);
+        void _update_position(Int2 position);
+
+    private:
+        bool m_hidden = false;
+        int16_t m_scroll = 0;
+        Int2 m_position = {};
+        HWND m_window = nullptr;
     };
 }

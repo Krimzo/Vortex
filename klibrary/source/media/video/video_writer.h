@@ -4,51 +4,58 @@
 
 
 namespace kl {
-    class video_writer
+    struct VideoType
     {
-        const uint32_t width_;
-        const uint32_t height_;
-        const uint32_t fps_;
-        const uint32_t bit_rate_;
-        const GUID     encoding_format_;
+        static VideoType h264(eAVEncH264VProfile profile = eAVEncH264VProfile::eAVEncH264VProfile_Main)
+        {
+            return { MFVideoFormat_H264, (int) profile };
+        }
 
-        const uint32_t pixel_count_;
-        const uint64_t frame_duration_;
-        const GUID     input_format_ = MFVideoFormat_RGB32;
+        GUID type() const { return m_type; }
+        int profile() const { return m_profile; }
 
-        ComPtr<IMFSinkWriter> sink_writer_ = nullptr;
-        DWORD stream_index_ = 0;
+    private:
+        VideoType(const GUID type, const int profile)
+            : m_type(type), m_profile(profile)
+        {}
 
-        const int frame_byte_width_;
-        const int frame_byte_size_;
+        GUID m_type = {};
+        int m_profile = 0;
+    };
+}
 
-        ComPtr<IMFMediaBuffer> media_buffer_ = nullptr;
-        ComPtr<IMFSample> media_sample_ = nullptr;
+namespace kl {
+    struct VideoWriter : NoCopy
+    {
+        VideoWriter(const std::string_view& filepath, const VideoType& video_type, Int2 frame_size, int fps, int video_bit_rate, int audio_sample_rate);
 
-        int frame_counter_ = 0;
-
-    public:
-        video_writer(const std::string& filepath, const kl::int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
-        ~video_writer();
-
-        video_writer(const video_writer&) = delete;
-        video_writer(const video_writer&&) = delete;
-
-        void operator=(const video_writer&) = delete;
-        void operator=(const video_writer&&) = delete;
-
-        int2 frame_size() const;
+        Int2 frame_size() const;
         int fps() const;
-
-        int bit_rate() const;
-        GUID format() const;
-
-        bool add_frame(const image& frame);
+        int video_bit_rate() const;
         int frame_count() const;
+        bool add_frame(const Image& frame);
+        uint64_t video_duration_100ns() const;
+        float video_duration_seconds() const;
 
-        uint64_t duration_100ns() const;
-        float duration_seconds() const;
+        int audio_sample_rate() const;
+        bool add_audio(const Audio& audio);
+        uint64_t audio_duration_100ns() const;
+        float audio_duration_seconds() const;
 
-        bool finalize();
+        void finalize() const;
+
+    private:
+        const uint32_t m_width;
+        const uint32_t m_height;
+        const uint32_t m_fps;
+        const uint32_t m_bit_rate;
+        const uint32_t m_sample_rate;
+        const uint64_t m_frame_duration;
+
+        ComRef<IMFSinkWriter> m_writer;
+        DWORD m_video_index = 0;
+        DWORD m_audio_index = 0;
+        uint64_t m_video_time = 0;
+        uint64_t m_audio_time = 0;
     };
 }

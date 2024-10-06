@@ -4,29 +4,78 @@
 
 
 namespace kl {
-    class gpu;
+    struct GPU;
+}
+
+namespace kl {
+    enum struct ShaderType : int32_t
+    {
+        VERTEX = 0,
+        PIXEL,
+        GEOMETRY,
+        COMPUTE,
+    };
+}
+
+namespace kl {
+    struct CBuffer
+    {
+        const GPU* gpu;
+        dx::Buffer cbuffer;
+
+        CBuffer(const GPU* gpu);
+        
+        void upload(const void* data, UINT byte_size);
+        void bind(ShaderType type, int index) const;
+    };
 }
 
 namespace kl {
     template<typename S>
-    struct shader_holder
+    struct ShaderHolder : private CBuffer
     {
-        gpu* gpu = nullptr;
-        S shader = nullptr;
-        dx::buffer cbuffer = nullptr;
+        S shader = {};
 
-        // Construct
-        shader_holder(kl::gpu* gpu);
-        shader_holder(kl::gpu* gpu, const S& shader);
-        ~shader_holder();
+        ShaderHolder(const GPU* gpu = nullptr)
+            : CBuffer(gpu)
+        {}
 
-        // Get
-        operator S() const;
-        operator bool() const;
+        operator bool() const
+        {
+            return gpu && shader;
+        }
 
-        // CBuffer
         template<typename T>
-        void update_cbuffer(const T& object) { update_cbuffer(&object, sizeof(T)); }
-        void update_cbuffer(const void* data, UINT byte_size);
+        void upload(const T& object, int index = 0)
+        {
+            CBuffer::upload(&object, sizeof(T));
+            CBuffer::bind(type(), index);
+        }
+
+        static consteval ShaderType type()
+        {
+            if constexpr (std::is_same_v<S, dx::VertexShader>) {
+                return ShaderType::VERTEX;
+            }
+            else if constexpr (std::is_same_v<S, dx::PixelShader>) {
+                return ShaderType::PIXEL;
+            }
+            else if constexpr (std::is_same_v<S, dx::GeometryShader>) {
+                return ShaderType::GEOMETRY;
+            }
+            else if constexpr (std::is_same_v<S, dx::ComputeShader>) {
+                return ShaderType::COMPUTE;
+            }
+            else {
+                static_assert(false, "Unsupported shader type");
+            }
+        }
     };
+}
+
+namespace kl {
+    using VertexShader = ShaderHolder<dx::VertexShader>;
+	using PixelShader = ShaderHolder<dx::PixelShader>;
+	using GeometryShader = ShaderHolder<dx::GeometryShader>;
+	using ComputeShader = ShaderHolder<dx::ComputeShader>;
 }

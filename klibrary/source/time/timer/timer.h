@@ -4,21 +4,30 @@
 
 
 namespace kl {
-    class timer
+    struct Timer
     {
-        time_t interval_start_;
-        time_t interval_end_;
-        time_t elapsed_start_;
+        Timer();
 
-    public:
-        timer();
+        void update_delta();
+        float delta() const;
 
-        void reset();
+        void reset_elapsed();
+        float elapsed() const;
 
-        void update_interval();
-        float get_interval() const;
+        void stop();
+        void restart();
 
-        void update_elapsed();
-        float get_elapsed() const;
+        void pause();
+        void resume();
+
+        bool is_running() const;
+
+    private:
+        uint64_t m_delta_start;
+        uint64_t m_delta_end;
+        uint64_t m_elapsed_start;
+
+        float m_old_elapsed = 0.0f;
+        bool m_is_running = true;
     };
 }

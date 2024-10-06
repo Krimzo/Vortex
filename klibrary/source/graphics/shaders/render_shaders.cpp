@@ -1,15 +1,11 @@
-#include "graphics/shaders/render_shaders.h"
+#include "klibrary.h"
 
 
-// Creation
-kl::render_shaders::render_shaders()
+kl::RenderShaders::RenderShaders(const GPU* gpu)
+    : CBuffer(gpu)
 {}
 
-kl::render_shaders::~render_shaders()
-{}
-
-// Get
-kl::render_shaders::operator bool() const
+kl::RenderShaders::operator bool() const
 {
-    return vertex_shader && pixel_shader;
+    return gpu && vertex_shader && pixel_shader;
 }

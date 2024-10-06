@@ -58,6 +58,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>vortex.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,6 +80,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>vortex.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,33 +105,35 @@
     <ClInclude Include="resource\resource.h" />
     <ClInclude Include="source\board\board.h" />
     <ClInclude Include="source\engine\engine.h" />
-    <ClInclude Include="source\input\input_handler.h" />
-    <ClInclude Include="source\moves\moves.h" />
-    <ClInclude Include="source\piece\piece.h" />
-    <ClInclude Include="source\renderer\board_renderer.h" />
-    <ClInclude Include="source\renderer\gui_renderer.h" />
-    <ClInclude Include="source\vortex\search_info.h" />
-    <ClInclude Include="source\vortex\vortex.h" />
+    <ClInclude Include="source\vortex\game.h" />
+    <ClInclude Include="source\board\moves.h" />
+    <ClInclude Include="source\board\piece.h" />
+    <ClInclude Include="source\vortex\renderer.h" />
+    <ClInclude Include="source\vortex\ui.h" />
+    <ClInclude Include="source\vortex.h" />
+    <ClInclude Include="source\vortex\system.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\board\board.cpp" />
-    <ClCompile Include="source\engine\engine.cpp" />
     <ClCompile Include="source\engine\engine_evaluate.cpp" />
     <ClCompile Include="source\engine\engine_search.cpp" />
-    <ClCompile Include="source\input\input_handler.cpp" />
-    <ClCompile Include="source\logic\bishop_logic.cpp" />
-    <ClCompile Include="source\logic\king_logic.cpp" />
-    <ClCompile Include="source\logic\knight_logic.cpp" />
-    <ClCompile Include="source\logic\pawn_logic.cpp" />
-    <ClCompile Include="source\logic\queen_logic.cpp" />
-    <ClCompile Include="source\logic\rook_logic.cpp" />
+    <ClCompile Include="source\vortex\game.cpp" />
+    <ClCompile Include="source\board\logic\bishop_logic.cpp" />
+    <ClCompile Include="source\board\logic\king_logic.cpp" />
+    <ClCompile Include="source\board\logic\knight_logic.cpp" />
+    <ClCompile Include="source\board\logic\pawn_logic.cpp" />
+    <ClCompile Include="source\board\logic\queen_logic.cpp" />
+    <ClCompile Include="source\board\logic\rook_logic.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\moves\moves.cpp" />
-    <ClCompile Include="source\piece\piece.cpp" />
-    <ClCompile Include="source\renderer\board_renderer.cpp" />
-    <ClCompile Include="source\renderer\gui_renderer.cpp" />
-    <ClCompile Include="source\vortex\search_info.cpp" />
-    <ClCompile Include="source\vortex\vortex.cpp" />
+    <ClCompile Include="source\board\moves.cpp" />
+    <ClCompile Include="source\board\piece.cpp" />
+    <ClCompile Include="source\vortex\renderer.cpp" />
+    <ClCompile Include="source\vortex\ui.cpp" />
+    <ClCompile Include="source\vortex.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\vortex\system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource\icon\engine.rc" />

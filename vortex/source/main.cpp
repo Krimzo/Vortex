@@ -1,9 +1,9 @@
-#include "vortex/vortex.h"
+#include "vortex.h"
 
 
 int main()
 {
-	auto app = vortex();
-	app.run();
+	vtx::Vortex vortex{};
+	while (vortex.update());
 	return 0;
 }

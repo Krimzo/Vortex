@@ -1,11 +1,10 @@
-#include "utility/hash/hash_t.h"
+#include "klibrary.h"
 
 
-// Class
-kl::hash_t::hash_t()
+kl::Hash::Hash()
 {}
 
-kl::hash_t::hash_t(const std::string& hash)
+kl::Hash::Hash(const std::string_view& hash)
 {
     if (hash.size() < 64) {
         return;
@@ -17,23 +16,23 @@ kl::hash_t::hash_t(const std::string& hash)
 
         uint32_t result = 0;
         stream >> result;
-        buffer[i] = (uint8_t) result;
+        buffer[i] = uint8_t(result);
     }
 }
 
-uint8_t& kl::hash_t::operator[](const size_t index)
+uint8_t& kl::Hash::operator[](const size_t index)
 {
     return buffer[index];
 }
 
-const uint8_t& kl::hash_t::operator[](const size_t index) const
+const uint8_t& kl::Hash::operator[](const size_t index) const
 {
     return buffer[index];
 }
 
-bool kl::hash_t::operator==(const hash_t& other) const
+bool kl::Hash::operator==(const Hash& other) const
 {
-    for (uint64_t i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++) {
         if (buffer[i] != other[i]) {
             return false;
         }
@@ -41,17 +40,16 @@ bool kl::hash_t::operator==(const hash_t& other) const
     return true;
 }
 
-bool kl::hash_t::operator!=(const hash_t& other) const
+bool kl::Hash::operator!=(const Hash& other) const
 {
     return !(*this == other);
 }
 
-// Format
-std::ostream& kl::operator<<(std::ostream& stream, const hash_t& hash)
+std::ostream& kl::operator<<(std::ostream& stream, const Hash& hash)
 {
     stream << std::hex << std::setfill('0');
-    for (auto& value : hash.buffer) {
-        stream << std::setw(2) << (int32_t) value;
+    for (uint8_t value : hash.buffer) {
+        stream << std::setw(2) << int(value);
     }
     return stream;
 }

@@ -1,17 +1,17 @@
-#include "time/time.h"
+#include "klibrary.h"
 
 
 uint64_t kl::time::now()
 {
-    uint64_t result = 0;
-    QueryPerformanceCounter((LARGE_INTEGER*) &result);
+    uint64_t result{};
+    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&result));
     return result;
 }
 
 uint64_t kl::time::cpu_frequency()
 {
-    uint64_t result = 0;
-    QueryPerformanceFrequency((LARGE_INTEGER*) &result);
+    uint64_t result{};
+    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&result));
     return result;
 }
 
@@ -21,7 +21,7 @@ float kl::time::calculate(const uint64_t start, const uint64_t end)
     return (end - start) * rec_frequency;
 }
 
-float kl::time::get_interval()
+float kl::time::delta()
 {
     static uint64_t start_time = now();
 
@@ -47,7 +47,7 @@ bool kl::time::sleep(const float seconds)
 
     static const time_t frequency = cpu_frequency();
     const time_t to_sleep = -time_t(seconds * frequency);
-    if (!SetWaitableTimer(timer, (const LARGE_INTEGER*) &to_sleep, 0, nullptr, nullptr, false)) {
+    if (!SetWaitableTimer(timer, reinterpret_cast<const LARGE_INTEGER*>(&to_sleep), 0, nullptr, nullptr, false)) {
         CloseHandle(timer);
         return false;
     }

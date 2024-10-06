@@ -1,31 +1,32 @@
-#include "media/video/video_reader.h"
-
-#include "media/media.h"
-#include "utility/utility.h"
-
-using namespace kl::media_utility;
+#include "klibrary.h"
 
 
-// Utility
-static void configure_reader(ComPtr<IMFSourceReader> reader)
+using kl::ComRef;
+
+static void configure_reader(const ComRef<IMFSourceReader>& reader, const kl::Int2 size)
 {
-    ComPtr<IMFMediaType> media_type = nullptr;
-    fail_check_(reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type), "Failed to get default video type");
+    ComRef<IMFMediaType> media_type;
+    reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::verify_result;
 
     GUID major_type = {};
-    fail_check_(media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type), "Failed to get major video type");
+    media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type) >> kl::verify_result;
 
-    ComPtr<IMFMediaType> new_type = nullptr;
-    fail_check_(MFCreateMediaType(&new_type), "Failed to create new video type");
-    fail_check_(new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type), "Failed to set major video type");
-    fail_check_(new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32), "Failed to set sub video type");
-    fail_check_(reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()), "Failed to set video type");
+    ComRef<IMFMediaType> new_type;
+    MFCreateMediaType(&new_type) >> kl::verify_result;
+
+    new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::verify_result;
+    new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::verify_result;
+    if (size.x > 0 && size.y > 0) {
+        MFSetAttributeSize(new_type.get(), MF_MT_FRAME_SIZE, (UINT32) size.x, (UINT32) size.y) >> kl::verify_result;
+    }
+
+    reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.get()) >> kl::verify_result;
 }
 
-static uint64_t get_video_byte_size(ComPtr<IMFSourceReader> reader)
+static uint64_t video_byte_size(const ComRef<IMFSourceReader>& reader)
 {
-    PROPVARIANT variant = {};
-    if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
+    PROPVARIANT variant{};
+    if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
         return 0;
     }
 
@@ -35,10 +36,10 @@ static uint64_t get_video_byte_size(ComPtr<IMFSourceReader> reader)
     return byte_size;
 }
 
-static int64_t get_video_duration_100ns(ComPtr<IMFSourceReader> reader)
+static int64_t video_duration_100ns(const ComRef<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
-    if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
+    if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
         return 0;
     }
 
@@ -48,125 +49,138 @@ static int64_t get_video_duration_100ns(ComPtr<IMFSourceReader> reader)
     return duration;
 }
 
-static kl::int2 get_video_frame_size(ComPtr<IMFSourceReader> reader)
+static kl::Int2 video_frame_size(const ComRef<IMFSourceReader>& reader)
 {
-    ComPtr<IMFMediaType> current_type = nullptr;
+    ComRef<IMFMediaType> current_type;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return {};
     }
 
-    kl::int2 frame_size = {};
-    MFGetAttributeSize(current_type.Get(), MF_MT_FRAME_SIZE, (UINT32*) &frame_size.x, (UINT32*) &frame_size.y);
+    kl::Int2 frame_size = {};
+    MFGetAttributeSize(current_type.get(), MF_MT_FRAME_SIZE, (UINT32*) &frame_size.x, (UINT32*) &frame_size.y);
     return frame_size;
 }
 
-static float get_video_fps(ComPtr<IMFSourceReader> reader)
+static float video_fps(const ComRef<IMFSourceReader>& reader)
 {
-    ComPtr<IMFMediaType> current_type = nullptr;
+    ComRef<IMFMediaType> current_type;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return 0.0f;
     }
 
     UINT attribute1 = 0, attribute2 = 0;
-    MFGetAttributeRatio(current_type.Get(), MF_MT_FRAME_RATE, &attribute1, &attribute2);
+    MFGetAttributeRatio(current_type.get(), MF_MT_FRAME_RATE, &attribute1, &attribute2);
 
-    return (float) attribute1 / attribute2;
+    return (float) attribute1 / (float) attribute2;
 }
 
-// Video reader
-kl::video_reader::video_reader(const std::string& filepath)
+kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2 output_size, const bool use_gpu)
 {
-    // Init
-    ComPtr<IMFAttributes> attributes = nullptr;
-    fail_check_(MFCreateAttributes(&attributes, 1), "Failed to create attributes");
+    ComRef<IMFAttributes> attributes;
+    MFCreateAttributes(&attributes, 0) >> verify_result;
 
-    fail_check_(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true), "Failed to enable video processing");
+    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE) >> verify_result;
+    attributes->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE) >> verify_result;
+
+    if (use_gpu) {
+        m_gpu = new VideoGPU();
+        ComRef<ID3D11Multithread> multithread;
+        m_gpu->device().as(multithread) >> verify_result;
+        multithread->SetMultithreadProtected(TRUE);
+
+        UINT reset_token = 0;
+        ComRef<IMFDXGIDeviceManager> manager;
+        MFCreateDXGIDeviceManager(&reset_token, &manager) >> verify_result;
+        manager->ResetDevice(m_gpu->device().get(), reset_token) >> verify_result;
+		attributes->SetUnknown(MF_SOURCE_READER_D3D_MANAGER, manager.get()) >> verify_result;
+    }
 
     const std::wstring converted_path = convert_string(filepath);
-    fail_check_(MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &reader_), "Failed to create SourceReader");
-    configure_reader(reader_);
+    MFCreateSourceReaderFromURL(converted_path.data(), attributes.get(), &m_reader) >> verify_result;
+    configure_reader(m_reader, output_size);
 
-    // Getting info
-    byte_size_ = get_video_byte_size(reader_);
-    duration_ = get_video_duration_100ns(reader_);
+    m_byte_size = video_byte_size(m_reader);
+    m_duration = video_duration_100ns(m_reader);
 
-    frame_size_ = get_video_frame_size(reader_);
-    frame_byte_size_ = frame_size_.x * frame_size_.y * 4;
+    m_frame_size = video_frame_size(m_reader);
+    m_frame_byte_size = m_frame_size.x * m_frame_size.y * 4;
 
-    fps_ = get_video_fps(reader_);
-    frame_count_ = int(duration_seconds() * fps_);
+    m_fps = video_fps(m_reader);
+    m_frame_count = (int) (duration_seconds() * m_fps);
 }
 
-kl::video_reader::~video_reader()
-{}
-
-size_t kl::video_reader::byte_size() const
+uint64_t kl::VideoReader::byte_size() const
 {
-    return byte_size_;
+    return m_byte_size;
 }
 
-int64_t kl::video_reader::duration_100ns() const
+int64_t kl::VideoReader::duration_100ns() const
 {
-    return duration_;
+    return m_duration;
 }
 
-float kl::video_reader::duration_seconds() const
+float kl::VideoReader::duration_seconds() const
 {
     static constexpr float diver = 1.0f / 1e7f;
-    return duration_ * diver;
+    return m_duration * diver;
 }
 
-kl::int2 kl::video_reader::frame_size() const
+kl::Int2 kl::VideoReader::frame_size() const
 {
-    return frame_size_;
+    return m_frame_size;
 }
 
-int kl::video_reader::frame_count() const
+int kl::VideoReader::frame_count() const
 {
-    return frame_count_;
+    return m_frame_count;
 }
 
-float kl::video_reader::fps() const
+float kl::VideoReader::fps() const
 {
-    return fps_;
+    return m_fps;
 }
 
-bool kl::video_reader::get_next_frame(image& out) const
+bool kl::VideoReader::seek(const float time) const
 {
-    // Read sample
+    PROPVARIANT time_var;
+    PropVariantInit(&time_var);
+    time_var.vt = VT_I8;
+    time_var.hVal.QuadPart = LONGLONG(time * 1e7);
+    return SUCCEEDED(m_reader->SetCurrentPosition(GUID_NULL, time_var));
+}
+
+bool kl::VideoReader::read_frame(Image& out, int* out_index) const
+{
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
-    ComPtr<IMFSample> sample = nullptr;
-
-    if (!succeeded_(reader_->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
+    ComRef<IMFSample> sample;
+    if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
-    // Convert to array
-    ComPtr<IMFMediaBuffer> media_buffer = nullptr;
-    if (!succeeded_(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
+    ComRef<IMFMediaBuffer> media_buffer;
+    if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }
 
-    // Copy data
     BYTE* frame_data = nullptr;
     DWORD frame_byte_size = 0;
-    fail_check_(media_buffer->Lock(&frame_data, nullptr, &frame_byte_size), "Failed to lock the bytes [video_reader]");
+    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
 
-    out.resize(frame_size_);
-    const size_t pixel_count = (size_t) out.width() * out.height();
-    const color* frame_source = (color*) frame_data;
-    color* frame_target = out;
+    out.resize(m_frame_size);
+    const RGB* frame_source = (RGB*) frame_data;
+    RGB* frame_target = out.ptr();
 
-    for (size_t i = 0; i < pixel_count; i++) {
+    kl::async_for(0, out.width() * out.height(), [&](const int i)
+    {
         frame_target[i].r = frame_source[i].r;
         frame_target[i].g = frame_source[i].g;
         frame_target[i].b = frame_source[i].b;
-    }
-
-    // Cleanup
-    fail_check_(media_buffer->Unlock(), "Failed to unlock bytes [video_reader]");
+    });
+	if (out_index) {
+		*out_index = int(time_stamp * 1e-7 * m_fps);
+	}
     return true;
 }

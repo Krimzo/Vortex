@@ -1,86 +1,78 @@
-#include "window/input/mouse.h"
-
-#include "window/window.h"
+#include "klibrary.h"
 
 
-// Window private
-void kl::mouse::process() const
+void kl::Mouse::set_position(const Int2 position)
 {
-    left.process();
-    middle.process();
-    right.process();
-}
-
-// User access
-bool kl::mouse::is_hidden() const
-{
-    return hidden_;
-}
-
-void kl::mouse::set_hidden(const bool enabled)
-{
-    if (!hidden_ && enabled) {
-        while (show_counter_ > -1) {
-            show_counter_ = ShowCursor(false);
-        }
-    }
-    else if (hidden_ && !enabled) {
-        while (show_counter_ < 0) {
-            show_counter_ = ShowCursor(true);
-        }
-    }
-    hidden_ = enabled;
-}
-
-kl::int2 kl::mouse::position(const bool client) const
-{
-    if (client) {
-        return position_;
-    }
-
-    POINT client_position = { position_.x, position_.y };
-    ClientToScreen(window_, &client_position);
-    return { client_position.x, client_position.y };
-}
-
-void kl::mouse::set_position(const int2& position, const bool client)
-{
-    POINT client_position = { position.x, position.y };
-    POINT screen_position = { position.x, position.y };
-
-    if (client) {
-        ClientToScreen(window_, &screen_position);
-    }
-    else {
-        ScreenToClient(window_, &client_position);
-    }
-
-    position_ = { client_position.x, client_position.y };
+    m_position = position;
+    POINT screen_position{ position.x, position.y };
+    ClientToScreen(m_window, &screen_position);
     SetCursorPos(screen_position.x, screen_position.y);
 }
 
-kl::float2 kl::mouse::get_normalized_position(const bool client) const
+kl::Int2 kl::Mouse::position() const
 {
-    int2 frame_size = screen::size;
-    if (client) {
-        RECT client_area = {};
-        GetClientRect(window_, &client_area);
-        frame_size = {
-            client_area.right - client_area.left,
-            client_area.bottom - client_area.top,
-        };
-    }
-
-    float2 result = {
-        position_.x / (float) frame_size.x,
-        (frame_size.y - position_.y) / (float) frame_size.y,
-    };
-    result *= 2.0f;
-    result -= float2(1.0f);
-    return result;
+    return m_position;
 }
 
-int kl::mouse::scroll() const
+kl::Float2 kl::Mouse::norm_position() const
 {
-    return scroll_;
+    RECT client_area{};
+    GetClientRect(m_window, &client_area);
+    const Int2 frame_size{
+        client_area.right - client_area.left,
+        client_area.bottom - client_area.top,
+    };
+    return {
+        2.0f * m_position.x / frame_size.x - 1.0f,
+        2.0f * (frame_size.y - m_position.y) / frame_size.y - 1.0f,
+    };
+}
+
+int kl::Mouse::scroll() const
+{
+    return m_scroll;
+}
+
+void kl::Mouse::set_hidden(const bool state)
+{
+    if (state) {
+        while (ShowCursor(false) > -1);
+    }
+    else {
+        while (ShowCursor(true) < 0);
+    }
+    m_hidden = state;
+}
+
+bool kl::Mouse::is_hidden() const
+{
+    return m_hidden;
+}
+
+void kl::Mouse::_reload()
+{
+	m_scroll = 0;
+    for (auto& key : keys) {
+		key._reload();
+    }
+}
+
+void kl::Mouse::_update(const int btn_num, const bool new_state)
+{
+    keys[btn_num - 1]._update(new_state);
+}
+
+void kl::Mouse::_set_window(HWND window)
+{
+	m_window = window;
+}
+
+void kl::Mouse::_update_scroll(const int scroll)
+{
+    m_scroll = (int16_t) scroll;
+}
+
+void kl::Mouse::_update_position(const Int2 position)
+{
+	m_position = position;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "piece/piece.h"
+#include "board/piece.h"
 
 
 namespace vtx {
@@ -13,10 +13,9 @@ namespace vtx {
 }
 
 namespace vtx {
-	class board
+	struct Board
 	{
-	public:
-		piece pieces[8 * 8] = {};
+		Piece pieces[8 * 8] = {};
 
 		bool white_to_play = true;
 		bool castling_wk = true;
@@ -30,19 +29,19 @@ namespace vtx {
 
 		float evaluation = 0.0f;
 
-		board();
-		board(const std::string& fen);
+		Board();
+		Board(const std::string& fen);
 
-		piece& operator[](int index);
-		const piece& operator[](int index) const;
+		Piece& operator[](int index);
+		const Piece& operator[](int index) const;
 
-		piece& operator()(int x, int y);
-		const piece& operator()(int x, int y) const;
+		Piece& operator()(int x, int y);
+		const Piece& operator()(int x, int y) const;
 		
 		void load_fen(const std::string& fen);
 		void reset();
 
-		board after_playing(int from_index, int to_index, char new_type) const;
+		Board after_playing(int from_index, int to_index, char new_type) const;
 		int get_win_state() const;
 	};
 }

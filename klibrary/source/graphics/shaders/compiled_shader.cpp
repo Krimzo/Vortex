@@ -1,35 +1,27 @@
-#include "graphics/shaders/compiled_shader.h"
+#include "klibrary.h"
 
 
-// Creation
-kl::compiled_shader::compiled_shader()
-{}
-
-kl::compiled_shader::~compiled_shader()
-{}
-
-// Get
-kl::compiled_shader::operator bool() const
+kl::CompiledShader::operator bool() const
 {
     return (data && !error);
 }
 
-const void* kl::compiled_shader::get_data() const
+const void* kl::CompiledShader::data_ptr() const
 {
     return data ? (const void*) data->GetBufferPointer() : nullptr;
 }
 
-SIZE_T kl::compiled_shader::get_data_size() const
+SIZE_T kl::CompiledShader::data_size() const
 {
     return data ? data->GetBufferSize() : 0;
 }
 
-std::string kl::compiled_shader::get_error() const
+const char* kl::CompiledShader::error_val() const
 {
-    return error ? ((const char*) error->GetBufferPointer()) : "Unknown";
+    return (const char*) (error ? error->GetBufferPointer() : nullptr);
 }
 
-SIZE_T kl::compiled_shader::get_error_size() const
+SIZE_T kl::CompiledShader::error_size() const
 {
     return error ? error->GetBufferSize() : 0;
 }

@@ -1,9 +1,6 @@
-#include "board/board.h"
-
-#include "engine/engine.h"
+#include "vortex.h"
 
 
-// Helpers
 bool vtx::in_board(const int x, const int y)
 {
 	return (x >= 0 && x < 8 && y >= 0 && y < 8);
@@ -14,48 +11,46 @@ int vtx::get_index(const int x, const int y)
 	return (x + y * 8);
 }
 
-// Board
-vtx::board::board()
+vtx::Board::Board()
 {}
 
-vtx::board::board(const std::string& fen)
+vtx::Board::Board(const std::string& fen)
 {
 	load_fen(fen);
 }
 
-vtx::piece& vtx::board::operator[](const int index)
+vtx::Piece& vtx::Board::operator[](const int index)
 {
 	return pieces[index];
 }
 
-const vtx::piece& vtx::board::operator[](const int index) const
+const vtx::Piece& vtx::Board::operator[](const int index) const
 {
 	return pieces[index];
 }
 
-vtx::piece& vtx::board::operator()(const int x, const int y)
+vtx::Piece& vtx::Board::operator()(const int x, const int y)
 {
 	return pieces[get_index(x, y)];
 }
 
-const vtx::piece& vtx::board::operator()(const int x, const int y) const
+const vtx::Piece& vtx::Board::operator()(const int x, const int y) const
 {
 	return pieces[get_index(x, y)];
 }
 
-void vtx::board::load_fen(const std::string& fen)
+void vtx::Board::load_fen(const std::string& fen)
 {
 	const std::vector<std::string> parts = kl::split_string(fen, ' ');
-	if (kl::warning_check(parts.size() < 3, "Bad FEN data")) {
+	if (!kl::verify(parts.size() == 3, "Bad FEN data"))
 		return;
-	}
 
 	white_to_play = (parts[1] == "w");
 
 	for (int i = 0, position = 0; i < int(parts[0].size()) && position < 64; i++) {
 		if (const char lower_char = char(tolower(fen[i])); lower_char == 'p' || lower_char == 'n' || lower_char == 'b' ||
 			lower_char == 'r' || lower_char == 'q' || lower_char == 'k') {
-			pieces[position++] = piece(char(fen[i]));
+			pieces[position++] = Piece(char(fen[i]));
 		}
 		else if (isdigit(fen[i])) {
 			position += (fen[i] - 48);
@@ -63,7 +58,8 @@ void vtx::board::load_fen(const std::string& fen)
 	}
 
 	for (auto& c : parts[2]) {
-		switch (c) {
+		switch (c)
+		{
 		case 'K':
 			castling_wk = true;
 			break;
@@ -80,7 +76,7 @@ void vtx::board::load_fen(const std::string& fen)
 	}
 }
 
-void vtx::board::reset()
+void vtx::Board::reset()
 {
 	for (auto& piece : pieces) {
 		piece = none;
@@ -99,17 +95,20 @@ void vtx::board::reset()
 	evaluation = 0.0f;
 }
 
-vtx::board vtx::board::after_playing(const int from_index, const int to_index, const char new_type) const {
-	board board = *this;
+vtx::Board vtx::Board::after_playing(const int from_index, const int to_index, const char new_type) const {
+	Board board = *this;
 
-	switch (board[from_index]) {
+	switch (board[from_index])
+	{
 	case w_king:
 		board.castling_wk = false;
 		board.castling_wq = false;
+		break;
 
 	case b_king:
 		board.castling_bk = false;
 		board.castling_bq = false;
+		break;
 
 	case w_rook:
 		if (from_index == 63) {
@@ -118,6 +117,7 @@ vtx::board vtx::board::after_playing(const int from_index, const int to_index, c
 		else if (from_index == 56) {
 			board.castling_wq = false;
 		}
+		break;
 
 	case b_rook:
 		if (from_index == 7) {
@@ -126,6 +126,7 @@ vtx::board vtx::board::after_playing(const int from_index, const int to_index, c
 		else if (from_index == 0) {
 			board.castling_bq = false;
 		}
+		break;
 	}
 
 	board.last_played_from = from_index;
@@ -138,11 +139,10 @@ vtx::board vtx::board::after_playing(const int from_index, const int to_index, c
 	return board;
 }
 
-int vtx::board::get_win_state() const
+int vtx::Board::get_win_state() const
 {
 	int white_king_count = 0;
 	int black_king_count = 0;
-
 	for (auto& piece : pieces) {
 		if (piece.type == w_king) {
 			white_king_count += 1;
@@ -151,6 +151,5 @@ int vtx::board::get_win_state() const
 			black_king_count += 1;
 		}
 	}
-
 	return (white_king_count - black_king_count);
 }

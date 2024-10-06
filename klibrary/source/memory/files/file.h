@@ -3,76 +3,76 @@
 #include "math/math.h"
 
 
-// Helper
 namespace kl {
-    std::string get_file_extension(const std::string& filepath);
-    std::vector<std::string> get_files(const std::string& path, bool recursive = false);
-
-    std::string read_file_string(const std::string& filepath);
-    bool write_file_string(const std::string& filepath, const std::string& data);
-    bool append_file_string(const std::string& filepath, const std::string& data, int position = -1);
-
-    std::vector<vertex> parse_obj_file(const std::string& filepath, bool flip_z = true);
-}
-
-// File
-namespace kl {
-    class file
+    struct File : NoCopy
     {
-        FILE* file_ = nullptr;
-
-    public:
-        file();
-        file(const std::string& filepath, bool clear = true);
-        ~file();
-
-        file(const file&) = delete;
-        file(const file&&) = delete;
-
-        void operator=(const file&) = delete;
-        void operator=(const file&&) = delete;
+        File();
+        File(const std::string_view& filepath, bool write);
+        ~File();
 
         operator bool() const;
 
-        bool open(const std::string& filepath, bool clear = true);
+        void open(const std::string_view& filepath, bool write);
         void close();
 
-        bool seek(int position) const;
-        bool move(int delta) const;
+        bool seek(int64_t position) const;
+        bool move(int64_t delta) const;
 
         bool rewind() const;
         bool unwind() const;
 
-        int tell() const;
+        int64_t tell() const;
 
-        template <typename T>
-        size_t read(T& object) const
+        template<typename T>
+        T read() const
+        {
+            T result = {};
+            read<T>(result);
+            return result;
+        }
+
+        template<typename T>
+        uint64_t read(T& object) const
         {
             return read(&object, 1);
         }
 
-        template <typename T>
-        size_t read(T* buffer, const size_t count) const
+        template<typename T>
+        uint64_t read(T* buffer, const uint64_t count) const
         {
-            if (file_) {
-                return fread(buffer, sizeof(T), count, file_);
+            if (m_file) {
+                return fread(buffer, sizeof(T), count, m_file);
             }
             return 0;
         }
 
-        template <typename T>
-        size_t write(const T& object)
+        template<typename T>
+        uint64_t write(const T& object)
         {
             return write(&object, 1);
         }
 
-        template <typename T>
-        size_t write(const T* buffer, const size_t count)
+        template<typename T>
+        uint64_t write(const T* buffer, const uint64_t count)
         {
-            if (file_) {
-                return fwrite(buffer, sizeof(T), count, file_);
+            if (m_file) {
+                return fwrite(buffer, sizeof(T), count, m_file);
             }
             return 0;
         }
+
+    private:
+        FILE* m_file = nullptr;
     };
+}
+
+namespace kl {
+    std::string file_extension(const std::string_view& filepath);
+    std::vector<std::string> list_files(const std::string_view& path, bool recursive = false);
+
+    std::string read_file(const std::string_view& filepath);
+    bool write_file(const std::string_view& filepath, const std::string_view& data);
+
+    std::vector<Vertex<float>> parse_obj_file(const std::string_view& filepath, bool flip_z = true);
+    std::optional<std::string> choose_file(bool save, const std::vector<std::pair<std::string_view, std::string_view>>& filters = { { "All Files", ".*" } }, int* out_index = nullptr);
 }

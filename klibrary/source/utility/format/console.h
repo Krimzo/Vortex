@@ -3,19 +3,12 @@
 #include "math/math.h"
 
 
-namespace kl {
-    int get();
-
-    bool warning_check(bool occured, const std::string& message, bool wait = false);
-    void error_check(bool occured, const std::string& message, bool wait = true);
-}
-
 namespace kl::console {
     void set_enabled(bool state);
     void clear();
 
     void set_cursor_enabled(bool state);
-    void move_cursor(const int2& position);
+    void move_cursor(Int2 position);
 
     int width();
     void set_width(int width);
@@ -23,16 +16,43 @@ namespace kl::console {
     int height();
     void set_height(int height);
 
-    int2 size();
-    void set_size(const int2& size);
+    Int2 size();
+    void set_size(Int2 size);
 
-    void set_title(const std::string& text);
-    void set_font(const int2& size, const std::string& font_name = "Consolas");
+    void set_title(const std::string_view& text);
+    void set_font(Int2 size, const std::string_view& font_name = "Consolas");
 
-    char get_input();
+    char read();
     void wait(char to_wait_for, bool echo = false);
     char wait_for_any(bool echo = false);
 
-    void dump(const std::string& data, const int2& location = {});
-    void progress_bar(const std::string& message, int output_y, float percentage);
+    void dump(const std::string_view& data, Int2 location = {});
+    void progress_bar(const std::string_view& message, int output_y, float percentage);
+}
+
+namespace kl {
+    inline std::function<void(const std::string_view&)> VERIFICATION_LOGGER = [](const std::string_view& message)
+    {
+        console::set_enabled(true);
+        print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
+    };
+
+    template<typename... Args>
+    constexpr bool verify(const bool value, const Args&... args)
+    {
+        if (!value) {
+            VERIFICATION_LOGGER(format(args...));
+        }
+        return value;
+    }
+
+    template<typename... Args>
+    constexpr void assert(const bool value, const Args&... args)
+    {
+        if (!value) {
+            const std::string message = format(args...);
+            MessageBoxA(nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK);
+            exit(EXIT_FAILURE);
+        }
+    }
 }

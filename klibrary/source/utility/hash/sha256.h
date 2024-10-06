@@ -4,11 +4,11 @@
 
 
 namespace kl {
-    hash_t hash(const void* data, uint64_t data_size);
-    hash_t hash(const std::string& data);
+    Hash hash(const void* data, uint64_t byte_size);
+    Hash hash_str(const std::string_view& data);
 
     template<typename T>
-    hash_t hash(const T& object)
+    Hash hash_obj(const T& object)
     {
         return hash(&object, sizeof(T));
     }

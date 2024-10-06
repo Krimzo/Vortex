@@ -3,24 +3,22 @@
 #include "apis/apis.h"
 
 
-// Class
 namespace kl {
-    struct hash_t
+    struct Hash
     {
         uint8_t buffer[32] = {};
 
-        hash_t();
-        hash_t(const std::string& hash);
+        Hash();
+        Hash(const std::string_view& hash);
 
         uint8_t& operator[](size_t index);
         const uint8_t& operator[](size_t index) const;
 
-        bool operator==(const hash_t& other) const;
-        bool operator!=(const hash_t& other) const;
+        bool operator==(const Hash& other) const;
+        bool operator!=(const Hash& other) const;
     };
 }
 
-// Format
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const hash_t& hash);
+    std::ostream& operator<<(std::ostream& stream, const Hash& hash);
 }

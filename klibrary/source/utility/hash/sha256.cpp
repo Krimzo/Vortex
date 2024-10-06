@@ -1,7 +1,6 @@
-#include "utility/hash/sha256.h"
+#include "klibrary.h"
 
 
-// Defines
 #define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
 #define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 #define ROTRIGHT(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
@@ -12,15 +11,14 @@
 #define SIG0(x) (ROTRIGHT(x, 7) ^ ROTRIGHT(x, 18) ^ ((x) >> 3))
 #define SIG1(x) (ROTRIGHT(x, 17) ^ ROTRIGHT(x, 19) ^ ((x) >> 10))
 
-// Context
-struct sha256_context
+struct SHA256Context
 {
 	uint8_t data[64] = {};
 	uint8_t data_length = 0;
 	uint32_t state[8] = {};
 	uint32_t bit_length[2] = {};
 
-	sha256_context()
+	constexpr SHA256Context()
 	{
 		state[0] = 0x6a09e667;
 		state[1] = 0xbb67ae85;
@@ -33,7 +31,7 @@ struct sha256_context
 	}
 };
 
-static void transform_context(sha256_context* context, const uint8_t* data)
+static void transform_context(SHA256Context* context, const uint8_t* data)
 {
 	static uint32_t hash_keys[64] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -82,7 +80,7 @@ static void transform_context(sha256_context* context, const uint8_t* data)
 	}
 }
 
-static void update_context(sha256_context* context, const uint8_t* data, const uint64_t data_size)
+static void update_context(SHA256Context* context, const uint8_t* data, const uint64_t data_size)
 {
 	for (uint64_t i = 0; i < data_size; ++i) {
 		context->data[context->data_length] = data[i];
@@ -100,7 +98,7 @@ static void update_context(sha256_context* context, const uint8_t* data, const u
 	}
 }
 
-static kl::hash_t finalize_context(sha256_context* context)
+static kl::Hash finalize_context(SHA256Context* context)
 {
 	uint8_t index = context->data_length;
 	if (context->data_length < 56) {
@@ -134,7 +132,7 @@ static kl::hash_t finalize_context(sha256_context* context)
 	context->data[56] = context->bit_length[1] >> 24;
 	transform_context(context, context->data);
 
-	kl::hash_t result = {};
+	kl::Hash result = {};
 	for (uint32_t i = 0; i < 4; i++) {
 		for (uint32_t j = 0; j < 8; j++) {
 			result[i + ((size_t) j * 4)] = (context->state[j] >> (24 - (i * 8))) & 0x000000ff;
@@ -143,14 +141,14 @@ static kl::hash_t finalize_context(sha256_context* context)
 	return result;
 }
 
-// Hashing
-kl::hash_t kl::hash(const void* data, const uint64_t data_size) {
-	sha256_context context = {};
-	update_context(&context, (uint8_t*) data, data_size);
+kl::Hash kl::hash(const void* data, const uint64_t data_size)
+{
+	SHA256Context context{};
+	update_context(&context, reinterpret_cast<const uint8_t*>(data), data_size);
 	return finalize_context(&context);
 }
 
-kl::hash_t kl::hash(const std::string& data)
+kl::Hash kl::hash_str(const std::string_view& data)
 {
 	return hash(data.data(), data.size());
 }

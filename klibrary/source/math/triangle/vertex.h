@@ -1,24 +1,42 @@
 #pragma once
 
-#include "math/vector/float4.h"
+#include "math/vector/vector4.h"
 
 
 namespace kl {
-    struct vertex
+    template<typename T = float>
+    struct Vertex
     {
-        float3 world = {};
-        float2 texture = {};
-        float3 normal = {};
+        Vector3<T> world;
+        Vector2<T> texture;
+        Vector3<T> normal;
 
-        // Construct
-        vertex();
-        vertex(const float3& world);
-        vertex(const float3& world, const float2& texture);
-        vertex(const float3& world, const float3& normal);
-        vertex(const float3& world, const float2& texture, const float3& normal);
+        constexpr Vertex()
+        {}
+
+        constexpr Vertex(const Vector3<T>& world)
+            : world(world)
+        {}
+
+        constexpr Vertex(const Vector3<T>& world, const Vector2<T>& texture)
+            : world(world), texture(texture)
+        {}
+
+        constexpr Vertex(const Vector3<T>& world, const Vector3<T>& normal)
+            : world(world), normal(normal)
+        {}
+
+        constexpr Vertex(const Vector3<T>& world, const Vector2<T>& texture, const Vector3<T>& normal)
+            : world(world), texture(texture), normal(normal)
+        {}
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const vertex& obj);
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Vertex<T>& vertex)
+    {
+        stream << "{" << vertex.world << ", " << vertex.texture << ", " << vertex.normal << "}";
+        return stream;
+    }
 }

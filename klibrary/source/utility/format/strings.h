@@ -4,16 +4,29 @@
 
 
 namespace kl {
-    std::string convert_string(const std::wstring& data);
-    std::wstring convert_string(const std::string& data);
-
-    std::vector<std::string> split_string(const std::string& data, char delimiter);
-    std::vector<std::wstring> split_string(const std::wstring& data, wchar_t delimiter);
+    struct string_hash : std::hash<std::string_view>
+    {
+        using is_transparent = void;
+    };
 }
 
 namespace kl {
-    template<int W, int H>
-    std::string format_matrix(const float* data)
+    std::string convert_string(const std::wstring_view& data);
+    std::wstring convert_string(const std::string_view& data);
+
+    std::vector<std::string> split_string(const std::string_view& data, char delimiter);
+    std::vector<std::wstring> split_string(const std::wstring_view& data, wchar_t delimiter);
+
+    void replace_all(std::string& str, const std::string_view& from, const std::string_view& to);
+    void replace_all(std::wstring& str, const std::wstring_view& from, const std::wstring_view& to);
+
+    std::optional<int64_t> parse_int(const std::string_view& data);
+    std::optional<double> parse_float(const std::string_view& data);
+}
+
+namespace kl {
+    template<int W, int H, typename T>
+    constexpr std::string format_matrix(const T* data)
     {
         std::string output_data[W * H] = {};
         int max_lengths[W] = {};
@@ -25,14 +38,14 @@ namespace kl {
             }
         }
 
-        std::stringstream stream = {};
+        std::stringstream stream;
         for (int y = 0; y < H; y++) {
-            stream << ((y == 0) ? char(218) : (y == (H - 1) ? char(192) : char(179)));
+            stream << ((y == 0) ? (char) 218 : (y == (H - 1) ? (char) 192 : (char) 179));
             for (int x = 0; x < (W - 1); x++) {
                 stream << std::setw(max_lengths[x]) << output_data[y * W + x] << " ";
             }
             stream << std::setw(max_lengths[W - 1]) << output_data[y * W + (W - 1)];
-            stream << (y == 0 ? char(191) : (y == (H - 1) ? char(217) : char(179)));
+            stream << (y == 0 ? (char) 191 : (y == (H - 1) ? (char) 217 : (char) 179));
             stream << (y != (H - 1) ? "\n" : "");
         }
         return stream.str();
@@ -40,14 +53,13 @@ namespace kl {
 }
 
 namespace kl {
-    // 8 bit chars
     template <bool NewLine = true, typename... Args>
     void write(std::ostream& stream, const Args&... args)
     {
         std::osyncstream synced_stream(stream);
         (synced_stream << ... << args);
         if constexpr (NewLine) {
-            synced_stream << std::endl;
+            synced_stream << '\n';
         }
     }
 
@@ -60,33 +72,32 @@ namespace kl {
     template <typename... Args>
     std::string format(const Args&... args)
     {
-        std::stringstream stream = {};
+        std::stringstream stream;
         write<false>(stream, args...);
         return stream.str();
     }
 
-    // 16 bit chars
     template <bool NewLine = true, typename... Args>
-    void w_write(std::wostream& w_stream, const Args&... args)
+    void wwrite(std::wostream& w_stream, const Args&... args)
     {
         std::wosyncstream w_synced_stream(w_stream);
         (w_synced_stream << ... << args);
         if constexpr (NewLine) {
-            w_synced_stream << std::endl;
+            w_synced_stream << '\n';
         }
     }
 
     template <bool NewLine = true, typename... Args>
-    void w_print(const Args&... args)
+    void wprint(const Args&... args)
     {
-        w_write<NewLine>(std::wcout, args...);
+        wwrite<NewLine>(std::wcout, args...);
     }
 
     template <typename... Args>
-    std::wstring w_format(const Args&... args)
+    std::wstring wformat(const Args&... args)
     {
         std::wstringstream w_stream;
-        w_write<false>(w_stream, args...);
+        wwrite<false>(w_stream, args...);
         return w_stream.str();
     }
 }

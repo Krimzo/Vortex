@@ -1,4 +1,4 @@
-#include "engine/engine.h"
+#include "vortex.h"
 
 
 // Value tables
@@ -169,7 +169,7 @@ static constexpr float black_king_end_value_table[64]
 };
 
 
-static bool white_in_endgame(const vtx::board& board)
+static bool white_in_endgame(const vtx::Board& board)
 {
 	int minor_pieces = 0;
 	for (const auto piece : board.pieces) {
@@ -188,7 +188,7 @@ static bool white_in_endgame(const vtx::board& board)
 	return true;
 }
 
-static bool black_in_endgame(const vtx::board& board)
+static bool black_in_endgame(const vtx::Board& board)
 {
 	int minor_pieces = 0;
 	for (const auto piece : board.pieces) {
@@ -207,73 +207,73 @@ static bool black_in_endgame(const vtx::board& board)
 	return true;
 }
 
-void vtx::engine::static_evaluation(board& board)
+float vtx::Engine::evaluate(const Board& board) const
 {
-	board.evaluation = 0.0f;
-
+	float evaluation = 0.0f;
 	for (int i = 0; i < 64; i++) {
 		switch (board[i]) {
 			// White
 		case w_pawn:
-			board.evaluation += 1.0f;
-			board.evaluation += white_pawn_value_table[i];
+			evaluation += 1.0f;
+			evaluation += white_pawn_value_table[i];
 			break;
 
 		case w_knight:
-			board.evaluation += 3.2f;
-			board.evaluation += white_knight_value_table[i];
+			evaluation += 3.2f;
+			evaluation += white_knight_value_table[i];
 			break;
 
 		case w_bishop:
-			board.evaluation += 3.3f;
-			board.evaluation += white_bishop_value_table[i];
+			evaluation += 3.3f;
+			evaluation += white_bishop_value_table[i];
 			break;
 
 		case w_rook:
-			board.evaluation += 5.0f;
-			board.evaluation += white_rook_value_table[i];
+			evaluation += 5.0f;
+			evaluation += white_rook_value_table[i];
 			break;
 
 		case w_queen:
-			board.evaluation += 9.0f;
-			board.evaluation += white_queen_value_table[i];
+			evaluation += 9.0f;
+			evaluation += white_queen_value_table[i];
 			break;
 
 		case w_king:
-			board.evaluation += 1'000'000.0f;
-			board.evaluation += white_in_endgame(board) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
+			evaluation += 1'000'000.0f;
+			evaluation += white_in_endgame(board) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
 			break;
 
 			// Black
 		case b_pawn:
-			board.evaluation -= 1.0f;
-			board.evaluation -= black_pawn_value_table[i];
+			evaluation -= 1.0f;
+			evaluation -= black_pawn_value_table[i];
 			break;
 
 		case b_knight:
-			board.evaluation -= 3.2f;
-			board.evaluation -= black_knight_value_table[i];
+			evaluation -= 3.2f;
+			evaluation -= black_knight_value_table[i];
 			break;
 
 		case b_bishop:
-			board.evaluation -= 3.3f;
-			board.evaluation -= black_bishop_value_table[i];
+			evaluation -= 3.3f;
+			evaluation -= black_bishop_value_table[i];
 			break;
 
 		case b_rook:
-			board.evaluation -= 5.0f;
-			board.evaluation -= black_rook_value_table[i];
+			evaluation -= 5.0f;
+			evaluation -= black_rook_value_table[i];
 			break;
 
 		case b_queen:
-			board.evaluation -= 9.0f;
-			board.evaluation -= black_queen_value_table[i];
+			evaluation -= 9.0f;
+			evaluation -= black_queen_value_table[i];
 			break;
 
 		case b_king:
-			board.evaluation -= 1'000'000.0f;
-			board.evaluation -= black_in_endgame(board) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
+			evaluation -= 1'000'000.0f;
+			evaluation -= black_in_endgame(board) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
 			break;
 		}
 	}
+	return evaluation;
 }

@@ -1,60 +1,34 @@
 #pragma once
 
-// Input
 #include "window/input/key.h"
 #include "window/input/keyboard.h"
 #include "window/input/mouse.h"
-
-// Draw
-#include "window/draw/frame_buffer.h"
-#include "memory/memory.h"
+#include "window/hooks/keyboard_hook.h"
+#include "window/hooks/mouse_hook.h"
 
 
 namespace kl::screen {
-    inline const int2 size = {
+    inline const Int2 SIZE = {
         GetSystemMetrics(SM_CXSCREEN),
         GetSystemMetrics(SM_CYSCREEN),
     };
 }
 
 namespace kl {
-    class window
+    struct Window : NoCopy
     {
-        std::string name_ = {};
+        Keyboard keyboard;
+        Mouse mouse;
 
-        HINSTANCE instance_ = nullptr;
-        HWND window_ = nullptr;
-        HDC device_context_ = nullptr;
+        std::vector<std::function<void(Int2)>> on_resize;
+		std::vector<std::function<void(Int2)>> on_move;
 
-        bool in_fullscreen_ = false;
-        bool resizeable_ = true;
-        LONG window_style_ = NULL;
-        LONG window_ex_style_ = NULL;
-        WINDOWPLACEMENT placement_ = {};
+        Window(const std::string_view& name);
+        virtual ~Window();
 
-        // System
-        LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
-        void handle_message(const MSG& message);
-
-    public:
-        std::vector<std::function<void(int2)>> on_resize = {};
-        keyboard keyboard = {};
-        mouse mouse = {};
-
-        // Creation
-        window(const int2& size, const std::string& name);
-        ~window();
-
-        window(const window&) = delete;
-        window(const window&&) = delete;
-
-        void operator=(const window&) = delete;
-        void operator=(const window&&) = delete;
-
-        // Methods
         operator HWND() const;
 
-        bool process(bool wait = true);
+        bool process();
 
         bool is_open() const;
         void close() const;
@@ -62,15 +36,24 @@ namespace kl {
         bool is_resizeable() const;
         void set_resizeable(bool enabled);
 
+        int style() const;
+        void add_style(int style);
+        void remove_style(int style);
+
         void maximize() const;
         void minimize() const;
         void restore() const;
 
+        bool is_maximized() const;
+        bool is_minimized() const;
+        bool is_restored() const;
+        bool is_focused() const;
+
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled);
 
-        int2 position(bool client = false) const;
-        void set_position(const int2& position) const;
+        Int2 position() const;
+        void set_position(Int2 position) const;
 
         int width() const;
         void set_width(int width) const;
@@ -78,18 +61,39 @@ namespace kl {
         int height() const;
         void set_height(int height) const;
 
-        int2 size(bool client = true) const;
-        void resize(const int2& size, bool client = true) const;
+        Int2 size() const;
+        void resize(Int2 size) const;
 
-        float get_aspect_ratio() const;
-        int2 get_frame_center() const;
+        float aspect_ratio() const;
+        Int2 frame_center() const;
 
-        void set_title(const std::string& data) const;
-        bool set_icon(const std::string& filepath) const;
+        float dpi() const;
+        float pixels_to_dips(float value) const;
+        float dips_to_pixels(float value) const;
 
-        void draw_pixel_data(const color* data, const int2& size, const int2& position = {}) const;
-        void draw_image(const image& image, const int2& position = {}) const;
+        void set_title(const std::string_view& data) const;
+        bool set_icon(const std::string_view& filepath) const;
 
+        void draw_pixel_data(const RGB* data, Int2 size, Int2 position = {}) const;
+        void draw_image(const Image& image, Int2 position = {}) const;
+
+        void set_dark_mode(bool enabled) const;
         void notify() const;
+
+    private:
+        std::string m_name;
+
+        HINSTANCE m_instance = nullptr;
+        HWND m_window = nullptr;
+        HDC m_device_context = nullptr;
+
+        WINDOWPLACEMENT m_placement = {};
+        LONG m_window_ex_style = NULL;
+        LONG m_window_style = NULL;
+        bool m_resizeable = true;
+        bool m_in_fullscreen = false;
+
+        LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
+        void handle_message(const MSG& message);
     };
 }
