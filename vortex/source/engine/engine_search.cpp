@@ -16,30 +16,26 @@ vtx::SearchResult vtx::Engine::search(Board& board, const int max_depth)
 vtx::Board vtx::Engine::search_rec(Board& board, const int max_depth, const int depth, float alpha, float beta)
 {
 	board.evaluation = evaluate(board);
-	if (depth > max_depth || board.evaluation < -1e4f || board.evaluation > 1e4f) {
+	if (depth > max_depth || board.evaluation < -1000.0f || board.evaluation > 1000.0f)
 		return board;
-	}
 
 	Board best_position{};
-	best_position.evaluation = (board.white_to_play ? -INF : INF);
+	best_position.evaluation = board.white_to_play ? -INF : INF;
 
 	std::vector<Board> possible_boards;
 	possible_boards.reserve(50);
 	
 	for (int i = 0; i < 64; i++) {
-		Piece piece = board[i];
-		if (!piece_type_check(board, piece)) {
+		if (!piece_type_check(board, board[i]))
 			continue;
-		}
 
 		possible_boards.clear();
 		get_piece_moves(board, i, possible_boards);
 
 		for (auto& possible_board : possible_boards) {
 			possible_board.evaluation = search_rec(possible_board, max_depth, depth + 1, alpha, beta).evaluation;
-			if (evaluation_check(board.white_to_play, alpha, beta, possible_board, best_position)) {
+			if (evaluation_check(board.white_to_play, alpha, beta, possible_board, best_position))
 				return best_position;
-			}
 		}
 	}
 	return best_position;
@@ -47,12 +43,10 @@ vtx::Board vtx::Engine::search_rec(Board& board, const int max_depth, const int 
 
 bool vtx::Engine::piece_type_check(const Board& board, const Piece piece)
 {
-	if (board.white_to_play && !piece.is_white()) {
+	if (board.white_to_play && !piece.is_white())
 		return false;
-	}
-	if (!board.white_to_play && !piece.is_black()) {
+	if (!board.white_to_play && !piece.is_black())
 		return false;
-	}
 	return true;
 }
 

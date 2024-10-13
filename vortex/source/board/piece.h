@@ -4,34 +4,48 @@
 
 
 namespace vtx {
-	inline static constexpr char none = 0;
+	enum PieceType : int8_t
+	{
+		NONE = 0,
 
-	inline static constexpr char w_pawn = 'P';
-	inline static constexpr char w_knight = 'N';
-	inline static constexpr char w_bishop = 'B';
-	inline static constexpr char w_rook = 'R';
-	inline static constexpr char w_queen = 'Q';
-	inline static constexpr char w_king = 'K';
+		W_PAWN = 'P',
+		W_KNIGHT = 'N',
+		W_BISHOP = 'B',
+		W_ROOK = 'R',
+		W_QUEEN = 'Q',
+		W_KING = 'K',
 
-	inline static constexpr char b_pawn = 'p';
-	inline static constexpr char b_knight = 'n';
-	inline static constexpr char b_bishop = 'b';
-	inline static constexpr char b_rook = 'r';
-	inline static constexpr char b_queen = 'q';
-	inline static constexpr char b_king = 'k';
+		B_PAWN = 'p',
+		B_KNIGHT = 'n',
+		B_BISHOP = 'b',
+		B_ROOK = 'r',
+		B_QUEEN = 'q',
+		B_KING = 'k',
+	};
 }
 
 namespace vtx {
 	struct Piece
 	{
-		char type = none;
+		PieceType type;
 
-		Piece();
-		Piece(char type);
+		constexpr Piece(PieceType type = PieceType::NONE)
+			: type(type)
+		{}
 
-		operator char() const;
+		constexpr operator bool() const
+		{
+			return type != PieceType::NONE;
+		}
 
-		bool is_white(bool allow_none = false) const;
-		bool is_black(bool allow_none = false) const;
+		constexpr bool is_white(bool allow_none = false) const
+		{
+			return (type > 64 && type < 91) || (allow_none && !type);
+		}
+
+		constexpr bool is_black(bool allow_none = false) const
+		{
+			return (type > 96 && type < 123) || (allow_none && !type);
+		}
 	};
 }

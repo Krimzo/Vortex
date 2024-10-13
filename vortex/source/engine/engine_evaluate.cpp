@@ -171,15 +171,18 @@ static constexpr float black_king_end_value_table[64]
 
 static bool white_in_endgame(const vtx::Board& board)
 {
+	using namespace vtx;
+
 	int minor_pieces = 0;
-	for (const auto piece : board.pieces) {
-		switch (piece) {
-		case vtx::b_queen:
+	for (Piece piece : board.pieces) {
+		switch (piece.type)
+		{
+		case B_QUEEN:
 			return false;
 
-		case vtx::b_knight:
-		case vtx::b_bishop:
-		case vtx::b_rook:
+		case B_KNIGHT:
+		case B_BISHOP:
+		case B_ROOK:
 			if (++minor_pieces > 2) {
 				return false;
 			}
@@ -190,15 +193,18 @@ static bool white_in_endgame(const vtx::Board& board)
 
 static bool black_in_endgame(const vtx::Board& board)
 {
+	using namespace vtx;
+
 	int minor_pieces = 0;
-	for (const auto piece : board.pieces) {
-		switch (piece) {
-		case vtx::w_queen:
+	for (Piece piece : board.pieces) {
+		switch (piece.type)
+		{
+		case W_QUEEN:
 			return false;
 
-		case vtx::w_knight:
-		case vtx::w_bishop:
-		case vtx::w_rook:
+		case W_KNIGHT:
+		case W_BISHOP:
+		case W_ROOK:
 			if (++minor_pieces > 2) {
 				return false;
 			}
@@ -211,65 +217,64 @@ float vtx::Engine::evaluate(const Board& board) const
 {
 	float evaluation = 0.0f;
 	for (int i = 0; i < 64; i++) {
-		switch (board[i]) {
-			// White
-		case w_pawn:
+		switch (board[i].type)
+		{
+		case W_PAWN:
 			evaluation += 1.0f;
 			evaluation += white_pawn_value_table[i];
 			break;
 
-		case w_knight:
+		case W_KNIGHT:
 			evaluation += 3.2f;
 			evaluation += white_knight_value_table[i];
 			break;
 
-		case w_bishop:
+		case W_BISHOP:
 			evaluation += 3.3f;
 			evaluation += white_bishop_value_table[i];
 			break;
 
-		case w_rook:
+		case W_ROOK:
 			evaluation += 5.0f;
 			evaluation += white_rook_value_table[i];
 			break;
 
-		case w_queen:
+		case W_QUEEN:
 			evaluation += 9.0f;
 			evaluation += white_queen_value_table[i];
 			break;
 
-		case w_king:
+		case W_KING:
 			evaluation += 1'000'000.0f;
 			evaluation += white_in_endgame(board) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
 			break;
 
-			// Black
-		case b_pawn:
+		case B_PAWN:
 			evaluation -= 1.0f;
 			evaluation -= black_pawn_value_table[i];
 			break;
 
-		case b_knight:
+		case B_KNIGHT:
 			evaluation -= 3.2f;
 			evaluation -= black_knight_value_table[i];
 			break;
 
-		case b_bishop:
+		case B_BISHOP:
 			evaluation -= 3.3f;
 			evaluation -= black_bishop_value_table[i];
 			break;
 
-		case b_rook:
+		case B_ROOK:
 			evaluation -= 5.0f;
 			evaluation -= black_rook_value_table[i];
 			break;
 
-		case b_queen:
+		case B_QUEEN:
 			evaluation -= 9.0f;
 			evaluation -= black_queen_value_table[i];
 			break;
 
-		case b_king:
+		case B_KING:
 			evaluation -= 1'000'000.0f;
 			evaluation -= black_in_endgame(board) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
 			break;

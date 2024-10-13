@@ -3,18 +3,15 @@
 
 bool vtx::in_board(const int x, const int y)
 {
-	return (x >= 0 && x < 8 && y >= 0 && y < 8);
+	return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
 int vtx::get_index(const int x, const int y)
 {
-	return (x + y * 8);
+	return x + y * 8;
 }
 
-vtx::Board::Board()
-{}
-
-vtx::Board::Board(const std::string& fen)
+vtx::Board::Board(const std::string_view& fen)
 {
 	load_fen(fen);
 }
@@ -39,7 +36,7 @@ const vtx::Piece& vtx::Board::operator()(const int x, const int y) const
 	return pieces[get_index(x, y)];
 }
 
-void vtx::Board::load_fen(const std::string& fen)
+void vtx::Board::load_fen(const std::string_view& fen)
 {
 	const std::vector<std::string> parts = kl::split_string(fen, ' ');
 	if (!kl::verify(parts.size() == 3, "Bad FEN data"))
@@ -47,10 +44,10 @@ void vtx::Board::load_fen(const std::string& fen)
 
 	white_to_play = (parts[1] == "w");
 
-	for (int i = 0, position = 0; i < int(parts[0].size()) && position < 64; i++) {
-		if (const char lower_char = char(tolower(fen[i])); lower_char == 'p' || lower_char == 'n' || lower_char == 'b' ||
-			lower_char == 'r' || lower_char == 'q' || lower_char == 'k') {
-			pieces[position++] = Piece(char(fen[i]));
+	for (int i = 0, position = 0; i < (int) parts[0].size() && position < 64; i++) {
+		char lower_char = (char) tolower(fen[i]);
+		if (lower_char == 'p' || lower_char == 'n' || lower_char == 'b' || lower_char == 'r' || lower_char == 'q' || lower_char == 'k') {
+			pieces[position++] = Piece{ (PieceType) fen[i] };
 		}
 		else if (isdigit(fen[i])) {
 			position += (fen[i] - 48);
@@ -78,39 +75,38 @@ void vtx::Board::load_fen(const std::string& fen)
 
 void vtx::Board::reset()
 {
-	for (auto& piece : pieces) {
-		piece = none;
-	}
+	for (auto& piece : pieces)
+		piece = PieceType::NONE;
+
+	evaluation = 0.0f;
+
+	selected_square = -1;
+	last_played_from = -1;
+	last_played_to = -1;
 
 	white_to_play = true;
 	castling_wk = true;
 	castling_wq = true;
 	castling_bk = true;
 	castling_bq = true;
-
-	selected_square = -1;
-	last_played_from = -1;
-	last_played_to = -1;
-
-	evaluation = 0.0f;
 }
 
 vtx::Board vtx::Board::after_playing(const int from_index, const int to_index, const char new_type) const {
 	Board board = *this;
 
-	switch (board[from_index])
+	switch (board[from_index].type)
 	{
-	case w_king:
+	case W_KING:
 		board.castling_wk = false;
 		board.castling_wq = false;
 		break;
 
-	case b_king:
+	case B_KING:
 		board.castling_bk = false;
 		board.castling_bq = false;
 		break;
 
-	case w_rook:
+	case W_ROOK:
 		if (from_index == 63) {
 			board.castling_wk = false;
 		}
@@ -119,7 +115,7 @@ vtx::Board vtx::Board::after_playing(const int from_index, const int to_index, c
 		}
 		break;
 
-	case b_rook:
+	case B_ROOK:
 		if (from_index == 7) {
 			board.castling_bk = false;
 		}
@@ -132,8 +128,8 @@ vtx::Board vtx::Board::after_playing(const int from_index, const int to_index, c
 	board.last_played_from = from_index;
 	board.last_played_to = to_index;
 
-	board[from_index].type = none;
-	board[to_index].type = new_type;
+	board[from_index].type = PieceType::NONE;
+	board[to_index].type = (PieceType) new_type;
 
 	board.white_to_play = !white_to_play;
 	return board;
@@ -144,12 +140,12 @@ int vtx::Board::get_win_state() const
 	int white_king_count = 0;
 	int black_king_count = 0;
 	for (auto& piece : pieces) {
-		if (piece.type == w_king) {
+		if (piece.type == W_KING) {
 			white_king_count += 1;
 		}
-		if (piece.type == b_king) {
+		if (piece.type == B_KING) {
 			black_king_count += 1;
 		}
 	}
-	return (white_king_count - black_king_count);
+	return white_king_count - black_king_count;
 }

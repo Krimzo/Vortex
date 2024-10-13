@@ -11,18 +11,18 @@ vtx::Renderer::Renderer(Game& game)
 	sampler_state = gpu.create_sampler_state(true, true);
 	gpu.bind_blend_state(gpu.create_blend_state(true));
 
-	w_pawn_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_pawn.png")), nullptr);
-	b_pawn_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_pawn.png")), nullptr);
-	w_knight_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_knight.png")), nullptr);
-	b_knight_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_knight.png")), nullptr);
-	w_bishop_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_bishop.png")), nullptr);
-	b_bishop_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_bishop.png")), nullptr);
-	w_rook_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_rook.png")), nullptr);
-	b_rook_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_rook.png")), nullptr);
-	w_queen_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_queen.png")), nullptr);
-	b_queen_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_queen.png")), nullptr);
-	w_king_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/w_king.png")), nullptr);
-	b_king_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/b_king.png")), nullptr);
+	w_pawn_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_PAWN.png")), nullptr);
+	b_pawn_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_PAWN.png")), nullptr);
+	w_knight_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_KNIGHT.png")), nullptr);
+	b_knight_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_KNIGHT.png")), nullptr);
+	w_bishop_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_BISHOP.png")), nullptr);
+	b_bishop_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_BISHOP.png")), nullptr);
+	w_rook_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_ROOK.png")), nullptr);
+	b_rook_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_ROOK.png")), nullptr);
+	w_queen_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_QUEEN.png")), nullptr);
+	b_queen_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_QUEEN.png")), nullptr);
+	w_king_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_KING.png")), nullptr);
+	b_king_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/B_KING.png")), nullptr);
 
 	resize(kl::Int2(1));
 }
@@ -139,15 +139,15 @@ kl::RGB vtx::Renderer::get_square_color(const Board& board, const int x, const i
 {
 	const int index = x + y * 8;
 	if (board.get_win_state() && index == board.last_played_to)
-		return ((x % 2) == (y % 2)) ? game_over_light_color : game_over_dark_color;
+		return (x % 2 == y % 2) ? game_over_light_color : game_over_dark_color;
 
 	if (board.selected_square >= 0) {
-		std::vector<Board> boards = {};
+		std::vector<Board> boards;
 		get_piece_moves(board, board.selected_square, boards);
 		for (const auto& future_board : boards) {
-			if (index == future_board.last_played_to) {
-				return ((x % 2) == (y % 2)) ? selected_light_color : selected_dark_color;
-			}
+			if (index != future_board.last_played_to)
+				continue;
+			return (x % 2 == y % 2) ? selected_light_color : selected_dark_color;
 		}
 	}
 
@@ -158,20 +158,20 @@ kl::RGB vtx::Renderer::get_square_color(const Board& board, const int x, const i
 
 kl::dx::ShaderView vtx::Renderer::get_square_icon(const Board& board, const int x, const int y) const
 {
-	switch (board(x, y))
+	switch (board(x, y).type)
 	{
-	case w_pawn: return w_pawn_icon;
-	case b_pawn: return b_pawn_icon;
-	case w_knight: return w_knight_icon;
-	case b_knight: return b_knight_icon;
-	case w_bishop: return w_bishop_icon;
-	case b_bishop: return b_bishop_icon;
-	case w_rook: return w_rook_icon;
-	case b_rook: return b_rook_icon;
-	case w_queen: return w_queen_icon;
-	case b_queen: return b_queen_icon;
-	case w_king: return w_king_icon;
-	case b_king: return b_king_icon;
+	case W_PAWN: return w_pawn_icon;
+	case B_PAWN: return b_pawn_icon;
+	case W_KNIGHT: return w_knight_icon;
+	case B_KNIGHT: return b_knight_icon;
+	case W_BISHOP: return w_bishop_icon;
+	case B_BISHOP: return b_bishop_icon;
+	case W_ROOK: return w_rook_icon;
+	case B_ROOK: return b_rook_icon;
+	case W_QUEEN: return w_queen_icon;
+	case B_QUEEN: return b_queen_icon;
+	case W_KING: return w_king_icon;
+	case B_KING: return b_king_icon;
 	}
 	return {};
 }

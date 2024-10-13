@@ -46,7 +46,7 @@ void vtx::UI::update()
 void vtx::UI::display_log_window() const
 {
 	if (ImGui::Begin("Logs", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		if (ImGui::BeginTable("table2", 5, ImGuiTableFlags_Borders)) {
+		if (ImGui::BeginTable("table2", 4, ImGuiTableFlags_Borders)) {
 			ImGui::TableNextColumn();
 			ImGui::Text("Index");
 			ImGui::TableNextColumn();

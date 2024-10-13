@@ -3,7 +3,9 @@
 
 vtx::Game::Game(System& system)
     : system(system)
-{}
+{
+	reset();
+}
 
 void vtx::Game::update()
 {
@@ -23,6 +25,7 @@ void vtx::Game::reset()
 {
 	board = { default_fen };
 	search_results.clear();
+	search_results.emplace_back(board, 0, 0.0f);
 }
 
 kl::Float2 vtx::Game::mouse_ndc() const

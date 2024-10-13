@@ -8,7 +8,7 @@ void vtx::get_white_queen_moves(const Board& board, const int x, const int y, st
 
 	get_white_bishop_moves(board, x, y, boards);
 	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = w_queen;
+		new_board.pieces[new_board.last_played_to].type = W_QUEEN;
 		out_boards.push_back(new_board);
 	}
 
@@ -16,7 +16,7 @@ void vtx::get_white_queen_moves(const Board& board, const int x, const int y, st
 
 	get_white_rook_moves(board, x, y, boards);
 	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = w_queen;
+		new_board.pieces[new_board.last_played_to].type = W_QUEEN;
 		out_boards.push_back(new_board);
 	}
 }
@@ -28,7 +28,7 @@ void vtx::get_black_queen_moves(const Board& board, const int x, const int y, st
 
 	get_black_bishop_moves(board, x, y, boards);
 	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = b_queen;
+		new_board.pieces[new_board.last_played_to].type = B_QUEEN;
 		out_boards.push_back(new_board);
 	}
 
@@ -36,7 +36,7 @@ void vtx::get_black_queen_moves(const Board& board, const int x, const int y, st
 
 	get_black_rook_moves(board, x, y, boards);
 	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = b_queen;
+		new_board.pieces[new_board.last_played_to].type = B_QUEEN;
 		out_boards.push_back(new_board);
 	}
 }
