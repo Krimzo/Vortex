@@ -1,7 +1,7 @@
 struct VS_OUT
 {
     float4 position : SV_Position;
-    float2 textur : VS_Texture;
+    float2 uv : VS_UV;
 };
 
 float4 SQUARE_COLOR;
@@ -15,7 +15,7 @@ Texture2D PIECE_TEXTURE : register(t0);
 
 SamplerState PIECE_SAMPLER : register(s0);
 
-VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
+VS_OUT v_shader(float3 position : KL_Position, float2 uv : KL_UV)
 {
     if (PIECE_EXISTS)
     {
@@ -36,7 +36,7 @@ VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
 
     VS_OUT data;
     data.position = float4(altered_position, 0.5f, 1.0f);
-    data.textur = textur;
+    data.uv = uv;
     return data;
 }
 
@@ -46,9 +46,9 @@ float4 p_shader(VS_OUT data) : SV_Target0
         return float4(SQUARE_COLOR.xyz, 1.0f);
 
     if (SQUARE_COLOR.w == 1.0f)
-        return PIECE_TEXTURE.Sample(PIECE_SAMPLER, data.textur);
+        return PIECE_TEXTURE.Sample(PIECE_SAMPLER, data.uv);
 
     float4 square_color = float4(SQUARE_COLOR.xyz, 1.0f);
-    float4 texture_color = PIECE_TEXTURE.Sample(PIECE_SAMPLER, data.textur);
+    float4 texture_color = PIECE_TEXTURE.Sample(PIECE_SAMPLER, data.uv);
     return lerp(square_color, texture_color, texture_color.w);
 }

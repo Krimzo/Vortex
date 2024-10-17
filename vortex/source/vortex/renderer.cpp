@@ -6,9 +6,9 @@ vtx::Renderer::Renderer(Game& game)
 {
 	kl::GPU& gpu = game.system.gpu;
 
-	screen_mesh = gpu.create_screen_mesh();
-	render_shaders = gpu.create_render_shaders(kl::read_file("resource/shaders/board_render.hlsl"));
-	sampler_state = gpu.create_sampler_state(true, true);
+	m_screen_mesh = gpu.create_screen_mesh();
+	m_shaders = gpu.create_shaders(kl::read_file("resource/shaders/board_render.hlsl"));
+	m_sampler_state = gpu.create_sampler_state(true, true);
 	gpu.bind_blend_state(gpu.create_blend_state(true));
 
 	w_pawn_icon = gpu.create_shader_view(gpu.create_texture(kl::Image("resource/textures/W_PAWN.png")), nullptr);
@@ -38,13 +38,13 @@ void vtx::Renderer::update()
 	gpu.clear_target_view(m_render_texture.target_view, background);
 
 	gpu.set_draw_type(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gpu.bind_vertex_buffer(screen_mesh, 0, 0, sizeof(kl::Vertex<float>));
+	gpu.bind_vertex_buffer(m_screen_mesh, 0, 0, sizeof(kl::Vertex));
 
-	gpu.bind_render_shaders(render_shaders);
-	gpu.bind_sampler_state_for_pixel_shader(sampler_state, 0);
+	gpu.bind_shaders(m_shaders);
+	gpu.bind_sampler_state_for_pixel_shader(m_sampler_state, 0);
 
 	const float aspect_ratio = (float) render_size.x / (float) render_size.y;
-	const UINT vertex_count = gpu.vertex_buffer_size(screen_mesh, sizeof(kl::Vertex<float>));
+	const UINT vertex_count = gpu.vertex_buffer_size(m_screen_mesh, sizeof(kl::Vertex));
 
 	struct alignas(16) CB
 	{
@@ -68,7 +68,7 @@ void vtx::Renderer::update()
 			cb.ASPECT_RATIO = aspect_ratio;
 			cb.SQUARE_COLOR = get_square_color(game.board, x, 7 - y);
 			cb.SQUARE_COLOR.w = (i == game.board.selected_square) ? 0.0f : 2.0f;
-			render_shaders.upload(cb);
+			m_shaders.upload(cb);
 
 			kl::dx::ShaderView icon_texture = get_square_icon(game.board, x, 7 - y);
 			gpu.bind_shader_view_for_pixel_shader(icon_texture, 0);
@@ -89,7 +89,7 @@ void vtx::Renderer::update()
 		cb.ASPECT_RATIO = aspect_ratio;
 		cb.SQUARE_COLOR = get_square_color(game.board, x, y);
 		cb.SQUARE_COLOR.w = 1.0f;
-		render_shaders.upload(cb);
+		m_shaders.upload(cb);
 
 		const auto icon_texture = get_square_icon(game.board, x, y);
 		gpu.bind_shader_view_for_pixel_shader(icon_texture, 0);
@@ -130,7 +130,7 @@ void vtx::Renderer::resize(const kl::Int2 new_size)
 	render_texture_descriptor.Usage = D3D11_USAGE_DEFAULT;
 	render_texture_descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-	m_render_texture.graphics_buffer = game.system.gpu.create_texture(&render_texture_descriptor, nullptr);
+	m_render_texture.texture = game.system.gpu.create_texture(&render_texture_descriptor, nullptr);
 	m_render_texture.create_target_view();
 	m_render_texture.create_shader_view();
 }

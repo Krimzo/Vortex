@@ -29,9 +29,9 @@ namespace vtx {
 
     private:
         kl::Texture m_render_texture;
-        kl::dx::Buffer screen_mesh;
-        kl::RenderShaders render_shaders;
-        kl::dx::SamplerState sampler_state;
+        kl::dx::Buffer m_screen_mesh;
+        kl::Shaders m_shaders;
+        kl::dx::SamplerState m_sampler_state;
         kl::dx::ShaderView w_pawn_icon;
         kl::dx::ShaderView b_pawn_icon;
         kl::dx::ShaderView w_knight_icon;

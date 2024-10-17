@@ -7,8 +7,8 @@
 namespace kl {
     struct Texture
     {
-        Image data_buffer;
-        dx::Texture graphics_buffer;
+        Image image;
+        dx::Texture texture;
 
         dx::TargetView target_view;
         dx::DepthView depth_view;
@@ -26,7 +26,7 @@ namespace kl {
         void create_depth_view(const dx::DepthViewDescriptor* descriptor = nullptr);
         void create_shader_view(const dx::ShaderViewDescriptor* descriptor = nullptr);
         void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
-
+        
         Int2 size() const;
 
     private:
