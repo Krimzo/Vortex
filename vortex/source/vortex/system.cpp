@@ -23,7 +23,7 @@ vtx::System::~System()
 
 bool vtx::System::update()
 {
-	timer.update_delta();
+	timer.update();
 	gpu.swap_buffers(true);
 	return window.process();
 }

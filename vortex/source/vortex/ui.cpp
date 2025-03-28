@@ -8,7 +8,7 @@ vtx::UI::UI(Renderer& renderer)
 	auto& gpu = renderer.game.system.gpu;
 
 	ImGui::CreateContext();
-	ImGui_ImplWin32_Init(HWND(window));
+	ImGui_ImplWin32_Init(window.ptr());
 	ImGui_ImplDX11_Init(gpu.device().get(), gpu.context().get());
 	ImGui::StyleColorsDark();
 
@@ -16,7 +16,7 @@ vtx::UI::UI(Renderer& renderer)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	
-	float dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(HWND(window));
+	float dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(window.ptr());
 	load_fonts(dpi_scaling);
 	load_colors();
 }

@@ -9,7 +9,7 @@ vtx::SearchResult vtx::Engine::search(Board& board, const int max_depth)
 	SearchResult result;
 	result.board = search_rec(board, max_depth, 0, -INF, INF);
 	result.depth = max_depth;
-	result.time = kl::time::calculate(start_time, kl::time::now());
+	result.time = kl::time::elapsed(start_time, kl::time::now());
 	return result;
 }
 

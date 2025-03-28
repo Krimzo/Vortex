@@ -117,7 +117,7 @@ void vtx::Renderer::reset_colors()
 
 void vtx::Renderer::resize(const kl::Int2 new_size)
 {
-	if (m_render_texture.size() == new_size)
+	if (m_render_texture.resolution() == new_size)
 		return;
 
 	kl::dx::TextureDescriptor render_texture_descriptor{};

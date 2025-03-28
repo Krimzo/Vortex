@@ -4,6 +4,7 @@
 #include <any>
 #include <array>
 #include <atomic>
+#include <bitset>
 #include <cstdint>
 #include <ctime>
 #include <execution>
@@ -32,24 +33,26 @@
 #include <vector>
 
 
-namespace kl {
-	struct NoCopy
-	{
-	protected:
-		NoCopy() = default;
-	private:
-		NoCopy(const NoCopy&) = delete;
-		void operator=(const NoCopy&) = delete;
-	};
+namespace kl
+{
+struct NoCopy
+{
+protected:
+    NoCopy() = default;
+private:
+    NoCopy( NoCopy const& ) = delete;
+    void operator=( NoCopy const& ) = delete;
+};
 }
 
-namespace kl {
-	struct NoMove
-	{
-	protected:
-		NoMove() = default;
-	private:
-		NoMove(NoMove&&) = delete;
-		void operator=(NoMove&&) = delete;
-	};
+namespace kl
+{
+struct NoMove
+{
+protected:
+    NoMove() = default;
+private:
+    NoMove( NoMove&& ) = delete;
+    void operator=( NoMove&& ) = delete;
+};
 }
