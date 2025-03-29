@@ -142,17 +142,16 @@ kl::RGB vtx::Renderer::get_square_color(Board const& board, int x, int y) const
 		return (x % 2 == y % 2) ? game_over_light_color : game_over_dark_color;
 
 	if (board.selected_square >= 0) {
-		try {
-			get_piece_moves(board, board.selected_square, [&](Board& future_board)
-				{
-					if (index != future_board.last_played_to)
-						return;
-					throw (x % 2 == y % 2) ? selected_light_color : selected_dark_color;
-				});
-		}
-		catch (kl::Float4 result) {
-			return result;
-		}
+		std::optional<kl::Float4> result;
+		get_piece_moves(board, board.selected_square, [&](Board& future_board)
+			{
+				if (index != future_board.last_played_to)
+					return false;
+				result = (x % 2 == y % 2) ? selected_light_color : selected_dark_color;
+				return true;
+			});
+		if (result)
+			return result.value();
 	}
 
 	if (index == board.last_played_from || index == board.last_played_to)

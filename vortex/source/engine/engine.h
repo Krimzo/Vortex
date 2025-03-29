@@ -19,7 +19,7 @@ namespace vtx {
 namespace vtx {
 	struct Engine
 	{
-		int depth_limit = 2;
+		int depth_limit = 3;
 		uint64_t calls = 0;
 
 		SearchResult search(Board const& board);

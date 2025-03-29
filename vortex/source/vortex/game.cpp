@@ -39,7 +39,7 @@ void vtx::Game::reset()
 {
 	board = { default_fen };
 	search_results.clear();
-	search_results.emplace_back(board, 0, 0.0f);
+	search_results.emplace_back(board);
 }
 
 kl::Float2 vtx::Game::mouse_ndc() const
@@ -95,19 +95,17 @@ bool vtx::Game::play_players_turn(int destination_index)
 	if (board.get_win_state() || board.selected_square < 0)
 		return false;
 	
-	try {
-		get_piece_moves(board, board.selected_square, [&](Board& board)
-			{
-				if (destination_index == board.last_played_to) {
-					this->board = board;
-					throw true;
-				}
-			});
-		return false;
-	}
-	catch (bool result) {
-        return result;
-    }
+	bool result = false;
+	get_piece_moves(board, board.selected_square, [&](Board& board)
+		{
+			if (destination_index == board.last_played_to) {
+				this->board = board;
+				result = true;
+				return true;
+			}
+			return false;
+		});
+    return result;
 }
 
 void vtx::Game::play_engines_turn()

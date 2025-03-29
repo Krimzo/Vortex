@@ -1,7 +1,7 @@
 #include "vortex.h"
 
 
-void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
+void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<bool(Board&)> const& board_iterator)
 {
 	int from_index = get_index(x, y);
 	Board temp_board;
@@ -17,12 +17,12 @@ void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<v
 
 		if (board[index].is_black()) {
 			board.after_playing(from_index, index, W_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, W_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Left
@@ -36,12 +36,12 @@ void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<v
 
 		if (board[index].is_black()) {
 			board.after_playing(from_index, index, W_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, W_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Top
@@ -55,12 +55,12 @@ void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<v
 
 		if (board[index].is_black()) {
 			board.after_playing(from_index, index, W_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, W_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Bottom
@@ -74,16 +74,16 @@ void vtx::get_white_rook_moves(Board const& board, int x, int y, std::function<v
 		
 		if (board[index].is_black()) {
 			board.after_playing(from_index, index, W_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, W_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 }
 
-void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
+void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<bool(Board&)> const& board_iterator)
 {
 	int from_index = get_index(x, y);
 	Board temp_board;
@@ -99,12 +99,12 @@ void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<v
 
 		if (board[index].is_white()) {
 			board.after_playing(from_index, index, B_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, B_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Left
@@ -118,12 +118,12 @@ void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<v
 
 		if (board[index].is_white()) {
 			board.after_playing(from_index, index, B_ROOK, temp_board);
-			board_iterator(temp_board);
+			if (board_iterator(temp_board)) return;
 			break;
 		}
 
 		board.after_playing(from_index, index, B_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Top
@@ -141,7 +141,7 @@ void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<v
 		}
 
 		board.after_playing(from_index, index, B_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 
 	// Bottom
@@ -159,6 +159,6 @@ void vtx::get_black_rook_moves(Board const& board, int x, int y, std::function<v
 		}
 
 		board.after_playing(from_index, index, B_ROOK, temp_board);
-		board_iterator(temp_board);
+		if (board_iterator(temp_board)) return;
 	}
 }
