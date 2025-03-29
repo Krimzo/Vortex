@@ -44,7 +44,7 @@ namespace vtx {
 		void load_fen(std::string_view const& fen);
 		void reset();
 
-		void after_playing(int from_index, int to_index, char new_type, Board& out) const;
+		void after_playing(int from_index, int to_index, PieceType new_type, Board& out) const;
 		int get_win_state() const;
 	};
 }

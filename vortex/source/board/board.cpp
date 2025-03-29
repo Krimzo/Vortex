@@ -38,7 +38,7 @@ void vtx::Board::load_fen(std::string_view const& fen)
 	for (int i = 0, position = 0; i < (int) parts[0].size() && position < 64; i++) {
 		char lower_char = (char) tolower(fen[i]);
 		if (lower_char == 'p' || lower_char == 'n' || lower_char == 'b' || lower_char == 'r' || lower_char == 'q' || lower_char == 'k') {
-			pieces[position++] = Piece{ (PieceType) fen[i] };
+			pieces[position++].type = char_to_piece(fen[i]);
 		}
 		else if (isdigit(fen[i])) {
 			position += (fen[i] - 48);
@@ -72,7 +72,7 @@ void vtx::Board::load_fen(std::string_view const& fen)
 void vtx::Board::reset()
 {
 	for (auto& piece : pieces)
-		piece = PieceType::NONE;
+		piece = PIECE_NONE;
 	selected_square = -1;
 	last_played_from = -1;
 	last_played_to = -1;
@@ -83,7 +83,7 @@ void vtx::Board::reset()
 	castling_bq = true;
 }
 
-void vtx::Board::after_playing(int from_index, int to_index, char new_type, Board& out) const
+void vtx::Board::after_playing(int from_index, int to_index, PieceType new_type, Board& out) const
 {
 	out = *this;
 	switch (out[from_index].type)
@@ -118,8 +118,8 @@ void vtx::Board::after_playing(int from_index, int to_index, char new_type, Boar
 	}
 	out.last_played_from = from_index;
 	out.last_played_to = to_index;
-	out[from_index].type = PieceType::NONE;
-	out[to_index].type = (PieceType) new_type;
+	out[from_index].type = PIECE_NONE;
+	out[to_index].type = new_type;
 	out.white_to_play = !white_to_play;
 }
 
