@@ -12,7 +12,6 @@ namespace vtx {
         Board board = { vtx::default_fen };
         Engine engine;
 
-        int search_depth = 4;
         std::vector<SearchResult> search_results;
 
         Game(System& system);
@@ -23,9 +22,6 @@ namespace vtx {
         kl::Float2 mouse_ndc() const;
 
     private:
-        void on_mouse_clicked();
-        void on_mouse_released();
-
         kl::Int2 get_board_position() const;
         kl::Int2 get_board_size() const;
         kl::Int2 get_mouse_square() const;

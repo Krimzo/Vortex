@@ -1,42 +1,52 @@
 #include "vortex.h"
 
 
-void vtx::get_white_pawn_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_white_pawn_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	const int from_index = get_index(x, y);
+	int from_index = get_index(x, y);
+	Board temp_board;
 
 	if (in_board(x, y - 1) && !board[get_index(x, y - 1)]) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x, y - 1), (y == 1) ? W_QUEEN : W_PAWN));
+		board.after_playing(from_index, get_index(x, y - 1), (y == 1) ? W_QUEEN : W_PAWN, temp_board);
+		board_iterator(temp_board);
 
 		if (y == 6 && !board[get_index(x, y - 2)]) {
-			out_boards.push_back(board.after_playing(from_index, get_index(x, y - 2), W_PAWN));
+			board.after_playing(from_index, get_index(x, y - 2), W_PAWN, temp_board);
+			board_iterator(temp_board);
 		}
 	}
 
 	if (in_board(x - 1, y - 1) && board[get_index(x - 1, y - 1)].is_black()) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x - 1, y - 1), (y == 1) ? W_QUEEN : W_PAWN));
+		board.after_playing(from_index, get_index(x - 1, y - 1), (y == 1) ? W_QUEEN : W_PAWN, temp_board);
+		board_iterator(temp_board);
 	}
 	if (in_board(x + 1, y - 1) && board[get_index(x + 1, y - 1)].is_black()) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x + 1, y - 1), (y == 1) ? W_QUEEN : W_PAWN));
+		board.after_playing(from_index, get_index(x + 1, y - 1), (y == 1) ? W_QUEEN : W_PAWN, temp_board);
+		board_iterator(temp_board);
 	}
 }
 
-void vtx::get_black_pawn_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_black_pawn_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	const int from_index = get_index(x, y);
+	int from_index = get_index(x, y);
+	Board temp_board;
 
 	if (in_board(x, y + 1) && !board[get_index(x, y + 1)]) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x, y + 1), (y == 6) ? B_QUEEN : B_PAWN));
+		board.after_playing(from_index, get_index(x, y + 1), (y == 6) ? B_QUEEN : B_PAWN, temp_board);
+		board_iterator(temp_board);
 
 		if (y == 1 && !board[get_index(x, y + 2)]) {
-			out_boards.push_back(board.after_playing(from_index, get_index(x, y + 2), B_PAWN));
+			board.after_playing(from_index, get_index(x, y + 2), B_PAWN, temp_board);
+			board_iterator(temp_board);
 		}
 	}
 
 	if (in_board(x - 1, y + 1) && board[get_index(x - 1, y + 1)].is_white()) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x - 1, y + 1), (y == 6) ? B_QUEEN : B_PAWN));
+		board.after_playing(from_index, get_index(x - 1, y + 1), (y == 6) ? B_QUEEN : B_PAWN, temp_board);
+		board_iterator(temp_board);
 	}
 	if (in_board(x + 1, y + 1) && board[get_index(x + 1, y + 1)].is_white()) {
-		out_boards.push_back(board.after_playing(from_index, get_index(x + 1, y + 1), (y == 6) ? B_QUEEN : B_PAWN));
+		board.after_playing(from_index, get_index(x + 1, y + 1), (y == 6) ? B_QUEEN : B_PAWN, temp_board);
+		board_iterator(temp_board);
 	}
 }

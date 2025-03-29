@@ -1,24 +1,28 @@
 #include "vortex.h"
 
 
-void vtx::get_white_bishop_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_white_bishop_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	const int from_index = get_index(x, y);
+	int from_index = get_index(x, y);
+	Board temp_board;
 
 	// Top-Right
 	for (int i = 1; i < 8; i++) {
 		if (!in_board(x + i, y + i))
 			break;
 
-		const int index = get_index(x + i, y + i);
+		int index = get_index(x + i, y + i);
 		if (board[index].is_white())
 			break;
 
 		if (board[index].is_black()) {
-			out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+			board.after_playing(from_index, index, W_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+
+		board.after_playing(from_index, index, W_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Top-Left
@@ -26,15 +30,18 @@ void vtx::get_white_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x - i, y + i))
 			break;
 
-		const int index = get_index(x - i, y + i);
+		int index = get_index(x - i, y + i);
 		if (board[index].is_white())
 			break;
 
 		if (board[index].is_black()) {
-			out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+			board.after_playing(from_index, index, W_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+
+		board.after_playing(from_index, index, W_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Bottom-Right
@@ -42,15 +49,18 @@ void vtx::get_white_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x + i, y - i))
 			break;
 
-		const int index = get_index(x + i, y - i);
+		int index = get_index(x + i, y - i);
 		if (board[index].is_white())
 			break;
 
 		if (board[index].is_black()) {
-			out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+			board.after_playing(from_index, index, W_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+
+		board.after_playing(from_index, index, W_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Bottom-Left
@@ -58,36 +68,43 @@ void vtx::get_white_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x - i, y - i))
 			break;
 
-		const int index = get_index(x - i, y - i);
+		int index = get_index(x - i, y - i);
 		if (board[index].is_white())
 			break;
 
 		if (board[index].is_black()) {
-			out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+			board.after_playing(from_index, index, W_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, W_BISHOP));
+
+		board.after_playing(from_index, index, W_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 }
 
-void vtx::get_black_bishop_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_black_bishop_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	const int from_index = get_index(x, y);
+	int from_index = get_index(x, y);
+	Board temp_board;
 
 	// Top-Right
 	for (int i = 1; i < 8; i++) {
 		if (!in_board(x + i, y + i))
 			break;
 
-		const int index = get_index(x + i, y + i);
+		int index = get_index(x + i, y + i);
 		if (board[index].is_black())
 			break;
 
 		if (board[index].is_white()) {
-			out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+			board.after_playing(from_index, index, B_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+
+		board.after_playing(from_index, index, B_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Top-Left
@@ -95,15 +112,18 @@ void vtx::get_black_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x - i, y + i))
 			break;
 
-		const int index = get_index(x - i, y + i);
+		int index = get_index(x - i, y + i);
 		if (board[index].is_black())
 			break;
 
 		if (board[index].is_white()) {
-			out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+			board.after_playing(from_index, index, B_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+
+		board.after_playing(from_index, index, B_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Bottom-Right
@@ -111,15 +131,18 @@ void vtx::get_black_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x + i, y - i))
 			break;
 
-		const int index = get_index(x + i, y - i);
+		int index = get_index(x + i, y - i);
 		if (board[index].is_black())
 			break;
 
 		if (board[index].is_white()) {
-			out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+			board.after_playing(from_index, index, B_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+
+		board.after_playing(from_index, index, B_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 
 	// Bottom-Left
@@ -127,14 +150,17 @@ void vtx::get_black_bishop_moves(const Board& board, const int x, const int y, s
 		if (!in_board(x - i, y - i))
 			break;
 
-		const int index = get_index(x - i, y - i);
+		int index = get_index(x - i, y - i);
 		if (board[index].is_black())
 			break;
 
 		if (board[index].is_white()) {
-			out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+			board.after_playing(from_index, index, B_BISHOP, temp_board);
+			board_iterator(temp_board);
 			break;
 		}
-		out_boards.push_back(board.after_playing(from_index, index, B_BISHOP));
+
+		board.after_playing(from_index, index, B_BISHOP, temp_board);
+		board_iterator(temp_board);
 	}
 }

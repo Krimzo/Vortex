@@ -1,42 +1,30 @@
 #include "vortex.h"
 
 
-void vtx::get_white_queen_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_white_queen_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	std::vector<Board> boards;
-	boards.reserve(15);
-
-	get_white_bishop_moves(board, x, y, boards);
-	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = W_QUEEN;
-		out_boards.push_back(new_board);
-	}
-
-	boards.clear();
-
-	get_white_rook_moves(board, x, y, boards);
-	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = W_QUEEN;
-		out_boards.push_back(new_board);
-	}
+	get_white_bishop_moves(board, x, y, [&](Board& board)
+		{
+			board.pieces[board.last_played_to].type = W_QUEEN;
+			board_iterator(board);
+		});
+	get_white_rook_moves(board, x, y, [&](Board& board)
+		{
+			board.pieces[board.last_played_to].type = W_QUEEN;
+			board_iterator(board);
+		});
 }
 
-void vtx::get_black_queen_moves(const Board& board, const int x, const int y, std::vector<Board>& out_boards)
+void vtx::get_black_queen_moves(Board const& board, int x, int y, std::function<void(Board&)> const& board_iterator)
 {
-	std::vector<Board> boards;
-	boards.reserve(15);
-
-	get_black_bishop_moves(board, x, y, boards);
-	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = B_QUEEN;
-		out_boards.push_back(new_board);
-	}
-
-	boards.clear();
-
-	get_black_rook_moves(board, x, y, boards);
-	for (auto& new_board : boards) {
-		new_board.pieces[new_board.last_played_to].type = B_QUEEN;
-		out_boards.push_back(new_board);
-	}
+	get_black_bishop_moves(board, x, y, [&](Board& board)
+		{
+			board.pieces[board.last_played_to].type = B_QUEEN;
+			board_iterator(board);
+		});
+	get_black_rook_moves(board, x, y, [&](Board& board)
+		{
+			board.pieces[board.last_played_to].type = B_QUEEN;
+			board_iterator(board);
+		});
 }

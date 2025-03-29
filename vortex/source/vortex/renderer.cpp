@@ -29,7 +29,7 @@ vtx::Renderer::Renderer(Game& game)
 
 void vtx::Renderer::update()
 {
-	const kl::GPU& gpu = game.system.gpu;
+	auto& gpu = game.system.gpu;
 	kl::Int2 render_size = game.system.viewport_size;
 	resize(render_size);
 
@@ -43,8 +43,8 @@ void vtx::Renderer::update()
 	gpu.bind_shaders(m_shaders);
 	gpu.bind_sampler_state_for_pixel_shader(m_sampler_state, 0);
 
-	const float aspect_ratio = (float) render_size.x / (float) render_size.y;
-	const UINT vertex_count = gpu.vertex_buffer_size(m_screen_mesh, sizeof(kl::Vertex));
+	float aspect_ratio = (float) render_size.x / (float) render_size.y;
+	UINT vertex_count = gpu.vertex_buffer_size(m_screen_mesh, sizeof(kl::Vertex));
 
 	struct alignas(16) CB
 	{
@@ -58,7 +58,7 @@ void vtx::Renderer::update()
 
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
-			const int i = x + (7 - y) * 8;
+			int i = x + (7 - y) * 8;
 
 			CB cb;
 			cb.OFFSET_POS = {};
@@ -78,8 +78,8 @@ void vtx::Renderer::update()
 	}
 
 	if (game.board.selected_square >= 0) {
-		const int x = game.board.selected_square % 8;
-		const int y = game.board.selected_square / 8;
+		int x = game.board.selected_square % 8;
+		int y = game.board.selected_square / 8;
 
 		CB cb;
 		cb.OFFSET_POS = game.mouse_ndc();
@@ -91,7 +91,7 @@ void vtx::Renderer::update()
 		cb.SQUARE_COLOR.w = 1.0f;
 		m_shaders.upload(cb);
 
-		const auto icon_texture = get_square_icon(game.board, x, y);
+		auto icon_texture = get_square_icon(game.board, x, y);
 		gpu.bind_shader_view_for_pixel_shader(icon_texture, 0);
 
 		gpu.draw(vertex_count, 0);
@@ -115,7 +115,7 @@ void vtx::Renderer::reset_colors()
 	game_over_dark_color = kl::RGB(170, 100, 90);
 }
 
-void vtx::Renderer::resize(const kl::Int2 new_size)
+void vtx::Renderer::resize(kl::Int2 new_size)
 {
 	if (m_render_texture.resolution() == new_size)
 		return;
@@ -135,19 +135,23 @@ void vtx::Renderer::resize(const kl::Int2 new_size)
 	m_render_texture.create_shader_view();
 }
 
-kl::RGB vtx::Renderer::get_square_color(const Board& board, const int x, const int y) const
+kl::RGB vtx::Renderer::get_square_color(Board const& board, int x, int y) const
 {
-	const int index = x + y * 8;
+	int index = x + y * 8;
 	if (board.get_win_state() && index == board.last_played_to)
 		return (x % 2 == y % 2) ? game_over_light_color : game_over_dark_color;
 
 	if (board.selected_square >= 0) {
-		std::vector<Board> boards;
-		get_piece_moves(board, board.selected_square, boards);
-		for (const auto& future_board : boards) {
-			if (index != future_board.last_played_to)
-				continue;
-			return (x % 2 == y % 2) ? selected_light_color : selected_dark_color;
+		try {
+			get_piece_moves(board, board.selected_square, [&](Board& future_board)
+				{
+					if (index != future_board.last_played_to)
+						return;
+					throw (x % 2 == y % 2) ? selected_light_color : selected_dark_color;
+				});
+		}
+		catch (kl::Float4 result) {
+			return result;
 		}
 	}
 
@@ -156,7 +160,7 @@ kl::RGB vtx::Renderer::get_square_color(const Board& board, const int x, const i
 	return x % 2 == y % 2 ? default_light_color : default_dark_color;
 }
 
-kl::dx::ShaderView vtx::Renderer::get_square_icon(const Board& board, const int x, const int y) const
+kl::dx::ShaderView vtx::Renderer::get_square_icon(Board const& board, int x, int y) const
 {
 	switch (board(x, y).type)
 	{

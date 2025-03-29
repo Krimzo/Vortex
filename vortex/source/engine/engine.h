@@ -3,11 +3,15 @@
 #include "board/moves.h"
 
 
+inline constexpr auto INF = std::numeric_limits<float>::infinity();
+
 namespace vtx {
 	struct SearchResult
 	{
 		Board board;
 		int depth = 0;
+		uint64_t calls = 0;
+		float eval = 0.0f;
 		float time = 0.0f;
 	};
 }
@@ -15,14 +19,12 @@ namespace vtx {
 namespace vtx {
 	struct Engine
 	{
-		Engine() = default;
+		int depth_limit = 2;
+		uint64_t calls = 0;
 
-		float evaluate(const Board& board) const;
-		SearchResult search(Board& board, int max_depth);
+		SearchResult search(Board const& board);
 
-	private:
-		Board search_rec(Board& board, int max_depth, int depth, float alpha, float beta);
-		bool piece_type_check(const Board& board, Piece piece);
-		bool evaluation_check(bool white_to_play, float& alpha, float& beta, const Board& possible_board, Board& best_board);
+		float static_eval(Board const& board);
+		float dyn_eval(Board const& board, int depth, float alpha, float beta, Board* out_best_board);
 	};
 }

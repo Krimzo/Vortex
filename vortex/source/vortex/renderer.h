@@ -47,7 +47,7 @@ namespace vtx {
 
         void resize(kl::Int2 new_size);
 
-        kl::RGB get_square_color(const Board& board, int x, int y) const;
-        kl::dx::ShaderView get_square_icon(const Board& board, int x, int y) const;
+        kl::RGB get_square_color(Board const& board, int x, int y) const;
+        kl::dx::ShaderView get_square_icon(Board const& board, int x, int y) const;
     };
 }

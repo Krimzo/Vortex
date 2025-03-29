@@ -7,14 +7,12 @@ namespace vtx {
 	enum PieceType : int8_t
 	{
 		NONE = 0,
-
 		W_PAWN = 'P',
 		W_KNIGHT = 'N',
 		W_BISHOP = 'B',
 		W_ROOK = 'R',
 		W_QUEEN = 'Q',
 		W_KING = 'K',
-
 		B_PAWN = 'p',
 		B_KNIGHT = 'n',
 		B_BISHOP = 'b',

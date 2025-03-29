@@ -169,7 +169,7 @@ static constexpr float black_king_end_value_table[64]
 };
 
 
-static bool white_in_endgame(const vtx::Board& board)
+static bool white_in_endgame(vtx::Board const& board)
 {
 	using namespace vtx;
 
@@ -191,7 +191,7 @@ static bool white_in_endgame(const vtx::Board& board)
 	return true;
 }
 
-static bool black_in_endgame(const vtx::Board& board)
+static bool black_in_endgame(vtx::Board const& board)
 {
 	using namespace vtx;
 
@@ -213,7 +213,7 @@ static bool black_in_endgame(const vtx::Board& board)
 	return true;
 }
 
-float vtx::Engine::evaluate(const Board& board) const
+float vtx::Engine::static_eval(Board const& board)
 {
 	float evaluation = 0.0f;
 	for (int i = 0; i < 64; i++) {
@@ -245,7 +245,7 @@ float vtx::Engine::evaluate(const Board& board) const
 			break;
 
 		case W_KING:
-			evaluation += 1'000'000.0f;
+			evaluation += 10'000.0f;
 			evaluation += white_in_endgame(board) ? white_king_end_value_table[i] : white_king_mid_value_table[i];
 			break;
 
@@ -275,7 +275,7 @@ float vtx::Engine::evaluate(const Board& board) const
 			break;
 
 		case B_KING:
-			evaluation -= 1'000'000.0f;
+			evaluation -= 10'000.0f;
 			evaluation -= black_in_endgame(board) ? black_king_end_value_table[i] : black_king_mid_value_table[i];
 			break;
 		}

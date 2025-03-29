@@ -1,6 +1,5 @@
 #include "vortex.h"
 
-
 vtx::UI::UI(Renderer& renderer)
     : renderer(renderer)
 {
@@ -46,32 +45,32 @@ void vtx::UI::update()
 void vtx::UI::display_log_window() const
 {
 	if (ImGui::Begin("Logs", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		if (ImGui::BeginTable("table2", 4, ImGuiTableFlags_Borders)) {
+		if (ImGui::BeginTable("table2", 5, ImGuiTableFlags_Borders)) {
 			ImGui::TableNextColumn();
 			ImGui::Text("Index");
 			ImGui::TableNextColumn();
 			ImGui::Text("Depth");
-			//ImGui::TableNextColumn();
-			//ImGui::Text("Calls");
+			ImGui::TableNextColumn();
+			ImGui::Text("Calls");
 			ImGui::TableNextColumn();
 			ImGui::Text("Time");
 			ImGui::TableNextColumn();
 			ImGui::Text("Evaluation");
 
 			for (size_t i = 0; i < renderer.game.search_results.size(); i++) {
-				const auto& result = renderer.game.search_results[i];
+				auto& result = renderer.game.search_results[i];
 				ImGui::TableNextRow();
 
 				ImGui::TableNextColumn();
 				ImGui::Text(kl::format(i + 1).c_str());
 				ImGui::TableNextColumn();
 				ImGui::Text(kl::format(result.depth).c_str());
-				//ImGui::TableNextColumn();
-				//ImGui::Text(kl::format(result.calls).c_str());
+				ImGui::TableNextColumn();
+				ImGui::Text(kl::format(result.calls).c_str());
 				ImGui::TableNextColumn();
 				ImGui::Text(kl::format(result.time).c_str());
 				ImGui::TableNextColumn();
-				ImGui::Text(kl::format(std::fixed, std::setprecision(2), result.board.evaluation).c_str());
+				ImGui::Text(kl::format(std::fixed, std::setprecision(2), result.eval).c_str());
 			}
 			ImGui::EndTable();
 		}
@@ -90,7 +89,7 @@ void vtx::UI::display_board_window()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
 	if (ImGui::Begin("Board", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-		const ImVec2 content_region = ImGui::GetContentRegionAvail();
+		ImVec2 content_region = ImGui::GetContentRegionAvail();
 		system.viewport_focused = ImGui::IsWindowFocused();
 		system.viewport_top_left = {
 			(int) (ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x),
@@ -113,16 +112,16 @@ void vtx::UI::display_info_window() const
 
 	if (ImGui::Begin("Control")) {
 		ImGui::Text("Search");
-		ImGui::SliderInt("Search depth", &game.search_depth, 1, 7);
+		ImGui::SliderInt("Search depth", &game.engine.depth_limit, 1, 5);
 
 		ImGui::Separator();
-		
 		ImGui::Text("View");
+
 		ImGui::ColorEdit3("Background", &renderer.background.x);
 
 		ImGui::Separator();
-
 		ImGui::Text("Board colors");
+
 		ImGui::ColorEdit3("Default light", &renderer.default_light_color.x);
 		ImGui::ColorEdit3("Default dark", &renderer.default_dark_color.x);
 		ImGui::ColorEdit3("Selected light", &renderer.selected_light_color.x);
@@ -135,11 +134,38 @@ void vtx::UI::display_info_window() const
 		if (ImGui::Button("Reset colors", { -1.0f, 0.0f })) {
 			renderer.reset_colors();
 		}
+
+		ImGui::Separator();
+		ImGui::Text("Load FEN");
+
+		static std::string fen_buffer;
+		ImGui::SetNextItemWidth(-1.0f);
+		if (ImGui::InputText("##FenInput", &fen_buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			renderer.game.board.load_fen(fen_buffer);
+			game.search_results.clear();
+			fen_buffer.clear();
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Eval");
+
+		static Engine debug_engine;
+
+		static float static_eval = 0.0f;
+		if (ImGui::Button("Static Eval"))
+			static_eval = debug_engine.static_eval(renderer.game.board);
+		ImGui::DragFloat("Static eval", &static_eval, 0.0f);
+
+		static float dyn_eval = 0.0f;
+		if (ImGui::Button("Dynamic Eval"))
+			dyn_eval = debug_engine.dyn_eval(renderer.game.board, 0, -INF, INF, nullptr);
+		ImGui::SliderInt("Depth", &debug_engine.depth_limit, 1, 5);
+		ImGui::DragFloat("Dynamic eval", &dyn_eval, 0.0f);
 	}
 	ImGui::End();
 }
 
-void vtx::UI::load_fonts(const float dpi_scaling)
+void vtx::UI::load_fonts(float dpi_scaling)
 {
 	ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 	atlas->AddFontFromFileTTF("resource/fonts/roboto.ttf", 18 * dpi_scaling);
@@ -177,10 +203,10 @@ void vtx::UI::load_colors()
 	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
 
-	style.Colors[ImGuiCol_CheckMark] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_CheckMark] = (ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_SliderGrab] = (const ImVec4&) special_color;
-	style.Colors[ImGuiCol_SliderGrabActive] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_SliderGrab] = (ImVec4&) special_color;
+	style.Colors[ImGuiCol_SliderGrabActive] = (ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_Button] = style.Colors[ImGuiCol_FrameBg];
 	style.Colors[ImGuiCol_ButtonHovered] = style.Colors[ImGuiCol_FrameBgHovered];
@@ -192,20 +218,20 @@ void vtx::UI::load_colors()
 
 	style.Colors[ImGuiCol_Separator] = style.Colors[ImGuiCol_Border];
 	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	style.Colors[ImGuiCol_SeparatorActive] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_SeparatorActive] = (ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.30f, 0.30f, 0.67f);
-	style.Colors[ImGuiCol_ResizeGripActive] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_ResizeGripActive] = (ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_Tab] = ImVec4(0.08f, 0.08f, 0.08f, 0.83f);
 	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.35f, 0.35f, 0.35f, 0.83f);
 	style.Colors[ImGuiCol_TabActive] = ImVec4(0.23f, 0.23f, 0.23f, 1.00f);
 	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
 	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-	style.Colors[ImGuiCol_TabSelectedOverline] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_TabSelectedOverline] = (ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_DockingPreview] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_DockingPreview] = (ImVec4&) special_color;
 	style.Colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
 
 	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
@@ -215,9 +241,9 @@ void vtx::UI::load_colors()
 
 	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.42f, 0.69f, 0.69f, 0.32f);
 
-	style.Colors[ImGuiCol_DragDropTarget] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_DragDropTarget] = (ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_NavHighlight] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_NavHighlight] = (ImVec4&) special_color;
 	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 

@@ -115,8 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\board\board.cpp" />
-    <ClCompile Include="source\engine\engine_evaluate.cpp" />
-    <ClCompile Include="source\engine\engine_search.cpp" />
+    <ClCompile Include="source\engine\engine.cpp" />
+    <ClCompile Include="source\engine\engine_static_eval.cpp" />
+    <ClCompile Include="source\engine\engine_dyn_eval.cpp" />
     <ClCompile Include="source\vortex\game.cpp" />
     <ClCompile Include="source\board\logic\bishop_logic.cpp" />
     <ClCompile Include="source\board\logic\king_logic.cpp" />
