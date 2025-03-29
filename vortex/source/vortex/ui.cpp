@@ -130,16 +130,19 @@ void vtx::UI::display_info_window() const
 
 		static Engine debug_engine;
 
-		static float static_eval = 0.0f;
+		static int static_eval = 0;
 		if (ImGui::Button("Static Eval##Button"))
-			static_eval = debug_engine.static_eval(renderer.game.board);
-		ImGui::DragFloat("Static Eval", &static_eval, 0.0f);
+			static_eval = (int) debug_engine.static_eval(renderer.game.board);
+		ImGui::DragInt("Static Eval", &static_eval, 0.0f);
 
-		static float dyn_eval = 0.0f;
+		static int dyn_eval = 0;
 		if (ImGui::Button("Dynamic Eval##Button"))
-			dyn_eval = debug_engine.dyn_eval(renderer.game.board, 0, -INF, INF, nullptr);
+			dyn_eval = (int) debug_engine.dyn_eval(renderer.game.board, 0,
+				std::numeric_limits<int64_t>::min(),
+				std::numeric_limits<int64_t>::max(),
+				nullptr);
 		ImGui::SliderInt("Depth", &debug_engine.depth_limit, 1, 5);
-		ImGui::DragFloat("Dynamic Eval", &dyn_eval, 0.0f);
+		ImGui::DragInt("Dynamic Eval", &dyn_eval, 0.0f);
 
 		ImGui::Separator();
 		ImGui::Text("View");

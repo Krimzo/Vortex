@@ -3,15 +3,13 @@
 #include "board/moves.h"
 
 
-inline constexpr auto INF = std::numeric_limits<float>::infinity();
-
 namespace vtx {
 	struct SearchResult
 	{
 		Board board;
 		int depth = 0;
 		uint64_t calls = 0;
-		float eval = 0.0f;
+		int64_t eval = 0;
 		float time = 0.0f;
 	};
 }
@@ -24,7 +22,7 @@ namespace vtx {
 
 		SearchResult search(Board const& board);
 
-		float static_eval(Board const& board);
-		float dyn_eval(Board const& board, int depth, float alpha, float beta, Board* out_best_board);
+		int64_t static_eval(Board const& board);
+		int64_t dyn_eval(Board const& board, int depth, int64_t alpha, int64_t beta, Board* out_best_board);
 	};
 }
