@@ -75,7 +75,7 @@ void vtx::UI::display_log_window() const
 			ImGui::EndTable();
 		}
 
-		if (ImGui::Button("Reset board", { -1.0f, 0.0f })) {
+		if (ImGui::Button("Reset Board", { -1.0f, 0.0f })) {
 			renderer.game.reset();
 		}
 	}
@@ -112,28 +112,7 @@ void vtx::UI::display_info_window() const
 
 	if (ImGui::Begin("Control")) {
 		ImGui::Text("Search");
-		ImGui::SliderInt("Search depth", &game.engine.depth_limit, 1, 5);
-
-		ImGui::Separator();
-		ImGui::Text("View");
-
-		ImGui::ColorEdit3("Background", &renderer.background.x);
-
-		ImGui::Separator();
-		ImGui::Text("Board colors");
-
-		ImGui::ColorEdit3("Default light", &renderer.default_light_color.x);
-		ImGui::ColorEdit3("Default dark", &renderer.default_dark_color.x);
-		ImGui::ColorEdit3("Selected light", &renderer.selected_light_color.x);
-		ImGui::ColorEdit3("Selected dark", &renderer.selected_dark_color.x);
-		ImGui::ColorEdit3("Last played light", &renderer.last_played_light_color.x);
-		ImGui::ColorEdit3("Last played dark", &renderer.last_played_dark_color.x);
-		ImGui::ColorEdit3("Game over light", &renderer.game_over_light_color.x);
-		ImGui::ColorEdit3("Game over dark", &renderer.game_over_dark_color.x);
-
-		if (ImGui::Button("Reset colors", { -1.0f, 0.0f })) {
-			renderer.reset_colors();
-		}
+		ImGui::SliderInt("Search Depth", &game.engine.depth_limit, 1, 5);
 
 		ImGui::Separator();
 		ImGui::Text("Load FEN");
@@ -152,15 +131,36 @@ void vtx::UI::display_info_window() const
 		static Engine debug_engine;
 
 		static float static_eval = 0.0f;
-		if (ImGui::Button("Static Eval"))
+		if (ImGui::Button("Static Eval##Button"))
 			static_eval = debug_engine.static_eval(renderer.game.board);
-		ImGui::DragFloat("Static eval", &static_eval, 0.0f);
+		ImGui::DragFloat("Static Eval", &static_eval, 0.0f);
 
 		static float dyn_eval = 0.0f;
-		if (ImGui::Button("Dynamic Eval"))
+		if (ImGui::Button("Dynamic Eval##Button"))
 			dyn_eval = debug_engine.dyn_eval(renderer.game.board, 0, -INF, INF, nullptr);
 		ImGui::SliderInt("Depth", &debug_engine.depth_limit, 1, 5);
-		ImGui::DragFloat("Dynamic eval", &dyn_eval, 0.0f);
+		ImGui::DragFloat("Dynamic Eval", &dyn_eval, 0.0f);
+
+		ImGui::Separator();
+		ImGui::Text("View");
+
+		ImGui::ColorEdit3("Background", &renderer.background.x);
+
+		ImGui::Separator();
+		ImGui::Text("Board Colors");
+
+		ImGui::ColorEdit3("Default Light", &renderer.default_light_color.x);
+		ImGui::ColorEdit3("Default Dark", &renderer.default_dark_color.x);
+		ImGui::ColorEdit3("Selected Light", &renderer.selected_light_color.x);
+		ImGui::ColorEdit3("Selected Dark", &renderer.selected_dark_color.x);
+		ImGui::ColorEdit3("Last Played Light", &renderer.last_played_light_color.x);
+		ImGui::ColorEdit3("Last Played Dark", &renderer.last_played_dark_color.x);
+		ImGui::ColorEdit3("Game Over Light", &renderer.game_over_light_color.x);
+		ImGui::ColorEdit3("Game Over Dark", &renderer.game_over_dark_color.x);
+
+		if (ImGui::Button("Reset Colors", { -1.0f, 0.0f })) {
+			renderer.reset_colors();
+		}
 	}
 	ImGui::End();
 }
