@@ -137,10 +137,7 @@ void vtx::UI::display_info_window() const
 
 		static int dyn_eval = 0;
 		if (ImGui::Button("Dynamic Eval##Button"))
-			dyn_eval = (int) debug_engine.dyn_eval(renderer.game.board, 0,
-				std::numeric_limits<int64_t>::min(),
-				std::numeric_limits<int64_t>::max(),
-				nullptr);
+			dyn_eval = (int) debug_engine.dyn_eval(renderer.game.board, 0, MIN_EVAL, MAX_EVAL, nullptr);
 		ImGui::SliderInt("Depth", &debug_engine.depth_limit, 1, 5);
 		ImGui::DragInt("Dynamic Eval", &dyn_eval, 0.0f);
 

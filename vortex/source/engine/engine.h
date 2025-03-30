@@ -3,6 +3,9 @@
 #include "board/moves.h"
 
 
+inline constexpr int64_t MIN_EVAL = std::numeric_limits<int64_t>::min();
+inline constexpr int64_t MAX_EVAL = std::numeric_limits<int64_t>::max();
+
 namespace vtx {
 	struct SearchResult
 	{
