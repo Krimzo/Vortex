@@ -16,7 +16,8 @@ struct Matrix4x4
     };
 
     constexpr Matrix4x4()
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
@@ -71,7 +72,7 @@ struct Matrix4x4
 
     constexpr bool operator!=( Matrix4x4<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Matrix4x4<T> operator+( Matrix4x4<T> const& other ) const
@@ -125,7 +126,7 @@ struct Matrix4x4
             {
                 result( x, y ) = T( 0 );
                 for ( int i = 0; i < 4; i++ )
-                    result( x, y ) += (*this)(i, y) * other( x, i );
+                    result( x, y ) += ( *this )( i, y ) * other( x, i );
             }
         }
         return result;
@@ -142,25 +143,25 @@ struct Matrix4x4
         for ( int y = 0; y < 4; y++ )
         {
             for ( int i = 0; i < 4; i++ )
-                result[y] += (*this)(i, y) * vec[i];
+                result[y] += ( *this )( i, y ) * vec[i];
         }
         return result;
     }
 
     constexpr T determinant() const
     {
-        T A2323 = (*this)(2, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(2, 3);
-        T A1323 = (*this)(1, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(1, 3);
-        T A1223 = (*this)(1, 2) * (*this)(2, 3) - (*this)(2, 2) * (*this)(1, 3);
-        T A0323 = (*this)(0, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(0, 3);
-        T A0223 = (*this)(0, 2) * (*this)(2, 3) - (*this)(2, 2) * (*this)(0, 3);
-        T A0123 = (*this)(0, 2) * (*this)(1, 3) - (*this)(1, 2) * (*this)(0, 3);
+        T A2323 = ( *this )( 2, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 2, 3 );
+        T A1323 = ( *this )( 1, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 1, 3 );
+        T A1223 = ( *this )( 1, 2 ) * ( *this )( 2, 3 ) - ( *this )( 2, 2 ) * ( *this )( 1, 3 );
+        T A0323 = ( *this )( 0, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 0, 3 );
+        T A0223 = ( *this )( 0, 2 ) * ( *this )( 2, 3 ) - ( *this )( 2, 2 ) * ( *this )( 0, 3 );
+        T A0123 = ( *this )( 0, 2 ) * ( *this )( 1, 3 ) - ( *this )( 1, 2 ) * ( *this )( 0, 3 );
 
         T result =
-            (*this)(0, 0) * ((*this)(1, 1) * A2323 - (*this)(2, 1) * A1323 + (*this)(3, 1) * A1223) -
-            (*this)(1, 0) * ((*this)(0, 1) * A2323 - (*this)(2, 1) * A0323 + (*this)(3, 1) * A0223) +
-            (*this)(2, 0) * ((*this)(0, 1) * A1323 - (*this)(1, 1) * A0323 + (*this)(3, 1) * A0123) -
-            (*this)(3, 0) * ((*this)(0, 1) * A1223 - (*this)(1, 1) * A0223 + (*this)(2, 1) * A0123);
+            ( *this )( 0, 0 ) * ( ( *this )( 1, 1 ) * A2323 - ( *this )( 2, 1 ) * A1323 + ( *this )( 3, 1 ) * A1223 ) -
+            ( *this )( 1, 0 ) * ( ( *this )( 0, 1 ) * A2323 - ( *this )( 2, 1 ) * A0323 + ( *this )( 3, 1 ) * A0223 ) +
+            ( *this )( 2, 0 ) * ( ( *this )( 0, 1 ) * A1323 - ( *this )( 1, 1 ) * A0323 + ( *this )( 3, 1 ) * A0123 ) -
+            ( *this )( 3, 0 ) * ( ( *this )( 0, 1 ) * A1223 - ( *this )( 1, 1 ) * A0223 + ( *this )( 2, 1 ) * A0123 );
         return T( 1 ) / result;
     }
 
@@ -216,49 +217,56 @@ struct Matrix4x4
 
     static constexpr Matrix4x4<T> look_at( Vector3<T> const& position, Vector3<T> const& target, Vector3<T> const& up )
     {
-        Vector3<T> f = normalize( target - position );
-        Vector3<T> s = normalize( cross( up, f ) );
-        Vector3<T> u = cross( f, s );
+        return look_to( position, target - position, up );
+    }
+
+    static constexpr Matrix4x4<T> look_to( Vector3<T> const& position, Vector3<T> const& direction, Vector3<T> const& up )
+    {
+        const Vector3<T> f = normalize( direction );
+        const Vector3<T> s = normalize( cross( up, f ) );
+        const Vector3<T> u = cross( f, s );
 
         Matrix4x4<T> result;
         result[0] = s.x;
         result[1] = s.y;
         result[2] = s.z;
-        result[3] = -dot( s, position );
+        result[3] = dot( s, -position );
         result[4] = u.x;
         result[5] = u.y;
         result[6] = u.z;
-        result[7] = -dot( u, position );
+        result[7] = dot( u, -position );
         result[8] = f.x;
         result[9] = f.y;
         result[10] = f.z;
-        result[11] = -dot( f, position );
+        result[11] = dot( f, -position );
         return result;
     }
 
-    static constexpr Matrix4x4<T> perspective( T field_of_view, T aspect_ratio, T near_plane, T far_plane )
+    static constexpr Matrix4x4<T> perspective( T horizontal_fov_deg, T aspect_ratio, T near_plane, T far_plane )
     {
-        T tan_half = T( 1 ) / tan_d<T>( field_of_view * 0.5f );
+        const T width = T( 1 ) / tan_d<T>( horizontal_fov_deg * T( 0.5 ) );
+        const T height = width * aspect_ratio;
+        const T range = far_plane / ( far_plane - near_plane );
 
         Matrix4x4<T> result;
-        result[0] = tan_half / aspect_ratio;
-        result[5] = tan_half;
-        result[10] = (-far_plane - near_plane) / (near_plane - far_plane);
-        result[11] = (T( 2 ) * near_plane * far_plane) / (near_plane - far_plane);
+        result[0] = width;
+        result[5] = height;
+        result[10] = range;
+        result[11] = -range * near_plane;
         result[14] = T( 1 );
         result[15] = T( 0 );
         return result;
     }
 
-    static constexpr Matrix4x4<T> orthographic( T left, T right, T bottom, T top, T near_plane, T far_plane )
+    static constexpr Matrix4x4<T> orthographic( T width, T height, T near_plane, T far_plane )
     {
+        const T range = T( 1 ) / ( far_plane - near_plane );
+
         Matrix4x4<T> result;
-        result[0] = T( 2 ) / (right - left);
-        result[5] = T( 2 ) / (top - bottom);
-        result[10] = T( 2 ) / (far_plane - near_plane);
-        result[3] = -(right + left) / (right - left);
-        result[7] = -(top + bottom) / (top - bottom);
-        result[11] = -(far_plane + near_plane) / (far_plane - near_plane);
+        result[0] = T( 2 ) / width;
+        result[5] = T( 2 ) / height;
+        result[10] = range;
+        result[11] = -range * near_plane;
         return result;
     }
 };

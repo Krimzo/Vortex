@@ -12,24 +12,27 @@ struct Complex_T
     T i = {};
 
     constexpr Complex_T()
-    {}
+    {
+    }
 
     constexpr Complex_T( T r, T i )
         : r( r ), i( i )
-    {}
+    {
+    }
 
     explicit constexpr Complex_T( T angle )
         : r( cos_d( angle ) ), i( sin_d( angle ) )
-    {}
+    {
+    }
 
     constexpr T const& operator[]( int index )
     {
-        return (&r)[index];
+        return ( &r )[index];
     }
 
     constexpr T const& operator[]( int index ) const
     {
-        return (&r)[index];
+        return ( &r )[index];
     }
 
     constexpr operator Vector2<T>() const
@@ -44,7 +47,7 @@ struct Complex_T
 
     constexpr bool operator!=( Complex_T<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Complex_T<T> operator+( Complex_T<T> const& other ) const
@@ -116,8 +119,18 @@ namespace kl
 template<typename T>
 std::ostream& operator<<( std::ostream& stream, Complex_T<T> const& complex )
 {
+    const auto load_part = [&]( T const& part ) -> std::ostream&
+        {
+            if ( part < T( 0 ) )
+                stream << " - " << ( -part );
+            else
+                stream << " + " << part;
+            return stream;
+        };
+
     stream << std::setprecision( 2 );
-    stream << "(" << complex.r << " + " << complex.i << "i)";
+    stream << "(" << complex.r;
+    load_part( complex.i ) << "i)";
     return stream;
 }
 }

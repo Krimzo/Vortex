@@ -4,9 +4,9 @@
 kl::TextRaster::TextRaster()
 {
     D2D1_FACTORY_OPTIONS options{};
-    options.debugLevel = D2D1_DEBUG_LEVEL( kl::IS_DEBUG ? (D2D1_DEBUG_LEVEL_WARNING | D2D1_DEBUG_LEVEL_ERROR) : D2D1_DEBUG_LEVEL_NONE );
-    D2D1CreateFactory( D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options, (void**) &m_d2d1_factory ) >> verify_result;
-    DWriteCreateFactory( DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &m_write_factory ) >> verify_result;
+    options.debugLevel = D2D1_DEBUG_LEVEL( kl::IS_DEBUG ? ( D2D1_DEBUG_LEVEL_WARNING | D2D1_DEBUG_LEVEL_ERROR ) : D2D1_DEBUG_LEVEL_NONE );
+    D2D1CreateFactory( D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof( ID2D1Factory ), &options, (void**) &m_d2d1_factory ) >> verify_result;
+    DWriteCreateFactory( DWRITE_FACTORY_TYPE_SHARED, __uuidof( IDWriteFactory ), (IUnknown**) &m_write_factory ) >> verify_result;
 }
 
 kl::TextFormat kl::TextRaster::create_text_format(
@@ -17,6 +17,8 @@ kl::TextFormat kl::TextRaster::create_text_format(
     std::wstring_view const& locale
 ) const
 {
+    if ( font_size <= 0.0f )
+        return {};
     TextFormat format;
     m_write_factory->CreateTextFormat(
         font_family.data(), nullptr, font_weight, font_style, DWRITE_FONT_STRETCH_NORMAL,
@@ -25,20 +27,29 @@ kl::TextFormat kl::TextRaster::create_text_format(
     return format;
 }
 
-void kl::TextRaster::draw_text( UINT target_index ) const
+void kl::TextRaster::draw_text_batch( UINT target_index ) const
 {
-    auto& target = m_d2d1_targets[target_index];
+    auto const& target = m_d2d1_targets[target_index];
+    const Float2 target_size = (Float2 const&) target->GetSize();
     ComRef<ID2D1SolidColorBrush> brush;
-    D2D1_SIZE_F target_size = target->GetSize();
     D2D1_RECT_F layout_rect{};
 
     target->BeginDraw();
-    for ( auto& text : text_data )
+    for ( auto& text : text_batch )
     {
-        layout_rect.left = text.position.x;
-        layout_rect.right = layout_rect.left + (text.rect_size.x > 0.0f ? text.rect_size.x : target_size.width);
-        layout_rect.top = text.position.y;
-        layout_rect.bottom = layout_rect.top + (text.rect_size.y > 0.0f ? text.rect_size.y : target_size.height);
+        if ( !text.format )
+            continue;
+
+        const Float2 position_screen = from_ndc( text.position, target_size );
+        const Float2 rect_size_screen = target_size * text.rect_size * 0.5f;
+
+        layout_rect.left = position_screen.x;
+        layout_rect.top = position_screen.y;
+        layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.x - layout_rect.left ) );
+        layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.y - layout_rect.top ) );
+
+        text.format->SetTextAlignment( text.hor_center ? DWRITE_TEXT_ALIGNMENT_CENTER : DWRITE_TEXT_ALIGNMENT_LEADING );
+        text.format->SetParagraphAlignment( text.ver_center ? DWRITE_PARAGRAPH_ALIGNMENT_CENTER : DWRITE_PARAGRAPH_ALIGNMENT_NEAR );
 
         target->CreateSolidColorBrush(
             D2D1_COLOR_F{
@@ -49,12 +60,54 @@ void kl::TextRaster::draw_text( UINT target_index ) const
             },
             &brush );
 
-        target->DrawText(
+        target->DrawTextW(
             text.data.data(),
             (UINT) text.data.size(),
             text.format.get(),
             layout_rect,
             brush.get() );
     }
+    target->EndDraw();
+}
+
+void kl::TextRaster::draw_text_direct( UINT target_index, Text const& text ) const
+{
+    if ( !text.format )
+        return;
+
+    auto const& target = m_d2d1_targets[target_index];
+    const Float2 target_size = (Float2 const&) target->GetSize();
+
+    const Float2 position_screen = from_ndc( text.position, target_size );
+    const Float2 rect_size_screen = target_size * text.rect_size * 0.5f;
+
+    D2D1_RECT_F layout_rect{};
+    layout_rect.left = position_screen.x;
+    layout_rect.top = position_screen.y;
+    layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.x - layout_rect.left ) );
+    layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.y - layout_rect.top ) );
+
+    text.format->SetTextAlignment( text.hor_center ? DWRITE_TEXT_ALIGNMENT_CENTER : DWRITE_TEXT_ALIGNMENT_LEADING );
+    text.format->SetParagraphAlignment( text.ver_center ? DWRITE_PARAGRAPH_ALIGNMENT_CENTER : DWRITE_PARAGRAPH_ALIGNMENT_NEAR );
+
+    target->BeginDraw();
+
+    ComRef<ID2D1SolidColorBrush> brush;
+    target->CreateSolidColorBrush(
+        D2D1_COLOR_F{
+            .r = text.color.x,
+            .g = text.color.y,
+            .b = text.color.z,
+            .a = text.color.w,
+        },
+        &brush );
+
+    target->DrawTextW(
+        text.data.data(),
+        (UINT) text.data.size(),
+        text.format.get(),
+        layout_rect,
+        brush.get() );
+
     target->EndDraw();
 }

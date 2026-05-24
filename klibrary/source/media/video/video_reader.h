@@ -10,6 +10,7 @@ namespace kl
 struct VideoReader : NoCopy
 {
     VideoReader( std::string_view const& filepath, Int2 output_size = {}, bool use_gpu = true );
+    VideoReader( std::wstring_view const& filepath, Int2 output_size = {}, bool use_gpu = true );
 
     uint64_t byte_size() const;
 
@@ -21,7 +22,7 @@ struct VideoReader : NoCopy
     float fps() const;
 
     bool seek( float time ) const;
-    bool read_frame( Image& out, int* out_index = nullptr ) const;
+    bool read_frame( Image& out, int* out_index = nullptr, float* out_time = nullptr ) const;
 
 private:
     uint64_t m_byte_size = 0;
@@ -35,5 +36,13 @@ private:
 
     ComRef<IMFSourceReader> m_reader;
     Ref<VideoGPU> m_gpu;
+};
+}
+
+namespace kl
+{
+struct VideoInit
+{
+    static const int _init;
 };
 }

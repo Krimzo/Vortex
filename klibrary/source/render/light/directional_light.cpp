@@ -67,19 +67,22 @@ kl::dx::ShaderView kl::DirectionalLight::shader_view( UINT cascade_index ) const
 kl::Float4x4 kl::DirectionalLight::matrix( Float4x4 const& inv_cam_mat ) const
 {
     Float4 frustum_corners[8] = {
-        inv_cam_mat * Float4( -1, -1, -1, 1 ),
-        inv_cam_mat * Float4( 1, -1, -1, 1 ),
-        inv_cam_mat * Float4( -1, 1, -1, 1 ),
-        inv_cam_mat * Float4( 1, 1, -1, 1 ),
-        inv_cam_mat * Float4( -1, -1, 1, 1 ),
-        inv_cam_mat * Float4( 1, -1, 1, 1 ),
-        inv_cam_mat * Float4( -1, 1, 1, 1 ),
-        inv_cam_mat * Float4( 1, 1, 1, 1 ),
+        { -1, -1, 0, 1 },
+        { 1, -1, 0, 1 },
+        { -1, 1, 0, 1 },
+        { 1, 1, 0, 1 },
+        { -1, -1, 1, 1 },
+        { 1, -1, 1, 1 },
+        { -1, 1, 1, 1 },
+        { 1, 1, 1, 1 },
     };
     for ( auto& corner : frustum_corners )
-        corner *= (1.0f / corner.w);
+    {
+        corner = inv_cam_mat * corner;
+        corner *= 1.0f / corner.w;
+    }
 
-    Float4x4 temp_light_view_matrix = Float4x4::look_at( {}, m_direction, { 0, 1, 0 } );
+    const Float4x4 temp_light_view_matrix = Float4x4::look_to( {}, m_direction, { 0, 1, 0 } );
     for ( auto& corner : frustum_corners )
         corner = temp_light_view_matrix * corner;
 
@@ -95,41 +98,41 @@ kl::Float4x4 kl::DirectionalLight::matrix( Float4x4 const& inv_cam_mat ) const
         min_z = min( min_z, corner.z );
     }
     Float3 light_position{
-        (min_xy.x + max_xy.x) * 0.5f,
-        (min_xy.y + max_xy.y) * 0.5f,
+        ( min_xy.x + max_xy.x ) * 0.5f,
+        ( min_xy.y + max_xy.y ) * 0.5f,
         min_z,
     };
 
-    Float4x4 temp_light_view_matrix_inverse = inverse( temp_light_view_matrix );
-    Float4 new_light_pos = temp_light_view_matrix_inverse * Float4( light_position.x, light_position.y, light_position.z, 1.0f );
-    light_position = new_light_pos.xyz();
+    const Float4x4 temp_light_view_matrix_inverse = inverse( temp_light_view_matrix );
     for ( auto& corner : frustum_corners )
         corner = temp_light_view_matrix_inverse * corner;
+    light_position = ( temp_light_view_matrix_inverse * Float4( light_position, 1.0f ) ).xyz();
 
-    Float4x4 light_view_matrix = Float4x4::look_at( light_position, light_position + m_direction, { 0, 1, 0 } );
+    const Float4x4 light_view_matrix = Float4x4::look_to( light_position, m_direction, { 0, 1, 0 } );
     for ( auto& corner : frustum_corners )
         corner = light_view_matrix * corner;
 
     Float3 max_xyz{ -std::numeric_limits<float>::infinity() };
+    min_z = std::numeric_limits<float>::infinity();
     for ( auto& corner : frustum_corners )
     {
-        max_xyz.x = max( max_xyz.x, corner.x );
-        max_xyz.y = max( max_xyz.y, corner.y );
+        max_xyz.x = max( max_xyz.x, abs( corner.x ) );
+        max_xyz.y = max( max_xyz.y, abs( corner.y ) );
         max_xyz.z = max( max_xyz.z, corner.z );
+        min_z = min( min_z, corner.z );
     }
 
-    Float4x4 light_projection_matrix = Float4x4::orthographic(
-        -max_xyz.x, max_xyz.x,
-        -max_xyz.x, max_xyz.x,
-        -max_xyz.z, max_xyz.z
-    );
+    const Float4x4 light_projection_matrix = Float4x4::orthographic(
+        max_xyz.x * 2.0f,
+        max_xyz.y * 2.0f,
+        min_z, max_xyz.z );
     return light_projection_matrix * light_view_matrix;
 }
 
-kl::Float4x4 kl::DirectionalLight::matrix( Camera camera, UINT cascade_index ) const
+kl::Float4x4 kl::DirectionalLight::matrix_cascade( Camera camera, UINT cascade_index ) const
 {
-    Float2 camera_planes = { camera.near_plane, camera.far_plane };
-    camera.near_plane = lerp( cascades[cascade_index + 0], camera_planes.x, camera_planes.y );
-    camera.far_plane = lerp( cascades[cascade_index + 1], camera_planes.x, camera_planes.y );
+    const Float2 camera_planes = { camera.near_plane, camera.far_plane };
+    camera.near_plane = lerp( cascade_index > 0 ? cascade_ends[cascade_index - 1] : 0.0f, camera_planes.x, camera_planes.y );
+    camera.far_plane = lerp( cascade_ends[cascade_index], camera_planes.x, camera_planes.y );
     return matrix( inverse( camera.matrix() ) );
 }
