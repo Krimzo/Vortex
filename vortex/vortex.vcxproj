@@ -57,7 +57,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\imgui\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>vortex.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -79,7 +79,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\imgui\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>vortex.h</PrecompiledHeaderFile>
     </ClCompile>

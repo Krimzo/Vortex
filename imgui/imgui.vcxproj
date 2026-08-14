@@ -11,54 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\context_wrapper.h" />
-    <ClInclude Include="source\crude_json.h" />
-    <ClInclude Include="source\GraphEditor.h" />
-    <ClInclude Include="source\imconfig.h" />
-    <ClInclude Include="source\ImCurveEdit.h" />
-    <ClInclude Include="source\ImGradient.h" />
-    <ClInclude Include="source\imgui.h" />
-    <ClInclude Include="source\ImGuizmo.h" />
-    <ClInclude Include="source\imgui_bezier_math.h" />
-    <ClInclude Include="source\imgui_canvas.h" />
-    <ClInclude Include="source\imgui_extra_math.h" />
-    <ClInclude Include="source\imgui_impl_dx11.h" />
-    <ClInclude Include="source\imgui_impl_win32.h" />
-    <ClInclude Include="source\imgui_internal.h" />
-    <ClInclude Include="source\imgui_memory_editor.h" />
-    <ClInclude Include="source\imgui_stdlib.h" />
-    <ClInclude Include="source\imgui_text_editor.h" />
-    <ClInclude Include="source\ImNodeFlow.h" />
-    <ClInclude Include="source\ImSequencer.h" />
-    <ClInclude Include="source\imstb_rectpack.h" />
-    <ClInclude Include="source\imstb_textedit.h" />
-    <ClInclude Include="source\imstb_truetype.h" />
-    <ClInclude Include="source\ImZoomSlider.h" />
+    <ClInclude Include="imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\crude_json.cpp" />
-    <ClCompile Include="source\GraphEditor.cpp" />
-    <ClCompile Include="source\ImCurveEdit.cpp" />
-    <ClCompile Include="source\ImGradient.cpp" />
-    <ClCompile Include="source\imgui.cpp" />
-    <ClCompile Include="source\ImGuizmo.cpp" />
-    <ClCompile Include="source\imgui_canvas.cpp" />
-    <ClCompile Include="source\imgui_demo.cpp" />
-    <ClCompile Include="source\imgui_draw.cpp" />
-    <ClCompile Include="source\imgui_impl_dx11.cpp" />
-    <ClCompile Include="source\imgui_impl_win32.cpp" />
-    <ClCompile Include="source\imgui_stdlib.cpp" />
-    <ClCompile Include="source\imgui_tables.cpp" />
-    <ClCompile Include="source\imgui_text_editor.cpp" />
-    <ClCompile Include="source\imgui_widgets.cpp" />
-    <ClCompile Include="source\ImNodeFlow.cpp" />
-    <ClCompile Include="source\ImSequencer.cpp" />
-    <ClCompile Include="source\LanguageDefinitions.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\imgui_bezier_math.inl" />
-    <None Include="source\imgui_extra_math.inl" />
-    <None Include="source\ImNodeFlow.inl" />
+    <ClCompile Include="imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -101,7 +72,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\imgui\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +89,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\imgui\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)vortex\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
