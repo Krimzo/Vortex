@@ -6,16 +6,17 @@
 #include "vortex/ui.h"
 
 
-namespace vtx {
-    struct Vortex
-    {
-        System system;
-        Game game = { system };
-        Renderer renderer = { game };
-        UI ui = { renderer };
+namespace vtx
+{
+struct Vortex
+{
+    System system;
+    Game game = { system };
+    Renderer renderer = { game };
+    UI ui = { renderer };
 
-        Vortex() = default;
+    Vortex() = default;
 
-        bool update();
-    };
+    bool update();
+};
 }

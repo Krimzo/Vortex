@@ -3,7 +3,7 @@
 
 int main()
 {
-	vtx::Vortex vortex{};
-	while (vortex.update());
-	return 0;
+    vtx::Vortex vortex{};
+    while ( vortex.update() );
+    return 0;
 }

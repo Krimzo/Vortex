@@ -56,8 +56,10 @@ void vtx::Renderer::update()
         float ASPECT_RATIO;
     };
 
-    for ( int y = 0; y < 8; y++ ) {
-        for ( int x = 0; x < 8; x++ ) {
+    for ( int y = 0; y < 8; y++ )
+    {
+        for ( int x = 0; x < 8; x++ )
+        {
             int i = x + ( 7 - y ) * 8;
 
             CB cb;
@@ -77,7 +79,8 @@ void vtx::Renderer::update()
         }
     }
 
-    if ( game.board.selected_square >= 0 ) {
+    if ( game.board.selected_square >= 0 )
+    {
         int x = game.board.selected_square % 8;
         int y = game.board.selected_square / 8;
 
@@ -141,7 +144,8 @@ kl::RGB vtx::Renderer::get_square_color( Board const& board, int x, int y ) cons
     if ( board.get_win_state() && index == board.last_played_to )
         return ( x % 2 == y % 2 ) ? game_over_light_color : game_over_dark_color;
 
-    if ( board.selected_square >= 0 ) {
+    if ( board.selected_square >= 0 )
+    {
         std::optional<kl::Float4> result;
         get_piece_moves( board, board.selected_square, [&]( Board& future_board )
             {

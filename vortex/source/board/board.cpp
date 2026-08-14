@@ -35,12 +35,15 @@ void vtx::Board::load_fen( std::string_view const& fen )
     reset();
     white_to_play = ( parts[1] == "w" );
 
-    for ( int i = 0, position = 0; i < (int) parts[0].size() && position < 64; i++ ) {
+    for ( int i = 0, position = 0; i < (int) parts[0].size() && position < 64; i++ )
+    {
         char lower_char = (char) tolower( fen[i] );
-        if ( lower_char == 'p' || lower_char == 'n' || lower_char == 'b' || lower_char == 'r' || lower_char == 'q' || lower_char == 'k' ) {
+        if ( lower_char == 'p' || lower_char == 'n' || lower_char == 'b' || lower_char == 'r' || lower_char == 'q' || lower_char == 'k' )
+        {
             pieces[position++].type = char_to_piece( fen[i] );
         }
-        else if ( isdigit( fen[i] ) ) {
+        else if ( isdigit( fen[i] ) )
+        {
             position += ( fen[i] - 48 );
         }
     }
@@ -50,7 +53,8 @@ void vtx::Board::load_fen( std::string_view const& fen )
     castling_bk = false;
     castling_bq = false;
 
-    for ( auto& c : parts[2] ) {
+    for ( auto& c : parts[2] )
+    {
         switch ( c )
         {
         case 'K':
@@ -99,19 +103,23 @@ void vtx::Board::after_playing( int from_index, int to_index, PieceType new_type
         break;
 
     case W_ROOK:
-        if ( from_index == 63 ) {
+        if ( from_index == 63 )
+        {
             out.castling_wk = false;
         }
-        else if ( from_index == 56 ) {
+        else if ( from_index == 56 )
+        {
             out.castling_wq = false;
         }
         break;
 
     case B_ROOK:
-        if ( from_index == 7 ) {
+        if ( from_index == 7 )
+        {
             out.castling_bk = false;
         }
-        else if ( from_index == 0 ) {
+        else if ( from_index == 0 )
+        {
             out.castling_bq = false;
         }
         break;
@@ -126,11 +134,14 @@ void vtx::Board::after_playing( int from_index, int to_index, PieceType new_type
 int vtx::Board::get_win_state() const
 {
     int king_count = 0;
-    for ( auto& piece : pieces ) {
-        if ( piece.type == W_KING ) {
+    for ( auto& piece : pieces )
+    {
+        if ( piece.type == W_KING )
+        {
             king_count += 1;
         }
-        else if ( piece.type == B_KING ) {
+        else if ( piece.type == B_KING )
+        {
             king_count -= 1;
         }
     }
