@@ -5,18 +5,17 @@
 #include "vortex/renderer.h"
 #include "vortex/ui.h"
 
-
 namespace vtx
 {
 struct Vortex
 {
     System system;
-    Game game = { system };
-    Renderer renderer = { game };
-    UI ui = { renderer };
+    Game game = {system};
+    Renderer renderer = {game};
+    UI ui = {renderer};
 
     Vortex() = default;
 
     bool update();
 };
-}
+} // namespace vtx

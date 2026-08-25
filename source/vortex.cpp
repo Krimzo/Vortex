@@ -1,6 +1,5 @@
 #include "vortex.h"
 
-
 bool vtx::Vortex::update()
 {
     game.update();

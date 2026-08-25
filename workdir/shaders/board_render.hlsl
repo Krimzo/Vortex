@@ -18,21 +18,16 @@ SamplerState PIECE_SAMPLER : register(s0);
 VS_OUT v_shader(float3 position : KL_Position, float2 uv : KL_UV)
 {
     if (PIECE_EXISTS)
-    {
         position *= 1.25;
-    }
-    
+
     float2 altered_position = (position.xy + 1.0f) * 0.0625f;
     altered_position = altered_position * 2.0f - 1.0f;
     altered_position += PIECE_EXISTS ? (OFFSET_POS + 0.875f) : (PIECE_INDEX * 0.25f);
 
     if (VIEWPORT_SIZE.y > VIEWPORT_SIZE.x)
-    {
         altered_position.y *= ASPECT_RATIO;
-    }
-    else {
+    else
         altered_position.x /= ASPECT_RATIO;
-    }
 
     VS_OUT data;
     data.position = float4(altered_position, 0.5f, 1.0f);
