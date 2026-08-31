@@ -14,11 +14,10 @@ add_library(imguilib
 target_include_directories(imguilib PUBLIC imgui)
 
 add_subdirectory(klibrary)
-target_include_directories(klibrarylib PUBLIC imgui)
+target_link_libraries(klibrarylib PUBLIC imguilib)
 
 file(GLOB_RECURSE vortex_sources CONFIGURE_DEPENDS source/*.cpp)
 add_executable(vortex ${vortex_sources})
-target_link_libraries(vortex PUBLIC imguilib)
 target_link_libraries(vortex PUBLIC klibrarylib)
 target_include_directories(vortex PUBLIC source)
 set_target_properties(vortex PROPERTIES
